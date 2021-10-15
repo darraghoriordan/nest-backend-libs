@@ -21,9 +21,16 @@ import CoreLoggerService from "../logger/CoreLoggerService";
 import {CoreConfigurationService} from "../core-config/CoreConfigurationService";
 import {LoggingInterceptor} from "../logger/LoggingInterceptor";
 import {HttpLogResponse} from "./httpLogResponseContent";
+import {CoreConfigModule} from "../core-config/CoreConfig.module";
 
 @Module({
-    imports: [LoggerModule, DatabaseModule, AuthzModule, EmailClientModule],
+    imports: [
+        LoggerModule,
+        CoreConfigModule,
+        DatabaseModule,
+        AuthzModule,
+        EmailClientModule,
+    ],
     controllers: [AppController],
     providers: [AppService, SwaggerGen],
     exports: [SwaggerGen],
