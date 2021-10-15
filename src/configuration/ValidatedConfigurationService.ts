@@ -1,6 +1,8 @@
-import {OnModuleInit} from "@nestjs/common";
+import {Injectable, OnModuleInit} from "@nestjs/common";
 import {validate} from "class-validator";
 
+@Injectable()
+// eslint-disable-next-line @darraghor/nestjs-typed/injectable-should-be-provided
 export abstract class ValidatedConfigurationService implements OnModuleInit {
     async onModuleInit(): Promise<void> {
         const result = await validate(this);
