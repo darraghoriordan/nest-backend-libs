@@ -1,18 +1,18 @@
 import {Injectable} from "@nestjs/common";
 import {AuthenticationClient, AuthenticationClientOptions} from "auth0";
 import CoreLoggerService from "../logger/CoreLoggerService";
-import {AuthConfigurationService} from "./AuthConfigurationService";
+import {AuthClientConfigurationService} from "./AuthClientConfigurationService";
 import {UserProfile} from "./UserProfile.dto";
 @Injectable()
 export class AuthZClientService {
     private auth0Client: AuthenticationClient;
 
     constructor(
-        private logger: CoreLoggerService,
-        private configuration: AuthConfigurationService
+        private readonly logger: CoreLoggerService,
+        private readonly config: AuthClientConfigurationService
     ) {
         const options: AuthenticationClientOptions = {
-            domain: this.configuration.auth0Domain,
+            domain: this.config.auth0Domain,
         };
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call
         this.auth0Client = new AuthenticationClient(options);
@@ -27,9 +27,8 @@ export class AuthZClientService {
             return (await this.auth0Client.getProfile(
                 accessToken
             )) as Promise<UserProfile>;
-            // eslint-disable-next-line unicorn/prefer-optional-catch-binding
         } catch (error) {
-            this.logger.error("Failed to load user from auth0");
+            this.logger.error("Failed to load user from auth0", error);
         }
         return undefined;
     }

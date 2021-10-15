@@ -4,10 +4,14 @@ import {PersonController} from "./person.controller";
 import {Person} from "./entities/person.entity";
 import {LoggerModule} from "../logger/logger.module";
 import {TypeOrmModule} from "@nestjs/typeorm";
-import {AuthzModule} from "../authz/authz.module";
+import {AuthzClientModule} from "../authzclient/authz-client.module";
 
 @Module({
-    imports: [LoggerModule, TypeOrmModule.forFeature([Person]), AuthzModule],
+    imports: [
+        LoggerModule,
+        TypeOrmModule.forFeature([Person]),
+        AuthzClientModule,
+    ],
     controllers: [PersonController],
     providers: [PersonService],
     exports: [PersonService],
