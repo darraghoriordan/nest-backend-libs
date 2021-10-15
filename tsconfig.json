@@ -14,15 +14,17 @@
         "alwaysStrict": true,
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
+        "moduleResolution": "node",
         "skipLibCheck": true,
         "skipDefaultLibCheck": true,
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "inlineSources": false,
         "target": "ES2020",
-        "lib": ["es2020"],
+        "lib": [
+            "es2020"
+        ],
         "sourceMap": true,
-        "outDir": "./dist",
-        "baseUrl": "./"
+        "outDir": "./dist"
     }
 }
