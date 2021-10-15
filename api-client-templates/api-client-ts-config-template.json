@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "target": "es2019",
+    "lib": ["es2019", "dom"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "outDir": "dist",
+    "typeRoots": ["node_modules/@types"]
+  },
+  "exclude": ["dist", "node_modules"]
+}
