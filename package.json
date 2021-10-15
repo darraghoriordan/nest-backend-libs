@@ -21,7 +21,7 @@
         "url": "https://darraghoriordan.com"
     },
     "main": "dist/index.js",
-    "types": "index.d.ts",
+    "types": "dist/index.d.ts",
     "keywords": [
         "nestjs"
     ],
