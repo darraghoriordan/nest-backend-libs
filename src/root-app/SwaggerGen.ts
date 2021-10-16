@@ -23,7 +23,7 @@ export class SwaggerGen {
             .setDescription("Describes the backend api")
             .build();
         const document = SwaggerModule.createDocument(app, config);
-        SwaggerModule.setup("api", app, document);
+        SwaggerModule.setup("swagger", app, document);
 
         // tslint:disable-next-line: non-literal-fs-path
         fs.writeFileSync(pathToSave, JSON.stringify(document));

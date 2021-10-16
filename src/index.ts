@@ -5,15 +5,17 @@ import {ValidatedConfigurationService} from "./configuration/ValidatedConfigurat
 import {CoreConfigurationService} from "./core-config/CoreConfigurationService";
 import {DatabaseModule} from "./database/Database.module";
 import {TypeOrmConfigurationProvider} from "./database/TypeOrmConfigurationProvider";
+import {EmailClientModule} from "./email-client/email-client.module";
 import {EmailClient} from "./email-client/email-client.service";
 import CoreLoggerService from "./logger/CoreLoggerService";
-import {AppModule} from "./root-app/app.module";
+import {CoreModule} from "./root-app/core-app.module";
 import {SwaggerGen} from "./root-app/SwaggerGen";
 
 export {
     CoreLoggerService,
     CoreConfigurationService,
-    AppModule,
+    EmailClientModule,
+    CoreModule,
     SwaggerGen,
     DefaultAuthGuard,
     DatabaseModule,

@@ -9,33 +9,29 @@ import {
     NestApplicationOptions,
     ValidationPipe,
 } from "@nestjs/common";
-import {AuthzModule} from "../authz/authz.module";
 import {LoggerModule} from "../logger/logger.module";
 import {AppController} from "./app.controller";
 import {AppService} from "./app.service";
 import {SwaggerGen} from "./SwaggerGen";
-import {EmailClientModule} from "../email-client/email-client.module";
-import {DatabaseModule} from "../database/Database.module";
 import {NestFactory, Reflector} from "@nestjs/core";
 import CoreLoggerService from "../logger/CoreLoggerService";
 import {CoreConfigurationService} from "../core-config/CoreConfigurationService";
 import {LoggingInterceptor} from "../logger/LoggingInterceptor";
 import {HttpLogResponse} from "./httpLogResponseContent";
 import {CoreConfigModule} from "../core-config/CoreConfig.module";
+import {ConfigModule} from "@nestjs/config";
 
 @Module({
     imports: [
+        ConfigModule.forRoot({cache: true}),
         LoggerModule,
         CoreConfigModule,
-        DatabaseModule,
-        AuthzModule,
-        EmailClientModule,
     ],
     controllers: [AppController],
     providers: [AppService, SwaggerGen],
     exports: [SwaggerGen],
 })
-export class AppModule {
+export class CoreModule {
     public static initApplication(
         // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types,@typescript-eslint/no-explicit-any
         rootModule: any,
@@ -44,7 +40,7 @@ export class AppModule {
     ): void {
         void (async () => {
             try {
-                const app = await NestFactory.create(AppModule);
+                const app = await NestFactory.create(rootModule);
                 const loggerService = app.get(CoreLoggerService);
                 const configService = app.get(CoreConfigurationService);
                 app.useLogger(loggerService);
@@ -54,6 +50,8 @@ export class AppModule {
                     new ValidationPipe({
                         transform: true,
                         skipMissingProperties: false,
+                        whitelist: true,
+                        forbidNonWhitelisted: true,
                     })
                 );
                 app.useGlobalInterceptors(
@@ -61,14 +59,9 @@ export class AppModule {
                     new LoggingInterceptor(loggerService)
                 );
                 app.useGlobalInterceptors(new HttpLogResponse());
-                const configuredPort = configService.webPort;
-                const swaggerGen = app.get(SwaggerGen);
-                swaggerGen.generate(app, "open-api/swagger.json");
-
-                await app.listen(configuredPort);
 
                 loggerService.log(
-                    `listening on http://localhost:${configService.webPort}`
+                    `will listen on port ${configService.webPort} (DEV: http://localhost:${configService.webPort} )`
                 );
 
                 await callback(app);

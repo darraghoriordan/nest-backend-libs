@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable unicorn/prefer-module */
 import {TypeOrmModuleOptions} from "@nestjs/typeorm";
 import path from "path";
@@ -9,34 +10,42 @@ export class TypeOrmConfigurationProvider {
      * @returns
      */
     public static getTypeOrmConfig(): TypeOrmModuleOptions {
+        console.log("DIRNAME", __dirname);
+        const nodeModuleCorePath = path.join(
+            __dirname,
+            process.env.CORE_MODULE_ENTITY_PATH || "",
+            "**",
+            "*.entity.{ts,js}"
+        );
+        console.log("Using core entity path", nodeModuleCorePath);
+
+        const appModulePath = path.join(
+            __dirname,
+            process.env.APP_MODULE_ENTITY_PATH || "",
+            "**",
+            "*.entity.{ts,js}"
+        );
+        console.log("Using application entity path", appModulePath);
+
+        const migrationsPath = path.join(
+            __dirname,
+            process.env.MIGRATIONS_PATH || "",
+            "**",
+            "migration",
+            "*.{ts,js}"
+        );
+        console.log("Using migration path", migrationsPath);
+
         if (process.env.DATABASE_URL) {
             return {
                 type: "postgres",
                 url: process.env.DATABASE_URL,
                 logging: false,
-
                 migrationsTableName: "migrations",
                 migrationsRun: true,
                 synchronize: false,
-                entities: [
-                    path.join(
-                        __dirname,
-                        "..",
-                        process.env.DB_CONFIG_ROOT || "",
-                        "**",
-                        "*.entity.{ts,js}"
-                    ),
-                ],
-                migrations: [
-                    path.join(
-                        __dirname,
-                        "..",
-                        process.env.DB_CONFIG_ROOT || "",
-                        "**",
-                        "migration",
-                        "*.{ts,js}"
-                    ),
-                ],
+                entities: [nodeModuleCorePath, appModulePath],
+                migrations: [migrationsPath],
                 cli: {
                     migrationsDir: "src/migrations",
                 },
@@ -55,26 +64,8 @@ export class TypeOrmConfigurationProvider {
             migrationsRun: true,
             logging: true,
             synchronize: false,
-            entities: [
-                path.join(
-                    __dirname,
-                    "..",
-                    process.env.DB_CONFIG_ROOT || "",
-                    "**",
-                    "*.entity.{ts,js}"
-                ),
-            ],
-            migrations: [
-                path.join(
-                    __dirname,
-                    "..",
-                    process.env.DB_CONFIG_ROOT || "",
-                    "**",
-                    "migration",
-                    "*.{ts,js}"
-                ),
-            ],
-
+            entities: [nodeModuleCorePath, appModulePath],
+            migrations: [migrationsPath],
             cli: {
                 migrationsDir: "src/migration",
             },

@@ -1,22 +1,14 @@
-import {Injectable} from "@nestjs/common";
-import {AuthenticationClient, AuthenticationClientOptions} from "auth0";
+import {Inject, Injectable} from "@nestjs/common";
+import {AuthenticationClient} from "auth0";
 import CoreLoggerService from "../logger/CoreLoggerService";
-import {AuthClientConfigurationService} from "./AuthClientConfigurationService";
 import {UserProfile} from "./UserProfile.dto";
 @Injectable()
 export class AuthZClientService {
-    private auth0Client: AuthenticationClient;
-
     constructor(
         private readonly logger: CoreLoggerService,
-        private readonly config: AuthClientConfigurationService
-    ) {
-        const options: AuthenticationClientOptions = {
-            domain: this.config.auth0Domain,
-        };
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call
-        this.auth0Client = new AuthenticationClient(options);
-    }
+        @Inject("AuthzClient")
+        private readonly auth0Client: AuthenticationClient
+    ) {}
 
     public async getUser(
         accessToken: string
