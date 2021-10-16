@@ -27,6 +27,6 @@ export class AppController {
         const testString = this.appService.getHello();
         const stringifyUser = JSON.stringify(request.user);
         this.logger.log("request user", stringifyUser);
-        return testString + stringifyUser;
+        return testString;
     }
 }

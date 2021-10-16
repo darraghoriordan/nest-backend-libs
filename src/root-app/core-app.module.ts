@@ -20,12 +20,14 @@ import {LoggingInterceptor} from "../logger/LoggingInterceptor";
 import {HttpLogResponse} from "./httpLogResponseContent";
 import {CoreConfigModule} from "../core-config/CoreConfig.module";
 import {ConfigModule} from "@nestjs/config";
+import {OrganisationModule} from "../organisation/organisation.module";
 
 @Module({
     imports: [
         ConfigModule.forRoot({cache: true}),
         LoggerModule,
         CoreConfigModule,
+        OrganisationModule,
     ],
     controllers: [AppController],
     providers: [AppService, SwaggerGen],
