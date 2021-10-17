@@ -17,7 +17,7 @@ export class TypeOrmConfigurationProvider {
             "**",
             "*.entity.{ts,js}"
         );
-        console.log("Using core entity path", nodeModuleCorePath);
+        console.log("Using core entity path:", nodeModuleCorePath);
 
         const appModulePath = path.join(
             __dirname,
@@ -25,16 +25,16 @@ export class TypeOrmConfigurationProvider {
             "**",
             "*.entity.{ts,js}"
         );
-        console.log("Using application entity path", appModulePath);
+        console.log("Using application entity path:", appModulePath);
 
         const migrationsPath = path.join(
             __dirname,
             process.env.MIGRATIONS_PATH || "",
             "**",
-            "migration",
+            "migrations",
             "*.{ts,js}"
         );
-        console.log("Using migration path", migrationsPath);
+        console.log("Using migration path:", migrationsPath);
 
         if (process.env.DATABASE_URL) {
             return {
@@ -67,7 +67,7 @@ export class TypeOrmConfigurationProvider {
             entities: [nodeModuleCorePath, appModulePath],
             migrations: [migrationsPath],
             cli: {
-                migrationsDir: "src/migration",
+                migrationsDir: "src/migrations",
             },
         };
     }
