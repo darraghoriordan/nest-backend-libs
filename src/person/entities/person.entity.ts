@@ -4,6 +4,7 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
+    Generated,
     Index,
     ManyToMany,
     OneToMany,
@@ -21,6 +22,14 @@ export class Person {
     @ApiProperty()
     @Column()
     email!: string;
+
+    @Column("uuid", {
+        name: "uuid",
+        default: () => "uuid_generate_v4()",
+    })
+    @Generated("uuid")
+    @ApiProperty()
+    public uuid!: string;
 
     @ApiProperty()
     @Column({default: false})

@@ -1,7 +1,6 @@
 import {
     Controller,
     Get,
-    Post,
     Request,
     Body,
     Patch,
@@ -10,7 +9,6 @@ import {
     UseGuards,
 } from "@nestjs/common";
 import {PersonService} from "./person.service";
-import {CreatePersonDto} from "./dto/create-person.dto";
 import {UpdatePersonDto} from "./dto/update-person.dto";
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
 import {Person} from "./entities/person.entity";
@@ -23,36 +21,36 @@ import {RequestWithUser} from "../authz/RequestWithUser";
 export class PersonController {
     constructor(private readonly personService: PersonService) {}
 
-    @Post()
-    @ApiOkResponse({type: Person})
-    async create(@Body() createPersonDto: CreatePersonDto): Promise<Person> {
-        return this.personService.create(createPersonDto);
-    }
-
     @Get()
     @ApiOkResponse({type: Person})
     async findSelf(@Request() request: RequestWithUser) {
         return this.personService.findOne(request.user.id);
     }
 
-    @Patch(":id")
+    @Patch(":uuid")
     @ApiOkResponse({type: Person})
     async update(
-        @Param("id") id: string,
-        @Body() updatePersonDto: UpdatePersonDto
+        @Param("uuid") uuid: string,
+        @Body() updatePersonDto: UpdatePersonDto,
+        @Request() request: RequestWithUser
     ) {
-        return this.personService.update(+id, updatePersonDto);
+        return this.personService.update(
+            uuid,
+            updatePersonDto,
+            request.user.uuid
+        );
     }
 
-    @Delete(":id")
+    @Delete(":uuid")
     @ApiOkResponse({type: Person})
-    async remove(@Param("id") id: string): Promise<boolean> {
-        const deleteResult = await this.personService.remove(+id);
-        return (
-            deleteResult !== undefined &&
-            deleteResult.affected !== undefined &&
-            deleteResult?.affected !== null &&
-            deleteResult?.affected > 0
+    async remove(
+        @Param("uuid") uuid: string,
+        @Request() request: RequestWithUser
+    ): Promise<boolean> {
+        const deleteResult = await this.personService.remove(
+            uuid,
+            request.user.uuid
         );
+        return deleteResult !== undefined;
     }
 }

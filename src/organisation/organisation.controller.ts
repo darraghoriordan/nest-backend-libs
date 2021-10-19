@@ -1,7 +1,7 @@
 import {
     Controller,
     Get,
-    Post,
+    Request,
     Body,
     Patch,
     Param,
@@ -9,11 +9,11 @@ import {
     UseGuards,
 } from "@nestjs/common";
 import {OrganisationService} from "./organisation.service";
-import {CreateOrganisationDto} from "./dto/create-organisation.dto";
 import {UpdateOrganisationDto} from "./dto/update-organisation.dto";
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
 import {Organisation} from "./entities/organisation.entity";
 import {AuthGuard} from "@nestjs/passport";
+import {RequestWithUser} from "../authz/RequestWithUser";
 @UseGuards(AuthGuard("jwt"))
 @ApiBearerAuth()
 @Controller("organisation")
@@ -21,39 +21,48 @@ import {AuthGuard} from "@nestjs/passport";
 export class OrganisationController {
     constructor(private readonly organisationService: OrganisationService) {}
 
-    @Post()
+    @Get(":uuid")
     @ApiOkResponse({type: Organisation})
-    async create(
-        @Body() createOrganisationDto: CreateOrganisationDto
-    ): Promise<Organisation> {
-        return this.organisationService.create(createOrganisationDto);
+    async findOne(
+        @Param("uuid") uuid: string,
+        @Request() request: RequestWithUser
+    ) {
+        return this.organisationService.findOne(uuid, request.user.id);
     }
 
+    // eslint-disable-next-line @typescript-eslint/require-await
     @Get()
     @ApiOkResponse({type: Organisation, isArray: true})
-    async findAll() {
-        return this.organisationService.findAll();
+    async findAllForUser(
+        @Request() request: RequestWithUser
+    ): Promise<Organisation[]> {
+        return this.organisationService.findAllForUser(request.user.id);
     }
 
-    @Get(":id")
-    @ApiOkResponse({type: Organisation})
-    async findOne(@Param("id") id: string) {
-        return this.organisationService.findOne(+id);
-    }
-
-    @Patch(":id")
+    @Patch(":uuid")
     @ApiOkResponse({type: Organisation})
     async update(
-        @Param("id") id: string,
-        @Body() updateOrganisationDto: UpdateOrganisationDto
+        @Param("uuid") uuid: string,
+        @Body() updateOrganisationDto: UpdateOrganisationDto,
+        @Request() request: RequestWithUser
     ) {
-        return this.organisationService.update(+id, updateOrganisationDto);
+        return this.organisationService.update(
+            uuid,
+            updateOrganisationDto,
+            request.user.id
+        );
     }
 
-    @Delete(":id")
+    @Delete("uuid")
     @ApiOkResponse({type: Organisation})
-    async remove(@Param("id") id: string): Promise<boolean> {
-        const deleteResult = await this.organisationService.remove(+id);
+    async remove(
+        @Param("uuid") uuid: string,
+        @Request() request: RequestWithUser
+    ): Promise<boolean> {
+        const deleteResult = await this.organisationService.remove(
+            uuid,
+            request.user.id
+        );
         return (
             deleteResult !== undefined &&
             deleteResult.affected !== undefined &&

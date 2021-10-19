@@ -5,6 +5,7 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
+    Generated,
     Index,
     JoinColumn,
     JoinTable,
@@ -21,6 +22,14 @@ export class Organisation {
     @PrimaryGeneratedColumn()
     @ApiProperty()
     id!: number;
+
+    @Column("uuid", {
+        name: "uuid",
+        default: () => "uuid_generate_v4()",
+    })
+    @Generated("uuid")
+    @ApiProperty()
+    public uuid!: string;
 
     @ManyToMany(() => Person, (orgMember) => orgMember.memberOfOrganisations, {
         eager: true,

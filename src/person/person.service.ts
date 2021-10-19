@@ -1,4 +1,4 @@
-import {Injectable} from "@nestjs/common";
+import {Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
 import {AccessToken} from "../authz/AccessToken";
@@ -6,7 +6,6 @@ import {AuthZClientService} from "../authzclient/authz.service";
 import {UserProfile} from "../authzclient/UserProfile.dto";
 import CoreLoggerService from "../logger/CoreLoggerService";
 import {Organisation} from "../organisation/entities/organisation.entity";
-import {CreatePersonDto} from "./dto/create-person.dto";
 import {UpdatePersonDto} from "./dto/update-person.dto";
 import {Person} from "./entities/person.entity";
 
@@ -80,10 +79,6 @@ export class PersonService {
         return this.repository.save(person);
     }
 
-    async create(createPersonDto: CreatePersonDto) {
-        return this.repository.save(createPersonDto);
-    }
-
     async findAll() {
         return this.repository.find();
     }
@@ -103,11 +98,40 @@ export class PersonService {
         return this.repository.findOneOrFail(id);
     }
 
-    async update(id: number, updatePersonDto: UpdatePersonDto) {
-        return this.repository.update(id, updatePersonDto);
+    async update(
+        uuid: string,
+        updatePersonDto: UpdatePersonDto,
+        currentUserUuid: string
+    ) {
+        this.isOwnerGuard(uuid, currentUserUuid, "update");
+        return this.repository.update({uuid}, updatePersonDto);
     }
 
-    async remove(id: number) {
-        return this.repository.delete(id);
+    async remove(uuid: string, currentUserUuid: string): Promise<Person> {
+        this.isOwnerGuard(uuid, currentUserUuid, "delete");
+        try {
+            const user = await this.repository.findOneOrFail({
+                uuid,
+            });
+
+            return this.repository.remove(user);
+        } catch (error) {
+            this.logger.error("Couldn't find a user to notify", error);
+            throw new NotFoundException();
+        }
+    }
+
+    private isOwnerGuard(
+        uuid: string,
+        currentUserUuid: string,
+        attemptedAction: string
+    ) {
+        if (uuid !== currentUserUuid) {
+            this.logger.warn(`Attempted to ${attemptedAction} another user`, {
+                currentUserUuid,
+                uuid,
+            });
+            throw new NotFoundException();
+        }
     }
 }

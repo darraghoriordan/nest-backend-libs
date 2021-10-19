@@ -26,7 +26,7 @@ export class SwaggerGen {
         SwaggerModule.setup("swagger", app, document);
 
         // tslint:disable-next-line: non-literal-fs-path
-        fs.writeFileSync(pathToSave, JSON.stringify(document));
+        fs.writeFileSync(pathToSave, JSON.stringify(document, undefined, 2));
         this.logger.log(`Wrote swagger api doc to ${pathToSave}`);
 
         const modelGenerator = spawn("./generate.sh", {

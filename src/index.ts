@@ -1,6 +1,7 @@
 import {AuthzModule} from "./authz/authz.module";
 import {JwtStrategy} from "./authz/authzstrategy";
 import {DefaultAuthGuard} from "./authz/DefaultAuthGuard";
+import {RequestWithUser} from "./authz/RequestWithUser";
 import {ValidatedConfigurationService} from "./configuration/ValidatedConfigurationService";
 import {CoreConfigurationService} from "./core-config/CoreConfigurationService";
 import {DatabaseModule} from "./database/Database.module";
@@ -24,4 +25,5 @@ export {
     TypeOrmConfigurationProvider,
     EmailClient,
     ValidatedConfigurationService,
+    RequestWithUser,
 };
