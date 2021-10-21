@@ -21,6 +21,16 @@ export class CoreConfigurationService extends ValidatedConfigurationService {
 
     @IsDefined()
     @IsBoolean()
+    get shouldAutomaticallyInstallApiModels(): boolean {
+        return (
+            this.configService.get<string>(
+                "core.shouldAutomaticallyInstallApiModels"
+            ) === "true"
+        );
+    }
+
+    @IsDefined()
+    @IsBoolean()
     get shouldUseNestCors(): boolean {
         return (
             this.configService.get<string>("core.shouldUseNestCors") === "true"

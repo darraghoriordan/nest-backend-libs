@@ -8,4 +8,5 @@ export default registerAs("core", () => ({
     clientCorsUrl: process.env.CLIENT_CORS_URL,
     appEnvironmentSpecificUrl: process.env.APP_ENVIRONMENT_SPECIFIC_URL,
     shouldUseNestCors: process.env.ENABLE_NEST_CORS,
+    shouldAutomaticallyInstallApiModels: process.env.AUTO_INSTALL_API_MODELS,
 }));

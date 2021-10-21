@@ -4,14 +4,18 @@ import fs from "fs";
 
 import {spawn} from "child_process";
 import CoreLoggerService from "../logger/CoreLoggerService";
+import {CoreConfigurationService} from "..";
 
 /* istanbul ignore next */
 @Injectable()
 // eslint-disable-next-line @darraghor/nestjs-typed/injectable-should-be-provided
 export class SwaggerGen {
-    constructor(private logger: CoreLoggerService) {}
+    constructor(
+        private logger: CoreLoggerService,
+        private config: CoreConfigurationService
+    ) {}
     public generate(app: INestApplication, pathToSave: string): void {
-        if (!SwaggerGen.runOnThisEnvironment(process.env.GENERATE_SWAGGER)) {
+        if (!this.config.shouldGenerateSwagger) {
             this.logger.log(
                 "Skipping swagger model generation for this environment"
             );
@@ -28,18 +32,15 @@ export class SwaggerGen {
         // tslint:disable-next-line: non-literal-fs-path
         fs.writeFileSync(pathToSave, JSON.stringify(document, undefined, 2));
         this.logger.log(`Wrote swagger api doc to ${pathToSave}`);
+        if (this.config.shouldAutomaticallyInstallApiModels) {
+            const modelGenerator = spawn("./generate.sh", {
+                stdio: ["ignore", "ignore", "inherit"],
+                shell: true,
+            });
 
-        const modelGenerator = spawn("./generate.sh", {
-            stdio: ["ignore", "ignore", "inherit"],
-            shell: true,
-        });
-
-        modelGenerator.on("exit", () => {
-            this.logger.log("Regenerated shared api models");
-        });
-    }
-
-    public static runOnThisEnvironment(generateSwagger?: string): boolean {
-        return generateSwagger?.toLowerCase() === "true";
+            modelGenerator.on("exit", () => {
+                this.logger.log("Regenerated shared api models");
+            });
+        }
     }
 }
