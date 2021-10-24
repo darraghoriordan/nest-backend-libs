@@ -17,7 +17,6 @@ import {NestFactory, Reflector} from "@nestjs/core";
 import CoreLoggerService from "../logger/CoreLoggerService";
 import {CoreConfigurationService} from "../core-config/CoreConfigurationService";
 import {LoggingInterceptor} from "../logger/LoggingInterceptor";
-import {HttpLogResponse} from "./httpLogResponseContent";
 import {CoreConfigModule} from "../core-config/CoreConfig.module";
 import {ConfigModule} from "@nestjs/config";
 import {OrganisationModule} from "../organisation/organisation.module";
@@ -60,7 +59,6 @@ export class CoreModule {
                     new ClassSerializerInterceptor(app.get(Reflector)),
                     new LoggingInterceptor(loggerService)
                 );
-                app.useGlobalInterceptors(new HttpLogResponse());
 
                 loggerService.log(
                     `will listen on port ${configService.webPort} (DEV: http://localhost:${configService.webPort} )`

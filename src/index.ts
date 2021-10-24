@@ -9,6 +9,9 @@ import {TypeOrmConfigurationProvider} from "./database/TypeOrmConfigurationProvi
 import {EmailClientModule} from "./email-client/email-client.module";
 import {EmailClient} from "./email-client/email-client.service";
 import CoreLoggerService from "./logger/CoreLoggerService";
+import {OrganisationModule} from "./organisation/organisation.module";
+import {Person} from "./person/entities/person.entity";
+import {PersonModule} from "./person/person.module";
 import {CoreModule} from "./root-app/core-app.module";
 import {SwaggerGen} from "./root-app/SwaggerGen";
 
@@ -22,8 +25,11 @@ export {
     DatabaseModule,
     JwtStrategy,
     AuthzModule,
+    Person,
     TypeOrmConfigurationProvider,
     EmailClient,
     ValidatedConfigurationService,
     RequestWithUser,
+    PersonModule,
+    OrganisationModule,
 };

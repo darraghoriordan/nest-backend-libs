@@ -1,4 +1,5 @@
 import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
+import {Exclude} from "class-transformer";
 import {
     Column,
     CreateDateColumn,
@@ -64,12 +65,14 @@ export class Person {
     @Column({nullable: true})
     username?: string;
 
+    @Exclude()
     @ManyToMany(() => Organisation, (org) => org.members, {
         cascade: true,
         onDelete: "CASCADE",
     })
     memberOfOrganisations!: Organisation[];
 
+    @Exclude()
     @OneToMany(() => Organisation, (org) => org.owner, {
         cascade: true,
     })

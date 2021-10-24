@@ -8,6 +8,7 @@ import CoreLoggerService from "../logger/CoreLoggerService";
 import {Organisation} from "../organisation/entities/organisation.entity";
 import {UpdatePersonDto} from "./dto/update-person.dto";
 import {Person} from "./entities/person.entity";
+import {PersonConfigurationService} from "./PersonConfigurationService";
 
 @Injectable()
 export class PersonService {
@@ -15,7 +16,8 @@ export class PersonService {
         @InjectRepository(Person)
         private repository: Repository<Person>,
         private logger: CoreLoggerService,
-        private authzClient: AuthZClientService
+        private authzClient: AuthZClientService,
+        private personConfig: PersonConfigurationService
     ) {}
 
     async getAuth0User(
@@ -24,17 +26,18 @@ export class PersonService {
     ): Promise<UserProfile | undefined> {
         // fake the user for our m2m token user used in testing
         // m2m users don't get profiles
-        if (payload.sub === "qgxmSYCc92PRWDcg9ia19C681ua7iaED@clients") {
+        if (payload.sub === this.personConfig.fakeSub) {
             const integrationTestM2MFakeUser = new UserProfile();
             integrationTestM2MFakeUser.email_verified = true;
-            integrationTestM2MFakeUser.family_name = "O Riordan";
+            integrationTestM2MFakeUser.family_name =
+                this.personConfig.fakeFamilyName;
             integrationTestM2MFakeUser.gender = undefined;
             integrationTestM2MFakeUser.sub = payload.sub;
-            integrationTestM2MFakeUser.given_name = "Darragh";
-            integrationTestM2MFakeUser.name = "darragh.oriordan@gmail.com";
-            integrationTestM2MFakeUser.email = "darragh.oriordan@gmail.com";
-            integrationTestM2MFakeUser.picture =
-                "https://s.gravatar.com/avatar/cabb1573ace049b462d82c1f3205ddbb?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatars%2Fda.png";
+            integrationTestM2MFakeUser.given_name =
+                this.personConfig.fakeGivenNAme;
+            integrationTestM2MFakeUser.name = this.personConfig.fakeName;
+            integrationTestM2MFakeUser.email = this.personConfig.fakeEmail;
+            integrationTestM2MFakeUser.picture = this.personConfig.fakePicture;
             return integrationTestM2MFakeUser;
         }
 
@@ -84,18 +87,20 @@ export class PersonService {
     }
 
     async findOneByAuth0Id(auth0Id: string): Promise<Person | undefined> {
-        try {
-            return await this.repository.findOneOrFail({
-                auth0UserId: auth0Id,
-            });
-        } catch (error) {
-            this.logger.error("Couldn't find a user to notify", error);
-            return undefined;
-        }
+        return this.repository.findOneOrFail({
+            auth0UserId: auth0Id,
+        });
     }
 
     async findOne(id: number) {
         return this.repository.findOneOrFail(id);
+    }
+
+    async findOneByUuid(uuid: string): Promise<Person> {
+        return this.repository.findOneOrFail(
+            {uuid},
+            {relations: ["ownerOfOrganisations"]}
+        );
     }
 
     async update(
@@ -109,16 +114,18 @@ export class PersonService {
 
     async remove(uuid: string, currentUserUuid: string): Promise<Person> {
         this.isOwnerGuard(uuid, currentUserUuid, "delete");
-        try {
-            const user = await this.repository.findOneOrFail({
-                uuid,
-            });
 
-            return this.repository.remove(user);
-        } catch (error) {
-            this.logger.error("Couldn't find a user to notify", error);
-            throw new NotFoundException();
+        const user = await this.repository.findOneOrFail(
+            {
+                uuid,
+            },
+            {}
+        );
+        if (user.ownerOfOrganisations.length > 0) {
+            throw new Error("Can't remove the owner of an organisation");
         }
+
+        return this.repository.remove(user);
     }
 
     private isOwnerGuard(

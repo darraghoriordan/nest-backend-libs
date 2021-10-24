@@ -14,11 +14,12 @@ export class LoggingInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler) {
         const request = context.switchToHttp().getRequest();
 
-        const {statusCode} = context.switchToHttp().getResponse();
+        const response = context.switchToHttp().getResponse();
 
         const {originalUrl, method, params, query, body} = request;
 
         this.logger.log({
+            type: "REQUEST",
             originalUrl,
             method,
             params,
@@ -29,8 +30,12 @@ export class LoggingInterceptor implements NestInterceptor {
         return next.handle().pipe(
             tap((data) =>
                 this.logger.log({
-                    statusCode,
-                    data,
+                    type: "RESPONSE",
+                    originalUrl,
+                    method,
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                    status: response?.status,
+                    responseBody: data || undefined,
                 })
             )
         );
