@@ -37,6 +37,7 @@ export class CoreModule {
         // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types,@typescript-eslint/no-explicit-any
         rootModule: any,
         callback: (appModule: INestApplication) => void | Promise<void>,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         options?: NestApplicationOptions
     ): void {
         void (async () => {
