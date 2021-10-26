@@ -54,6 +54,7 @@ export class CoreModule {
                         skipMissingProperties: false,
                         whitelist: true,
                         forbidNonWhitelisted: true,
+                        forbidUnknownValues: true,
                     })
                 );
                 app.useGlobalInterceptors(
