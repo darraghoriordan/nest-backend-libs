@@ -12,6 +12,7 @@ import CoreLoggerService from "./logger/CoreLoggerService";
 import {OrganisationModule} from "./organisation/organisation.module";
 import {Person} from "./person/entities/person.entity";
 import {PersonModule} from "./person/person.module";
+import {PersonService} from "./person/person.service";
 import {CoreModule} from "./root-app/core-app.module";
 import {SwaggerGen} from "./root-app/SwaggerGen";
 
@@ -32,4 +33,5 @@ export {
     RequestWithUser,
     PersonModule,
     OrganisationModule,
+    PersonService,
 };

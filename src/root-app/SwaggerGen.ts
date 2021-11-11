@@ -14,6 +14,7 @@ export class SwaggerGen {
         private logger: CoreLoggerService,
         private config: CoreConfigurationService
     ) {}
+
     public generate(app: INestApplication, pathToSave: string): void {
         if (!this.config.shouldGenerateSwagger) {
             this.logger.log(
@@ -23,7 +24,7 @@ export class SwaggerGen {
         }
         const config = new DocumentBuilder()
             .addBearerAuth()
-            .setTitle("Coin bot Api")
+            .setTitle(this.config.appTitle)
             .setDescription("Describes the backend api")
             .build();
         const document = SwaggerModule.createDocument(app, config);

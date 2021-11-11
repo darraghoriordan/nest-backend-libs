@@ -54,6 +54,12 @@ export class CoreConfigurationService extends ValidatedConfigurationService {
 
     @IsDefined()
     @IsString()
+    get appTitle(): string {
+        return this.configService.get<string>("core.appTitle")!;
+    }
+
+    @IsDefined()
+    @IsString()
     get appEnvironmentSpecificUrl(): string {
         return this.configService.get<string>(
             "core.appEnvironmentSpecificUrl"

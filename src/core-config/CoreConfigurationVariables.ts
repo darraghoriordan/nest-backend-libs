@@ -9,4 +9,5 @@ export default registerAs("core", () => ({
     appEnvironmentSpecificUrl: process.env.APP_ENVIRONMENT_SPECIFIC_URL,
     shouldUseNestCors: process.env.ENABLE_NEST_CORS,
     shouldAutomaticallyInstallApiModels: process.env.AUTO_INSTALL_API_MODELS,
+    appTitle: process.env.APP_TITLE,
 }));
