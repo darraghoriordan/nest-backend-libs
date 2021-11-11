@@ -1,6 +1,9 @@
 import {ApiProperty} from "@nestjs/swagger";
 import {Exclude} from "class-transformer";
 import {
+    AfterInsert,
+    AfterLoad,
+    AfterUpdate,
     Column,
     CreateDateColumn,
     DeleteDateColumn,
@@ -66,4 +69,14 @@ export class Organisation {
     @DeleteDateColumn()
     @ApiProperty()
     deletedDate!: Date;
+
+    // eslint-disable-next-line @typescript-eslint/require-await
+    @AfterLoad()
+    @AfterInsert()
+    @AfterUpdate()
+    async nullChecks() {
+        if (!this.members) {
+            this.members = [];
+        }
+    }
 }
