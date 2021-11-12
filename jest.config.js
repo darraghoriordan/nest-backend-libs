@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prefer-module */
 module.exports = {
     cacheDirectory: __dirname + "/.jest_cache",
     roots: ["<rootDir>/src"],
