@@ -12,7 +12,7 @@ cd ../frontend
 rm -rf ./node_modules/shared-api-client
 yarn install --check-files
 
-# install latest into the client
+# install latest into the e2e tests
 cd ../e2e-backend
 rm -rf ./node_modules/shared-api-client
 yarn install --check-files
