@@ -5,14 +5,14 @@ npx @openapitools/openapi-generator-cli generate -i ./open-api/swagger.json -g t
 cp ./api-client-templates/api-client-ts-config-template.json ../shared-api-client/tsconfig.json
 cp ./api-client-templates/package-json-template.json ../shared-api-client/package.json
 cd ../shared-api-client
-npm install
+yarn
 
 # install latest into the client
 cd ../frontend
 rm -rf ./node_modules/shared-api-client
-npm i
+yarn install --check-files
 
 # install latest into the client
 cd ../e2e-backend
 rm -rf ./node_modules/shared-api-client
-npm i
+yarn install --check-files
