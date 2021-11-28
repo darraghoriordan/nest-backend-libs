@@ -37,7 +37,7 @@
         "prepare": "husky install",
         "release": "npx semantic-release",
         "semantic-release": "semantic-release",
-        "copyOpenApiGenerationModule": "copyfiles --error --up 1 src/open-api-generation/**/* dist"
+        "copyOpenApiGenerationModule": "copyfiles --error --up 1 \"src/open-api-generation/**/*\" \"src/open-api-generation/*\" dist"
     },
     "dependencies": {
         "@nestjs/common": "^7.6.18",
