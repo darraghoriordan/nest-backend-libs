@@ -6,4 +6,5 @@ export default registerAs("email", () => ({
     emailPassword: process.env.EMAIL_PASSWORD,
     emailUsername: process.env.EMAIL_USERNAME,
     senderEmailAddress: process.env.EMAIL_SENDER_ADDRESS,
+    senderName: process.env.EMAIL_SENDER_NAME,
 }));

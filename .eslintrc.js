@@ -8,29 +8,27 @@ module.exports = {
     plugins: [
         "@typescript-eslint/eslint-plugin",
         "unicorn",
-        "import",
         "@darraghor/nestjs-typed",
         "eslint-comments",
         "sonarjs",
         "promise",
         "jest",
     ],
-    settings: {
-        ["import/parsers"]: {"@typescript-eslint/parser": [".ts", ".tsx"]},
-        ["import/resolver"]: {
-            node: {
-                extensions: [".ts", ".tsx"],
-            },
-        },
-    },
+    // settings: {
+    //     ["import/parsers"]: {"@typescript-eslint/parser": [".ts", ".tsx"]},
+    //     ["import/resolver"]: {
+    //         node: {
+    //             extensions: [".ts", ".tsx"],
+    //         },
+    //     },
+    // },
     extends: [
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
         "plugin:unicorn/recommended",
-        "plugin:import/errors",
-        "plugin:import/warnings",
-        "plugin:import/typescript",
+        // "plugin:import/errors",
+        // "plugin:import/warnings",
         "plugin:unicorn/recommended",
         "plugin:eslint-comments/recommended",
         "plugin:sonarjs/recommended",

@@ -42,4 +42,10 @@ export class EmailConfigurationService extends ValidatedConfigurationService {
     get senderEmailAddress(): string {
         return this.configService.get<string>("email.senderEmailAddress")!;
     }
+
+    @IsDefined()
+    @IsString()
+    get senderName(): string {
+        return this.configService.get<string>("email.senderName")!;
+    }
 }

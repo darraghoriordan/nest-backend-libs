@@ -60,7 +60,7 @@ export class EmailClient {
         this.logger.log(`Sending an email. Email id: ${savedEmail.id}`);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument
         const info = await this.transporter.sendMail({
-            from: this.config.senderEmailAddress, // sender address
+            from: `"${this.config.senderName}" <${this.config.senderEmailAddress}>`, // sender address
             to: serialisedEmailAddresses, // list of receivers
             subject: subject, // Subject line
             text: body, // plain text body
