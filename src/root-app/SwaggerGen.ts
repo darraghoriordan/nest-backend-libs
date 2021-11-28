@@ -34,10 +34,13 @@ export class SwaggerGen {
         fs.writeFileSync(pathToSave, JSON.stringify(document, undefined, 2));
         this.logger.log(`Wrote swagger api doc to ${pathToSave}`);
         if (this.config.shouldAutomaticallyInstallApiModels) {
-            const modelGenerator = spawn("./generate.sh", {
-                stdio: ["ignore", "ignore", "inherit"],
-                shell: true,
-            });
+            const modelGenerator = spawn(
+                "./node_modules/@darraghor/nest-backend-libs/dist/open-api-generation/generate.sh",
+                {
+                    stdio: ["ignore", "ignore", "inherit"],
+                    shell: true,
+                }
+            );
 
             modelGenerator.on("exit", () => {
                 this.logger.log("Regenerated shared api models");

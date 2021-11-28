@@ -53,7 +53,7 @@ export class OrganisationController {
         );
     }
 
-    @Delete("uuid")
+    @Delete(":uuid")
     @ApiOkResponse({type: Organisation})
     async remove(
         @Param("uuid") uuid: string,
