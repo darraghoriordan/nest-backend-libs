@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prefer-export-from */
 import {AuthzModule} from "./authz/authz.module";
 import {JwtStrategy} from "./authz/authzstrategy";
 import {DefaultAuthGuard} from "./authz/DefaultAuthGuard";
