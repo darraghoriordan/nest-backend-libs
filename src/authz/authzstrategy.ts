@@ -5,9 +5,9 @@ import {passportJwtSecret} from "jwks-rsa";
 import {PersonService} from "../person/person.service";
 import {AccessToken} from "./AccessToken";
 import {Request} from "express";
-import {Person} from "../person/entities/person.entity";
 import {AuthConfigurationService} from "./AuthConfigurationService";
 import CoreLoggerService from "../logger/CoreLoggerService";
+import {RequestPerson} from "./RequestWithUser";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -40,17 +40,20 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     async validate(
         request: Request,
-        payload: unknown
-    ): Promise<Person | undefined> {
+        payload: AccessToken
+    ): Promise<RequestPerson | undefined> {
         const rawAccessToken =
             ExtractJwt.fromAuthHeaderAsBearerToken()(request);
         if (rawAccessToken === undefined || rawAccessToken === null) {
             this.logger.error("Couldn't log the raw access token");
             return;
         }
-        return await this.personService.validateUser(
-            payload as AccessToken,
+
+        const personResult = await this.personService.validateUser(
+            payload,
             rawAccessToken
         );
+        const withPermissions = {permissions: payload.permissions || []};
+        return {...personResult, ...withPermissions} as RequestPerson;
     }
 }
