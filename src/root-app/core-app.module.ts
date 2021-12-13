@@ -26,7 +26,6 @@ import {OrganisationModule} from "../organisation/organisation.module";
         ConfigModule.forRoot({cache: true}),
         LoggerModule,
         CoreConfigModule,
-        OrganisationModule,
     ],
     controllers: [AppController],
     providers: [AppService, SwaggerGen],

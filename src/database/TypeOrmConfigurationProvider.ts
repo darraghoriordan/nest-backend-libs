@@ -3,6 +3,7 @@
 import {TypeOrmModuleOptions} from "@nestjs/typeorm";
 import path from "path";
 import {DatabaseType} from "typeorm";
+import {BaseConnectionOptions} from "typeorm/connection/BaseConnectionOptions";
 
 export class TypeOrmConfigurationProvider {
     /**
@@ -56,7 +57,7 @@ export class TypeOrmConfigurationProvider {
         }
         // if passing in the pg env vars this is a pg db!
         return {
-            type: "postgres",
+            type: (process.env.APP_DATABASE_TYPE as DatabaseType) || "postgres",
             host: process.env.APP_POSTGRES_HOST,
             port: Number.parseInt(process.env.APP_POSTGRES_PORT || "5000", 10),
             username: process.env.APP_POSTGRES_USER,
@@ -72,6 +73,6 @@ export class TypeOrmConfigurationProvider {
             cli: {
                 migrationsDir: "src/migrations",
             },
-        };
+        } as BaseConnectionOptions; // this is dynamic based on the type discriminator
     }
 }
