@@ -38,7 +38,7 @@ export class TypeOrmConfigurationProvider {
 
         if (process.env.DATABASE_URL) {
             return {
-                type: "postgres",
+                type: process.env.APP_DATABASE_TYPE || "postgres",
                 url: process.env.DATABASE_URL,
                 logging: false,
                 migrationsTableName: "migrations",
@@ -53,7 +53,7 @@ export class TypeOrmConfigurationProvider {
         }
 
         return {
-            type: "postgres",
+            type: process.env.APP_DATABASE_TYPE || "postgres",
             host: process.env.APP_POSTGRES_HOST,
             port: Number.parseInt(process.env.APP_POSTGRES_PORT || "5000", 10),
             username: process.env.APP_POSTGRES_USER,
