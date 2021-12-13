@@ -19,7 +19,6 @@ import {CoreConfigurationService} from "../core-config/CoreConfigurationService"
 import {LoggingInterceptor} from "../logger/LoggingInterceptor";
 import {CoreConfigModule} from "../core-config/CoreConfig.module";
 import {ConfigModule} from "@nestjs/config";
-import {OrganisationModule} from "../organisation/organisation.module";
 
 @Module({
     imports: [
