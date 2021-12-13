@@ -2,6 +2,7 @@
 /* eslint-disable unicorn/prefer-module */
 import {TypeOrmModuleOptions} from "@nestjs/typeorm";
 import path from "path";
+import {DatabaseType} from "typeorm";
 
 export class TypeOrmConfigurationProvider {
     /**
@@ -38,7 +39,9 @@ export class TypeOrmConfigurationProvider {
 
         if (process.env.DATABASE_URL) {
             return {
-                type: process.env.APP_DATABASE_TYPE || "postgres",
+                type:
+                    (process.env.APP_DATABASE_TYPE as DatabaseType) ||
+                    "postgres",
                 url: process.env.DATABASE_URL,
                 logging: false,
                 migrationsTableName: "migrations",
@@ -51,9 +54,9 @@ export class TypeOrmConfigurationProvider {
                 },
             };
         }
-
+        // if passing in the pg env vars this is a pg db!
         return {
-            type: process.env.APP_DATABASE_TYPE || "postgres",
+            type: "postgres",
             host: process.env.APP_POSTGRES_HOST,
             port: Number.parseInt(process.env.APP_POSTGRES_PORT || "5000", 10),
             username: process.env.APP_POSTGRES_USER,
