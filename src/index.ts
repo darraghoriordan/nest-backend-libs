@@ -5,8 +5,10 @@ import {DefaultAuthGuard} from "./authz/DefaultAuthGuard";
 import {RequestWithUser} from "./authz/RequestWithUser";
 import {ValidatedConfigurationService} from "./configuration/ValidatedConfigurationService";
 import {CoreConfigurationService} from "./core-config/CoreConfigurationService";
-import {DatabaseModule} from "./database/Database.module";
-import {TypeOrmConfigurationProvider} from "./database/TypeOrmConfigurationProvider";
+import {PostgresDatabaseModule} from "./database-postgres/PostgresDatabase.module";
+import {PostgresTypeOrmConfigurationProvider} from "./database-postgres/PostgresTypeOrmConfigurationProvider";
+import {SqliteDatabaseModule} from "./database-sqlite/SqliteDatabase.module";
+import {SqliteDatabaseConfigurationService} from "./database-sqlite/SqliteDatabaseConfigurationService";
 import {EmailClientModule} from "./email-client/email-client.module";
 import {EmailClient} from "./email-client/email-client.service";
 import CoreLoggerService from "./logger/CoreLoggerService";
@@ -24,15 +26,17 @@ export {
     CoreModule,
     SwaggerGen,
     DefaultAuthGuard,
-    DatabaseModule,
+    PostgresDatabaseModule as DatabaseModule,
     JwtStrategy,
     AuthzModule,
     Person,
-    TypeOrmConfigurationProvider,
+    PostgresTypeOrmConfigurationProvider as TypeOrmConfigurationProvider,
     EmailClient,
     ValidatedConfigurationService,
     RequestWithUser,
     PersonModule,
     OrganisationModule,
     PersonService,
+    SqliteDatabaseModule,
+    SqliteDatabaseConfigurationService,
 };

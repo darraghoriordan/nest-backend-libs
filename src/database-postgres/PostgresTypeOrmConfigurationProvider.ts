@@ -2,10 +2,9 @@
 /* eslint-disable unicorn/prefer-module */
 import {TypeOrmModuleOptions} from "@nestjs/typeorm";
 import path from "path";
-import {DatabaseType} from "typeorm";
 import {BaseConnectionOptions} from "typeorm/connection/BaseConnectionOptions";
 
-export class TypeOrmConfigurationProvider {
+export class PostgresTypeOrmConfigurationProvider {
     /**
      * This method uses process.env directly because it is also used in a node script that doesn't have access
      * to NestJS injection.
@@ -37,12 +36,10 @@ export class TypeOrmConfigurationProvider {
             "*.{ts,js}"
         );
         console.log("Using migration path:", migrationsPath);
-
+        // database url is used in dokku
         if (process.env.DATABASE_URL) {
             return {
-                type:
-                    (process.env.APP_DATABASE_TYPE as DatabaseType) ||
-                    "postgres",
+                type: "postgres",
                 url: process.env.DATABASE_URL,
                 logging: false,
                 migrationsTableName: "migrations",
@@ -57,7 +54,7 @@ export class TypeOrmConfigurationProvider {
         }
         // if passing in the pg env vars this is a pg db!
         return {
-            type: (process.env.APP_DATABASE_TYPE as DatabaseType) || "postgres",
+            type: "postgres",
             host: process.env.APP_POSTGRES_HOST,
             port: Number.parseInt(process.env.APP_POSTGRES_PORT || "5000", 10),
             username: process.env.APP_POSTGRES_USER,

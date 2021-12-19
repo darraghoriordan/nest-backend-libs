@@ -1,6 +1,6 @@
 import {Injectable} from "@nestjs/common";
 import {TypeOrmModuleOptions} from "@nestjs/typeorm";
-import {TypeOrmConfigurationProvider} from "./TypeOrmConfigurationProvider";
+import {PostgresTypeOrmConfigurationProvider} from "./PostgresTypeOrmConfigurationProvider";
 
 @Injectable()
 export class DatabaseConfigurationService {
@@ -10,6 +10,6 @@ export class DatabaseConfigurationService {
      * @returns {TypeOrmModuleOptions} Database config for the current env
      */
     public getTypeOrmConfig(): TypeOrmModuleOptions {
-        return TypeOrmConfigurationProvider.getTypeOrmConfig();
+        return PostgresTypeOrmConfigurationProvider.getTypeOrmConfig();
     }
 }
