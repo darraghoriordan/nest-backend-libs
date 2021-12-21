@@ -4,7 +4,7 @@
     "description": "OpenAPI client for shared-api-client",
     "author": "OpenAPI-Generator",
     "main": "dist/index.js",
-    "module": "commonjs",
+    "type": "commonjs",
     "typings": "dist/index.d.ts",
     "scripts": {
         "build": "tsc",
