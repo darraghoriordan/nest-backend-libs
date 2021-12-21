@@ -3,8 +3,9 @@
     "version": "1.0.0",
     "description": "OpenAPI client for shared-api-client",
     "author": "OpenAPI-Generator",
-    "main": "./dist/index.js",
-    "typings": "./dist/index.d.ts",
+    "main": "dist/index.js",
+    "module": "commonjs",
+    "typings": "dist/index.d.ts",
     "scripts": {
         "build": "tsc",
         "prepare": "yarn build"
