@@ -2,6 +2,7 @@
 
 import {TypeOrmModuleOptions} from "@nestjs/typeorm";
 import path from "path";
+import {DataSourceOptions} from "typeorm";
 
 export class SqliteTypeOrmConfigurationProvider {
     /**
@@ -48,6 +49,6 @@ export class SqliteTypeOrmConfigurationProvider {
             cli: {
                 migrationsDir: "src/migrations",
             },
-        };
+        } as DataSourceOptions;
     }
 }

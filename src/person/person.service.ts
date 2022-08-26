@@ -88,19 +88,21 @@ export class PersonService {
 
     async findOneByAuth0Id(auth0Id: string): Promise<Person | undefined> {
         return this.repository.findOneOrFail({
-            auth0UserId: auth0Id,
+            where: {
+                auth0UserId: auth0Id,
+            },
         });
     }
 
     async findOne(id: number) {
-        return this.repository.findOneOrFail(id);
+        return this.repository.findOneOrFail({where: {id}});
     }
 
     async findOneByUuid(uuid: string): Promise<Person> {
-        return this.repository.findOneOrFail(
-            {uuid},
-            {relations: ["ownerOfOrganisations"]}
-        );
+        return this.repository.findOneOrFail({
+            relations: ["ownerOfOrganisations"],
+            where: {uuid},
+        });
     }
 
     async update(
@@ -115,12 +117,11 @@ export class PersonService {
     async remove(uuid: string, currentUserUuid: string): Promise<Person> {
         this.isOwnerGuard(uuid, currentUserUuid, "delete");
 
-        const user = await this.repository.findOneOrFail(
-            {
+        const user = await this.repository.findOneOrFail({
+            where: {
                 uuid,
             },
-            {}
-        );
+        });
         if (user.ownerOfOrganisations.length > 0) {
             throw new Error("Can't remove the owner of an organisation");
         }

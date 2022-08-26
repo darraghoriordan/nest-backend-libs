@@ -1,6 +1,6 @@
 import {Injectable} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import {DeleteResult, FindConditions, Repository, UpdateResult} from "typeorm";
+import {DeleteResult, Repository, UpdateResult} from "typeorm";
 import {CreateOrganisationDto} from "./dto/create-organisation.dto";
 import {UpdateOrganisationDto} from "./dto/update-organisation.dto";
 import {Organisation} from "./entities/organisation.entity";
@@ -43,7 +43,7 @@ export class OrganisationService {
         currentUserId: number
     ): Promise<UpdateResult> {
         return this.repository.update(
-            {uuid, ownerId: currentUserId} as FindConditions<Organisation>,
+            {uuid, ownerId: currentUserId},
             updateOrganisationDto
         );
     }
@@ -52,6 +52,6 @@ export class OrganisationService {
         return this.repository.delete({
             uuid,
             ownerId: currentUserId,
-        } as FindConditions<Organisation>);
+        });
     }
 }

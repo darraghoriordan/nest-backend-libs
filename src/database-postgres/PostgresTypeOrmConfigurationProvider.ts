@@ -2,7 +2,7 @@
 /* eslint-disable unicorn/prefer-module */
 import {TypeOrmModuleOptions} from "@nestjs/typeorm";
 import path from "path";
-import {BaseConnectionOptions} from "typeorm/connection/BaseConnectionOptions";
+import {DataSourceOptions} from "typeorm";
 
 export class PostgresTypeOrmConfigurationProvider {
     /**
@@ -47,9 +47,6 @@ export class PostgresTypeOrmConfigurationProvider {
                 synchronize: false,
                 entities: [nodeModuleCorePath, appModulePath],
                 migrations: [migrationsPath],
-                cli: {
-                    migrationsDir: "src/migrations",
-                },
             };
         }
         // if passing in the pg env vars this is a pg db!
@@ -70,6 +67,6 @@ export class PostgresTypeOrmConfigurationProvider {
             cli: {
                 migrationsDir: "src/migrations",
             },
-        } as BaseConnectionOptions; // this is dynamic based on the type discriminator
+        } as DataSourceOptions; // this is dynamic based on the type discriminator
     }
 }
