@@ -12,15 +12,15 @@ import {LoggingConfigurationService} from "./LoggingConfigurationService";
 
 @Injectable()
 export default class CoreLoggerService implements LoggerService {
-    private logger: Logger;
+    private logger: Logger<CoreLoggerService>;
 
     constructor(private readonly configService: LoggingConfigurationService) {
         this.logger = new Logger({
-            displayLoggerName: true,
-            displayFunctionName: false,
+            //displayLoggerName: true,
+            // displayFunctionName: false,
             name: this.configService.loggerName,
-            displayFilePath: "hidden",
-            colorizePrettyLogs: this.configService.shouldLogForDevelopment,
+            // displayFilePath: "hidden",
+            // colorizePrettyLogs: this.configService.shouldLogForDevelopment,
         });
     }
 
