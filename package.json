@@ -8,6 +8,7 @@
         "type": "git",
         "url": "https://github.com/darraghoriordan/nest-backend-libs"
     },
+    "type": "module",
     "engines": {
         "node": ">=12"
     },
@@ -30,7 +31,7 @@
         "clean": "rm -Rf ./dist/",
         "build:ci": "yarn build",
         "build": "yarn clean && mkdir ./dist && tsc --project tsconfig.build.json && yarn copyOpenApiGenerationModule",
-        "lint": "npx eslint -c .eslintrc.js --ext .ts './src/**/*.ts' './tests/**/*.ts' --no-error-on-unmatched-pattern",
+        "lint": "npx eslint -c .eslintrc.cjs --ext .ts './src/**/*.ts' './tests/**/*.ts' --no-error-on-unmatched-pattern",
         "test": "export NODE_OPTIONS=\"--max-old-space-size=8192\" && npx jest --runInBand --color --reporters=default --no-cache --coverage=false --passWithNoTests",
         "pre-commit": "npx lint-staged",
         "prettier": "prettier --write src/*",
@@ -104,7 +105,7 @@
         "ts-loader": "9.4.1",
         "ts-node": "10.9.1",
         "tsconfig-paths": "4.1.0",
-        "typescript": "4.9.3"
+        "typescript": "4.8.4"
     },
     "lint-staged": {
         "*.ts": "eslint --cache --fix",

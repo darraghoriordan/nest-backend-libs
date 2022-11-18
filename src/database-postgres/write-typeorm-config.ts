@@ -1,4 +1,4 @@
-import fs = require("fs");
+import fs from "fs";
 import {PostgresTypeOrmConfigurationProvider} from "./PostgresTypeOrmConfigurationProvider";
 import dotenv from "dotenv";
 dotenv.config();

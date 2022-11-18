@@ -1,4 +1,4 @@
-import fs = require("fs");
+import fs from "fs";
 import dotenv from "dotenv";
 import {SqliteTypeOrmConfigurationProvider} from "./SqliteTypeOrmConfigurationProvider";
 dotenv.config();
