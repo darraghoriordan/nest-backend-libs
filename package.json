@@ -2,7 +2,7 @@
     "name": "@darraghor/nest-backend-libs",
     "version": "1.0.1",
     "license": "UNLICENSED",
-    "description": "Some helpers for personal projects",
+    "description": "Some helpers for personal projects in nestjs",
     "homepage": "https://github.com/darraghoriordan/nest-backend-libs",
     "repository": {
         "type": "git",
