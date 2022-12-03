@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {Injectable} from "@nestjs/common";
 import {ConfigService} from "@nestjs/config";
-import {IsBoolean, IsDefined, IsString} from "class-validator";
+import {IsBoolean, IsDefined, IsInt, IsString} from "class-validator";
 import {ValidatedConfigurationService} from "../configuration/ValidatedConfigurationService";
 
 @Injectable()
@@ -28,13 +28,25 @@ export class EmailConfigurationService extends ValidatedConfigurationService {
     @IsDefined()
     @IsString()
     get emailPassword(): string {
-        return this.configService.get<string>("email.emailPassword")!;
+        return this.configService.get<string>("email.smtpPassword")!;
+    }
+
+    @IsDefined()
+    @IsString()
+    get smtpHost(): string {
+        return this.configService.get<string>("email.smtpHost")!;
+    }
+
+    @IsDefined()
+    @IsInt()
+    get smtpPort(): number {
+        return this.configService.get<number>("email.smtpPort")!;
     }
 
     @IsDefined()
     @IsString()
     get emailUsername(): string {
-        return this.configService.get<string>("email.emailUsername")!;
+        return this.configService.get<string>("email.smtpUsername")!;
     }
 
     @IsDefined()
