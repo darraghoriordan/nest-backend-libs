@@ -1,4 +1,5 @@
 /* eslint-disable unicorn/prefer-export-from */
+import {TwitterAccountModule} from "./twitter-client/twitter-account.module";
 import {SmtpEmailClientModule} from "./smtp-email-client/smtp-email-client.module";
 import {EUploadMimeType} from "twitter-api-v2";
 import {AuthzModule} from "./authz/authz.module";
@@ -42,5 +43,6 @@ export {
     SqliteDatabaseModule,
     SqliteDatabaseConfigurationService,
     TwitterClientService,
+    TwitterAccountModule,
     EUploadMimeType,
 };
