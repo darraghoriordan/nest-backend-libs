@@ -1,4 +1,5 @@
 /* eslint-disable unicorn/prefer-export-from */
+import {SmtpEmailClientModule} from "./smtp-email-client/smtp-email-client.module";
 import {EUploadMimeType} from "twitter-api-v2";
 import {AuthzModule} from "./authz/authz.module";
 import {JwtStrategy} from "./authz/authzstrategy";
@@ -10,8 +11,7 @@ import {PostgresDatabaseModule} from "./database-postgres/PostgresDatabase.modul
 import {PostgresTypeOrmConfigurationProvider} from "./database-postgres/PostgresTypeOrmConfigurationProvider";
 import {SqliteDatabaseModule} from "./database-sqlite/SqliteDatabase.module";
 import {SqliteDatabaseConfigurationService} from "./database-sqlite/SqliteDatabaseConfigurationService";
-import {EmailClientModule} from "./smtp-email-client/email-client.module";
-import {EmailClient} from "./smtp-email-client/email-client.service";
+import {SmtpEmailClient} from "./smtp-email-client/email-client.service";
 import CoreLoggerService from "./logger/CoreLoggerService";
 import {OrganisationModule} from "./organisation/organisation.module";
 import {Person} from "./person/entities/person.entity";
@@ -24,7 +24,7 @@ import {TwitterClientService} from "./twitter-client/services/twitter-client.ser
 export {
     CoreLoggerService,
     CoreConfigurationService,
-    EmailClientModule,
+    SmtpEmailClientModule,
     CoreModule,
     SwaggerGen,
     DefaultAuthGuard,
@@ -33,7 +33,7 @@ export {
     AuthzModule,
     Person,
     PostgresTypeOrmConfigurationProvider as TypeOrmConfigurationProvider,
-    EmailClient,
+    SmtpEmailClient,
     ValidatedConfigurationService,
     RequestWithUser,
     PersonModule,

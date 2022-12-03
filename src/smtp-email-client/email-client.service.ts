@@ -7,7 +7,7 @@ import {Email} from "./email.entity";
 import {EmailConfigurationService} from "./EmailConfigurationService";
 
 @Injectable()
-export class EmailClient {
+export class SmtpEmailClient {
     constructor(
         private logger: CoreLoggerService,
         @InjectRepository(Email)

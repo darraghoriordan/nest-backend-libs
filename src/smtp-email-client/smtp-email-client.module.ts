@@ -2,7 +2,7 @@ import {Module} from "@nestjs/common";
 import {ConfigModule} from "@nestjs/config";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {LoggerModule} from "../logger/logger.module";
-import {EmailClient} from "./email-client.service";
+import {SmtpEmailClient} from "./email-client.service";
 import {EmailClientController} from "./email.controller";
 import {Email} from "./email.entity";
 import {EmailConfigurationService} from "./EmailConfigurationService";
@@ -14,8 +14,8 @@ import configVariables from "./EmailConfigurationVariables";
         LoggerModule,
         TypeOrmModule.forFeature([Email]),
     ],
-    providers: [EmailClient, EmailConfigurationService],
+    providers: [SmtpEmailClient, EmailConfigurationService],
     controllers: [EmailClientController],
-    exports: [EmailClient],
+    exports: [SmtpEmailClient],
 })
-export class EmailClientModule {}
+export class SmtpEmailClientModule {}
