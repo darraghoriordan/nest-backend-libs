@@ -40,7 +40,10 @@ export class EmailConfigurationService extends ValidatedConfigurationService {
     @IsDefined()
     @IsInt()
     get smtpPort(): number {
-        return this.configService.get<number>("email.smtpPort")!;
+        return Number.parseInt(
+            this.configService.get<string>("email.smtpPort")!,
+            10
+        );
     }
 
     @IsDefined()
