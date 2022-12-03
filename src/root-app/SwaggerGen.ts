@@ -4,7 +4,7 @@ import fs from "fs";
 
 import {spawn} from "child_process";
 import CoreLoggerService from "../logger/CoreLoggerService";
-import {CoreConfigurationService} from "..";
+import {CoreConfigurationService} from "../core-config/CoreConfigurationService";
 
 /* istanbul ignore next */
 @Injectable()

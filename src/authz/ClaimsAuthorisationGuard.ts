@@ -2,7 +2,7 @@ import {CanActivate, ExecutionContext, Injectable} from "@nestjs/common";
 import {Observable} from "rxjs";
 import {Reflector} from "@nestjs/core";
 import {RequestWithUser} from "./RequestWithUser";
-import {CoreLoggerService} from "..";
+import CoreLoggerService from "../logger/CoreLoggerService";
 
 @Injectable()
 export class ClaimsAuthorisationGuard implements CanActivate {
