@@ -22,6 +22,7 @@ import {CoreModule} from "./root-app/core-app.module";
 import {SwaggerGen} from "./root-app/SwaggerGen";
 import {TwitterClientService} from "./twitter-client/services/twitter-client.service";
 import {CoreConfigModule} from "./core-config/CoreConfig.module";
+import {execAsPromised} from "./runningCommandLine/execAsPromised";
 
 export {
     CoreLoggerService,
@@ -47,4 +48,5 @@ export {
     TwitterClientService,
     TwitterAccountModule,
     EUploadMimeType,
+    execAsPromised,
 };
