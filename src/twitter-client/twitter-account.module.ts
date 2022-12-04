@@ -14,6 +14,7 @@ import {TwitterClientProvider} from "./TwitterClientProvider";
         TwitterClientConfigurationService,
         TwitterClientService,
     ],
+    exports: [TwitterClientService],
     controllers: [],
 })
 export class TwitterAccountModule {}

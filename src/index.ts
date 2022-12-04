@@ -1,4 +1,5 @@
 /* eslint-disable unicorn/prefer-export-from */
+import {RunningCommandLineModule} from "./runningCommandLine/RunningCommandLine.module";
 import {TwitterAccountModule} from "./twitter-client/twitter-account.module";
 import {SmtpEmailClientModule} from "./smtp-email-client/smtp-email-client.module";
 import {EUploadMimeType} from "twitter-api-v2";
@@ -22,7 +23,7 @@ import {CoreModule} from "./root-app/core-app.module";
 import {SwaggerGen} from "./root-app/SwaggerGen";
 import {TwitterClientService} from "./twitter-client/services/twitter-client.service";
 import {CoreConfigModule} from "./core-config/CoreConfig.module";
-import {execAsPromised} from "./runningCommandLine/execAsPromised";
+import {CliCommandService} from "./runningCommandLine/CliCommandService";
 
 export {
     CoreLoggerService,
@@ -48,5 +49,6 @@ export {
     TwitterClientService,
     TwitterAccountModule,
     EUploadMimeType,
-    execAsPromised,
+    RunningCommandLineModule,
+    CliCommandService,
 };
