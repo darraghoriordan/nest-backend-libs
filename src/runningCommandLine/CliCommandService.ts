@@ -15,8 +15,9 @@ export class CliCommandService {
         cwd: string,
         shell?: string
     ): Promise<string> {
+        this.logger.warn(`Executing cli command '${command}' in '${cwd}'`);
         this.logger.warn(
-            `Executing cli command ${command} in ${cwd}. Note: Do NOT allow user input for this function as inputs are not sanitised or checked and a hacker could take over your system.`
+            "Note: Do NOT allow user input as parameters for 'execAsPromised' as inputs are not sanitised and a hacker could take over your system."
         );
         const result = await execPromise(
             `${command} ${commandArguments.join(" ")}`,
@@ -25,7 +26,7 @@ export class CliCommandService {
                 cwd,
             }
         );
-
+        // adding a comment
         return result.stdout;
     }
 }
