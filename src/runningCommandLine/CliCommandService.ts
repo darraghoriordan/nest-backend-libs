@@ -26,7 +26,7 @@ export class CliCommandService {
                 cwd,
             }
         );
-        // adding a comment
+
         return result.stdout;
     }
 }
