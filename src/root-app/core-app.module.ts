@@ -63,6 +63,9 @@ export class CoreModule {
                 loggerService.log(
                     `will listen on port ${configService.webPort} (DEV: http://localhost:${configService.webPort} )`
                 );
+                loggerService.log(
+                    `swagger will be available at (DEV: http://localhost:${configService.webPort}/swagger )`
+                );
 
                 await callback(app);
             } catch (initialisationError) {
