@@ -14,7 +14,7 @@ export class PostgresTypeOrmConfigurationProvider {
         console.log("DIRNAME", __dirname);
         const nodeModuleCorePath = path.join(
             __dirname,
-            process.env.CORE_MODULE_ENTITY_PATH || "",
+            process.env.CORE_MODULE_ENTITY_PATH || "..",
             "**",
             "*.entity.{ts,js}"
         );
@@ -22,7 +22,8 @@ export class PostgresTypeOrmConfigurationProvider {
 
         const appModulePath = path.join(
             __dirname,
-            process.env.APP_MODULE_ENTITY_PATH || "",
+            process.env.APP_MODULE_ENTITY_PATH ||
+                "../../../../../apps/backend/dist",
             "**",
             "*.entity.{ts,js}"
         );
@@ -30,7 +31,7 @@ export class PostgresTypeOrmConfigurationProvider {
 
         const migrationsPath = path.join(
             __dirname,
-            process.env.MIGRATIONS_PATH || "",
+            process.env.MIGRATIONS_PATH || "../../../../../apps/backend/dist",
             "**",
             "migrations",
             "*.{ts,js}"
