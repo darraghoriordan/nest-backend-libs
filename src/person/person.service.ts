@@ -42,6 +42,7 @@ export class PersonService {
         if (auth0User === undefined) {
             return;
         }
+        console.log("Saving auth0 user", {auth0User});
         // create a new org
         const unsavedOrganisation = new Organisation();
         unsavedOrganisation.name = "My Organisation";
