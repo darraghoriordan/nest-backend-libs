@@ -20,7 +20,7 @@ export class TwitterClientService {
         return this.clientInstance.v1.uploadMedia(
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             Buffer.from(bytes, "binary"),
-            {type}
+            {mimeType: type}
         );
     }
 

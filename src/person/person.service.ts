@@ -8,7 +8,6 @@ import CoreLoggerService from "../logger/CoreLoggerService";
 import {Organisation} from "../organisation/entities/organisation.entity";
 import {UpdatePersonDto} from "./dto/update-person.dto";
 import {Person} from "./entities/person.entity";
-import {PersonConfigurationService} from "./PersonConfigurationService";
 
 @Injectable()
 export class PersonService {
@@ -16,31 +15,13 @@ export class PersonService {
         @InjectRepository(Person)
         private repository: Repository<Person>,
         private logger: CoreLoggerService,
-        private authzClient: AuthZClientService,
-        private personConfig: PersonConfigurationService
+        private authzClient: AuthZClientService
     ) {}
 
     async getAuth0User(
         payload: AccessToken,
         rawAccessToken: string
     ): Promise<UserProfile | undefined> {
-        // fake the user for our m2m token user used in testing
-        // m2m users don't get profiles
-        if (payload.sub === this.personConfig.fakeSub) {
-            const integrationTestM2MFakeUser = new UserProfile();
-            integrationTestM2MFakeUser.email_verified = true;
-            integrationTestM2MFakeUser.family_name =
-                this.personConfig.fakeFamilyName;
-            integrationTestM2MFakeUser.gender = undefined;
-            integrationTestM2MFakeUser.sub = payload.sub;
-            integrationTestM2MFakeUser.given_name =
-                this.personConfig.fakeGivenNAme;
-            integrationTestM2MFakeUser.name = this.personConfig.fakeName;
-            integrationTestM2MFakeUser.email = this.personConfig.fakeEmail;
-            integrationTestM2MFakeUser.picture = this.personConfig.fakePicture;
-            return integrationTestM2MFakeUser;
-        }
-
         return await this.authzClient.getUser(rawAccessToken);
     }
 
