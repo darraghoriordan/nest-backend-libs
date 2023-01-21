@@ -25,6 +25,7 @@ import {TwitterClientService} from "./twitter-client/services/twitter-client.ser
 import {CoreConfigModule} from "./core-config/CoreConfig.module";
 import {CliCommandService} from "./runningCommandLine/CliCommandService";
 import {ClaimsAuthorisationGuard} from "./authz/ClaimsAuthorisationGuard";
+import {MandatoryUserClaims} from "./authz/MandatoryUserClaims.decorator";
 
 export {
     CoreLoggerService,
@@ -53,4 +54,5 @@ export {
     RunningCommandLineModule,
     CliCommandService,
     ClaimsAuthorisationGuard,
+    MandatoryUserClaims,
 };
