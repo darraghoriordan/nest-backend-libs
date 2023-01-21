@@ -53,8 +53,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             payload,
             rawAccessToken
         );
-        console.log("PAYLOADS", {payload, personResult, rawAccessToken});
+
         const withPermissions = {permissions: payload.permissions || []};
-        return {...personResult, ...withPermissions} as RequestPerson;
+        // eslint-disable-next-line sonarjs/prefer-immediate-return
+        const rp = {...personResult, ...withPermissions} as RequestPerson;
+        return rp;
     }
 }
