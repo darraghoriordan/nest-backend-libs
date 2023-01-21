@@ -34,7 +34,7 @@ export class LoggingInterceptor implements NestInterceptor {
                     originalUrl,
                     method,
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                    status: response?.status,
+                    statusCode: response?.statusCode,
                     responseBody: data || undefined,
                 })
             )

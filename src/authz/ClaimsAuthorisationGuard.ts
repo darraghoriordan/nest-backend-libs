@@ -28,7 +28,10 @@ export class ClaimsAuthorisationGuard implements CanActivate {
             if (!routePermissions || routePermissions.length === 0) {
                 return true;
             }
-            console.log("USER", user);
+
+            if (!user || !user.permissions) {
+                return false;
+            }
             return routePermissions.every((routePermission) =>
                 user.permissions.includes(routePermission)
             );
