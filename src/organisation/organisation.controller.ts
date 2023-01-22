@@ -14,6 +14,7 @@ import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
 import {Organisation} from "./entities/organisation.entity";
 import {AuthGuard} from "@nestjs/passport";
 import {RequestWithUser} from "../authz/RequestWithUser";
+
 @UseGuards(AuthGuard("jwt"))
 @ApiBearerAuth()
 @Controller("organisation")

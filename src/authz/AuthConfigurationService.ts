@@ -12,12 +12,6 @@ export class AuthConfigurationService extends ValidatedConfigurationService {
 
     @IsDefined()
     @IsString()
-    get auth0IssuerUrl(): string {
-        return this.configService.get<string>("auth.auth0issuerUrl")!;
-    }
-
-    @IsDefined()
-    @IsString()
     get auth0Audience(): string {
         return this.configService.get<string>("auth.auth0audience")!;
     }

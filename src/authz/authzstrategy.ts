@@ -12,7 +12,7 @@ import {RequestPerson} from "./RequestWithUser";
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    private readonly _config: AuthConfigurationService;
+    // private readonly _config: AuthConfigurationService;
 
     constructor(
         private readonly personService: PersonService,
@@ -24,18 +24,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
                 cache: true,
                 rateLimit: true,
                 jwksRequestsPerMinute: 5,
-                jwksUri: `${config.auth0IssuerUrl}.well-known/jwks.json`,
+                jwksUri: `${config.auth0Domain}/.well-known/jwks.json`,
             }),
             passReqToCallback: true,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             audience: config.auth0Audience,
-            issuer: config.auth0IssuerUrl,
+            issuer: `${config.auth0Domain}/`,
             algorithms: ["RS256"],
         });
-        this._config = config;
-
-        console.debug("Config usage", this._config.auth0IssuerUrl);
     }
 
     async validate(
