@@ -24,13 +24,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
                 cache: true,
                 rateLimit: true,
                 jwksRequestsPerMinute: 5,
-                jwksUri: `${config.auth0Domain}/.well-known/jwks.json`,
+                jwksUri: `https://${config.auth0Domain}/.well-known/jwks.json`,
             }),
             passReqToCallback: true,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             audience: config.auth0Audience,
-            issuer: `${config.auth0Domain}/`,
+            issuer: `https://${config.auth0Domain}/`,
             algorithms: ["RS256"],
         });
     }
