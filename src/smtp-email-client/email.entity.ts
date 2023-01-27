@@ -33,8 +33,16 @@ export class Email {
     to!: string;
 
     @Column()
-    @ApiProperty()
-    body!: string;
+    @ApiProperty({type: String})
+    bccTo!: string;
+
+    @Column()
+    @ApiPropertyOptional()
+    textBody?: string;
+
+    @Column()
+    @ApiPropertyOptional()
+    htmlBody?: string;
 
     @Column()
     @ApiProperty()

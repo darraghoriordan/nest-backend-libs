@@ -40,12 +40,14 @@ export class CoreModule {
     ): void {
         void (async () => {
             try {
-                const app = await NestFactory.create(rootModule);
+                const app = await NestFactory.create(rootModule, {
+                    bodyParser: true,
+                });
                 const loggerService = app.get(CoreLoggerService);
                 const configService = app.get(CoreConfigurationService);
                 app.useLogger(loggerService);
 
-                app.enableCors({origin: configService.clientCorsUrl});
+                app.enableCors({origin: configService.frontEndAppUrl});
                 app.useGlobalPipes(
                     new ValidationPipe({
                         transform: true,

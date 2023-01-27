@@ -1,5 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
-import {Exclude} from "class-transformer";
+
 import {
     AfterInsert,
     AfterLoad,
@@ -10,15 +10,11 @@ import {
     Entity,
     Generated,
     Index,
-    JoinColumn,
-    JoinTable,
-    ManyToMany,
-    ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
-    RelationId,
     UpdateDateColumn,
 } from "typeorm";
-import {Person} from "../../person/entities/person.entity";
+import {OrganisationMembership} from "./organisation-membership.entity";
 
 @Entity()
 export class Organisation {
@@ -34,25 +30,12 @@ export class Organisation {
     @ApiProperty()
     public uuid!: string;
 
-    @ManyToMany(() => Person, (orgMember) => orgMember.memberOfOrganisations, {
+    @OneToMany(() => OrganisationMembership, (om) => om.organisation, {
         eager: true,
-        onDelete: "CASCADE",
-    })
-    @Exclude()
-    @JoinTable()
-    members!: Person[];
-
-    @ManyToOne(() => Person, (person) => person.ownerOfOrganisations, {
-        eager: true,
-        onDelete: "CASCADE",
+        cascade: ["insert", "update"],
     })
     @Index()
-    @JoinColumn()
-    owner!: Person;
-
-    @RelationId((organisation: Organisation) => organisation.owner)
-    @ApiProperty()
-    ownerId!: number;
+    memberships!: OrganisationMembership[];
 
     @Column()
     @ApiProperty()
@@ -75,8 +58,8 @@ export class Organisation {
     @AfterInsert()
     @AfterUpdate()
     async nullChecks() {
-        if (!this.members) {
-            this.members = [];
+        if (!this.memberships) {
+            this.memberships = [];
         }
     }
 }

@@ -10,12 +10,11 @@ import {
     Entity,
     Generated,
     Index,
-    ManyToMany,
     OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
-import {Organisation} from "../../organisation/entities/organisation.entity";
+import {OrganisationMembership} from "../../organisation/entities/organisation-membership.entity";
 
 @Entity()
 export class Person {
@@ -69,17 +68,10 @@ export class Person {
     username?: string;
 
     @Exclude()
-    @ManyToMany(() => Organisation, (org) => org.members, {
-        cascade: true,
-        onDelete: "CASCADE",
+    @OneToMany(() => OrganisationMembership, (om) => om.person, {
+        cascade: ["insert", "update"],
     })
-    memberOfOrganisations!: Organisation[];
-
-    @Exclude()
-    @OneToMany(() => Organisation, (org) => org.owner, {
-        cascade: true,
-    })
-    ownerOfOrganisations!: Organisation[];
+    memberships!: OrganisationMembership[];
 
     @CreateDateColumn()
     @ApiProperty()
@@ -98,11 +90,8 @@ export class Person {
     @AfterInsert()
     @AfterUpdate()
     async nullChecks() {
-        if (!this.memberOfOrganisations) {
-            this.memberOfOrganisations = [];
-        }
-        if (!this.ownerOfOrganisations) {
-            this.ownerOfOrganisations = [];
+        if (!this.memberships) {
+            this.memberships = [];
         }
     }
 }

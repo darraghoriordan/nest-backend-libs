@@ -1,3 +1,4 @@
+import {BullModule} from "@nestjs/bull";
 import {Module} from "@nestjs/common";
 import {ConfigModule} from "@nestjs/config";
 import {TypeOrmModule} from "@nestjs/typeorm";
@@ -8,17 +9,23 @@ import {Email} from "./email.entity";
 import {EmailClientProvider} from "./EmailClientProvider";
 import {EmailConfigurationService} from "./EmailConfigurationService";
 import configVariables from "./EmailConfigurationVariables";
+import {SmtpEmailHandler} from "./smtp-email-handler";
 
+export const queueName = "smtp-emails";
 @Module({
     imports: [
         ConfigModule.forFeature(configVariables),
         LoggerModule,
         TypeOrmModule.forFeature([Email]),
+        BullModule.registerQueue({
+            name: queueName,
+        }),
     ],
     providers: [
         EmailClientProvider,
         SmtpEmailClient,
         EmailConfigurationService,
+        SmtpEmailHandler,
     ],
     controllers: [EmailClientController],
     exports: [SmtpEmailClient],

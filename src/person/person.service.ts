@@ -5,6 +5,9 @@ import {AccessToken} from "../authz/AccessToken";
 import {AuthZClientService} from "../authzclient/authz.service";
 import {UserProfile} from "../authzclient/UserProfile.dto";
 import CoreLoggerService from "../logger/CoreLoggerService";
+import {Roles} from "../organisation/dto/RolesEnum";
+import {MembershipRole} from "../organisation/entities/member-role.entity";
+import {OrganisationMembership} from "../organisation/entities/organisation-membership.entity";
 import {Organisation} from "../organisation/entities/organisation.entity";
 import {UpdatePersonDto} from "./dto/update-person.dto";
 import {Person} from "./entities/person.entity";
@@ -32,21 +35,46 @@ export class PersonService {
         // try to get org with person as a member
         const foundPerson = await this.repository.findOne({
             where: {auth0UserId: payload.sub},
+            relations: ["memberships"],
         });
-        // if result get out of here
-        if (foundPerson !== undefined && foundPerson !== null) {
+
+        // if person already configured then get out of here
+        if (
+            foundPerson !== undefined &&
+            foundPerson !== null &&
+            foundPerson.memberships.length > 0
+        ) {
             return foundPerson;
         }
-        // if not a result get the auth0 response
+
+        // if no person is found locally then get the user's profile details from auth0
         const auth0User = await this.getAuth0User(payload, rawAccessToken);
         if (auth0User === undefined) {
             return;
         }
 
-        // create a new org
+        // create a new organisation
         const unsavedOrganisation = new Organisation();
-        unsavedOrganisation.name = "My Organisation";
-        // create a new person.
+        unsavedOrganisation.name = `${
+            auth0User.given_name ?? "My"
+        } Organisation`;
+
+        // create roles
+        const ownerRole = new MembershipRole();
+        ownerRole.name = Roles.owner;
+
+        // create a new membership
+        const membership = new OrganisationMembership();
+        membership.organisation = unsavedOrganisation;
+        membership.roles = [ownerRole];
+
+        if (foundPerson !== undefined && foundPerson !== null) {
+            // if person already exists then add the membership to the existing person
+            foundPerson.memberships = [membership];
+            return this.repository.save(foundPerson);
+        }
+
+        // otherwise create a new person.
         const person = this.repository.create();
         person.auth0UserId = auth0User.sub;
         person.blocked = false;
@@ -54,8 +82,7 @@ export class PersonService {
         person.emailVerified = auth0User.email_verified;
         person.familyName = auth0User.family_name;
         person.givenName = auth0User.given_name;
-        person.memberOfOrganisations = [unsavedOrganisation];
-        person.ownerOfOrganisations = [unsavedOrganisation];
+        person.memberships = [membership];
         person.name = auth0User.name;
         person.picture = auth0User.picture;
         person.username = auth0User.preferred_username;
@@ -82,7 +109,7 @@ export class PersonService {
 
     async findOneByUuid(uuid: string): Promise<Person> {
         return this.repository.findOneOrFail({
-            relations: ["ownerOfOrganisations"],
+            relations: ["memberships"],
             where: {uuid},
         });
     }
@@ -103,9 +130,20 @@ export class PersonService {
             where: {
                 uuid,
             },
+            relations: {
+                memberships: {
+                    roles: true,
+                },
+            },
         });
-        if (user.ownerOfOrganisations.length > 0) {
-            throw new Error("Can't remove the owner of an organisation");
+        if (
+            user.memberships.some((m) =>
+                m.roles.some((r) => r.name === Roles.owner)
+            )
+        ) {
+            throw new Error(
+                "Can't remove the owner of an organisation. Assign a new owner first."
+            );
         }
 
         return this.repository.remove(user);

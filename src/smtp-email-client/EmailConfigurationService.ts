@@ -21,8 +21,8 @@ export class EmailConfigurationService extends ValidatedConfigurationService {
 
     @IsDefined()
     @IsString()
-    get emailBcc(): string {
-        return this.configService.get<string>("email.emailBcc")!;
+    get extraEmailBcc(): string {
+        return this.configService.get<string>("email.extraEmailBcc")!;
     }
 
     @IsDefined()

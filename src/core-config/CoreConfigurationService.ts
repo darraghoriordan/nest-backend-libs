@@ -48,22 +48,14 @@ export class CoreConfigurationService extends ValidatedConfigurationService {
 
     @IsDefined()
     @IsString()
-    get clientCorsUrl(): string {
-        return this.configService.get<string>("core.clientCorsUrl")!;
-    }
-
-    @IsDefined()
-    @IsString()
     get appTitle(): string {
         return this.configService.get<string>("core.appTitle")!;
     }
 
     @IsDefined()
     @IsString()
-    get appEnvironmentSpecificUrl(): string {
-        return this.configService.get<string>(
-            "core.appEnvironmentSpecificUrl"
-        )!;
+    get frontEndAppUrl(): string {
+        return this.configService.get<string>("core.frontEndAppUrl")!;
     }
 
     @IsDefined()
