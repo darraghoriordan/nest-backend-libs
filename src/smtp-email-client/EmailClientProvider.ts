@@ -1,8 +1,8 @@
 import {createTransport, Transporter} from "nodemailer";
 import {EmailConfigurationService} from "./EmailConfigurationService";
 
-export const EmailClientProvider = {
-    provide: "SmtpEmailClient",
+export const EmailTransporterProvider = {
+    provide: "SmtpEmailTransporter",
     useFactory: (config: EmailConfigurationService): Transporter => {
         return createTransport({
             host: config.smtpHost,

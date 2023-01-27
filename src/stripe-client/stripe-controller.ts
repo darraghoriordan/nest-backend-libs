@@ -22,7 +22,7 @@ import {StripeWebhookHandler} from "./services/stripe-webhook-handler.service";
 
 @Controller("payments/stripe")
 @ApiTags("payments")
-export class OrganisationController {
+export class StripeClientController {
     constructor(
         private readonly stripeService: StripeCheckoutService,
         private readonly stripeWebhookService: StripeWebhookHandler

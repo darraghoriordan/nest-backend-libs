@@ -15,7 +15,7 @@ export class SmtpEmailClient {
         private logger: CoreLoggerService,
         @InjectRepository(Email)
         private emailRepository: Repository<Email>,
-        @Inject("SmtpEmailClient")
+        @Inject("SmtpEmailTransporter")
         private smtpEmailTransporter: Transporter,
         @InjectQueue(queueName) private queue: Queue,
         private config: EmailConfigurationService

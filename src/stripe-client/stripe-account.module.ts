@@ -7,6 +7,7 @@ import {ConfigModule} from "@nestjs/config";
 import {CoreModule} from "../root-app/core-app.module";
 import {StripeClientProvider} from "./StripeClientProvider";
 import {BullModule} from "@nestjs/bull";
+import {StripeClientController} from "./stripe-controller";
 
 export const queueName = "stripe-events";
 @Module({
@@ -23,6 +24,6 @@ export const queueName = "stripe-events";
         StripeCheckoutService,
     ],
     exports: [StripeCheckoutService],
-    controllers: [],
+    controllers: [StripeClientController],
 })
 export class StripeAccountModule {}

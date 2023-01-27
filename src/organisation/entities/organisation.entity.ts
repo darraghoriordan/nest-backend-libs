@@ -14,6 +14,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
+import {Invitation} from "../../invitations/entities/invitation.entity";
 import {OrganisationMembership} from "./organisation-membership.entity";
 
 @Entity()
@@ -36,6 +37,13 @@ export class Organisation {
     })
     @Index()
     memberships!: OrganisationMembership[];
+
+    @OneToMany(() => Invitation, (om) => om.organisation, {
+        eager: true,
+        cascade: ["insert", "update"],
+    })
+    @Index()
+    invitations!: Invitation[];
 
     @Column()
     @ApiProperty()
