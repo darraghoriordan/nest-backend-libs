@@ -1,5 +1,4 @@
 import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
-import {Type} from "class-transformer";
 
 import {
     Column,
@@ -47,12 +46,10 @@ export class Invitation {
     @ApiPropertyOptional()
     acceptedOn?: Date;
 
-    @Column()
     @ApiProperty()
     @ManyToOne(() => Organisation, {
         eager: true,
     })
-    @Type(() => Organisation)
     organisation!: Organisation;
 
     @CreateDateColumn()

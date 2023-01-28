@@ -9,12 +9,13 @@ import {OrganisationModule} from "../organisation/organisation.module";
 import {ConfigModule} from "@nestjs/config";
 import configVariables from "./InvitationConfigurationVariables";
 import {InvitationsConfigurationService} from "./InvitationConfigurationService";
+import {Organisation} from "../organisation/entities/organisation.entity";
 
 @Module({
     imports: [
         ConfigModule.forFeature(configVariables),
         LoggerModule,
-        TypeOrmModule.forFeature([Invitation]),
+        TypeOrmModule.forFeature([Invitation, Organisation]),
         SmtpEmailClientModule,
         OrganisationModule,
     ],
