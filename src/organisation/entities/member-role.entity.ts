@@ -20,7 +20,6 @@ export class MembershipRole {
 
     @ManyToOne(() => OrganisationMembership, (membership) => membership.roles, {
         eager: true,
-        cascade: true,
     })
     membership!: OrganisationMembership;
 
