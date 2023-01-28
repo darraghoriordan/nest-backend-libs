@@ -3,6 +3,7 @@ import * as yargs from "yargs";
 import {exec} from "child_process";
 // eslint-disable-next-line unicorn/import-style
 import util from "util";
+import path from "path";
 
 /**
  * Generates a new migration file with sql needs to be executed to update schema.
@@ -45,10 +46,16 @@ export class WriteApiClientCommand
 
         const execPromise = util.promisify(exec);
         const commandArguments = [args.fePath, args.itPath, args.packageName];
+        // if i ever use modules later
+        // const __dirname = dirname(fileURLToPath(import.meta.url));
+
+        const scriptPath = path.join(
+            // eslint-disable-next-line  unicorn/prefer-module
+            __dirname,
+            "../../open-api-generation/generate.sh"
+        );
         const result = await execPromise(
-            `../../open-api-generation/generate.sh ${commandArguments.join(
-                " "
-            )}`
+            `${scriptPath} ${commandArguments.join(" ")}`
         );
 
         console.log(result.stdout);
