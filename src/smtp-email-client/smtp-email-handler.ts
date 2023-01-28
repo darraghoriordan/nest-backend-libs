@@ -5,7 +5,7 @@ import {
     OnQueueCompleted,
     Process,
 } from "@nestjs/bull";
-import {Injectable} from "@nestjs/common";
+import {Inject, Injectable} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Job} from "bull";
 import {Transporter} from "nodemailer";
@@ -22,6 +22,7 @@ export class SmtpEmailHandler {
         private config: EmailConfigurationService,
         @InjectRepository(Email)
         private emailRepository: Repository<Email>,
+        @Inject("SmtpEmailTransporter")
         private smtpEmailTransporter: Transporter,
         private readonly logger: CoreLoggerService
     ) {}

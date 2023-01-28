@@ -6,7 +6,7 @@ import {LoggerModule} from "../logger/logger.module";
 import {SmtpEmailClient} from "./email-client.service";
 import {EmailClientController} from "./email.controller";
 import {Email} from "./email.entity";
-import {EmailTransporterProvider} from "./EmailClientProvider";
+import {EmailTransporterProvider} from "./EmailTransporterProvider";
 import {EmailConfigurationService} from "./EmailConfigurationService";
 import configVariables from "./EmailConfigurationVariables";
 import {SmtpEmailHandler} from "./smtp-email-handler";
