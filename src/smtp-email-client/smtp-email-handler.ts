@@ -6,6 +6,7 @@ import {
     Process,
 } from "@nestjs/bull";
 import {Injectable} from "@nestjs/common";
+import {InjectRepository} from "@nestjs/typeorm";
 import {Job} from "bull";
 import {Transporter} from "nodemailer";
 import Mail from "nodemailer/lib/mailer";
@@ -19,6 +20,7 @@ import {EmailConfigurationService} from "./EmailConfigurationService";
 export class SmtpEmailHandler {
     constructor(
         private config: EmailConfigurationService,
+        @InjectRepository(Email)
         private emailRepository: Repository<Email>,
         private smtpEmailTransporter: Transporter,
         private readonly logger: CoreLoggerService
