@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 const Configuration = {
     extends: ["@commitlint/config-conventional"],
     /*
@@ -20,6 +21,7 @@ const Configuration = {
     /*
      * Functions that return true if commitlint should ignore the given message.
      */
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     ignores: [(commit) => commit.includes("Merge")],
     /*
      * Whether commitlint uses the default ignore rules.

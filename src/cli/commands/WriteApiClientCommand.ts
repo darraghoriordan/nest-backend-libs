@@ -9,7 +9,12 @@ import path from "path";
  * Generates a new migration file with sql needs to be executed to update schema.
  */
 
-type ArgumentsType = {fePath: string; itPath: string; packageName: string};
+type ArgumentsType = {
+    o: string;
+    fePath: string;
+    itPath: string;
+    packageName: string;
+};
 
 export class WriteApiClientCommand
     implements yargs.CommandModule<ArgumentsType, ArgumentsType>
@@ -21,6 +26,11 @@ export class WriteApiClientCommand
     // eslint-disable-next-line unicorn/prevent-abbreviations
     builder(args: yargs.Argv) {
         return args
+            .option("o", {
+                type: "string",
+                default: "../../libs/shared-api-client",
+                describe: "The output directory for the generated client.",
+            })
             .option("fePath", {
                 type: "string",
                 default: "../../apps/frontend",
@@ -45,7 +55,12 @@ export class WriteApiClientCommand
         // call the script
 
         const execPromise = util.promisify(exec);
-        const commandArguments = [args.fePath, args.itPath, args.packageName];
+        const commandArguments = [
+            args.o,
+            args.fePath,
+            args.itPath,
+            args.packageName,
+        ];
         // if i ever use modules later
         // const __dirname = dirname(fileURLToPath(import.meta.url));
 
