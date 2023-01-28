@@ -1,11 +1,17 @@
 import {InjectQueue} from "@nestjs/bull";
-import {BadRequestException, Inject, RawBodyRequest} from "@nestjs/common";
+import {
+    BadRequestException,
+    Inject,
+    Injectable,
+    RawBodyRequest,
+} from "@nestjs/common";
 import {Queue} from "bull";
 import {Request} from "express";
 import Stripe from "stripe";
 import CoreLoggerService from "../../logger/CoreLoggerService";
 import {StripeClientConfigurationService} from "../StripeClientConfigurationService";
 
+@Injectable()
 export class StripeWebhookHandler {
     constructor(
         private readonly config: StripeClientConfigurationService,

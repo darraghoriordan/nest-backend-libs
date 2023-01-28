@@ -10,6 +10,7 @@ import {BullModule} from "@nestjs/bull";
 import {StripeClientController} from "./stripe-controller";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {StripeCheckoutEvent} from "./entities/stripe-checkout-event.entity";
+import {StripeWebhookHandler} from "./services/stripe-webhook-handler.service";
 
 @Module({
     imports: [
@@ -24,6 +25,7 @@ import {StripeCheckoutEvent} from "./entities/stripe-checkout-event.entity";
         StripeClientProvider,
         StripeClientConfigurationService,
         StripeCheckoutService,
+        StripeWebhookHandler,
     ],
     exports: [StripeCheckoutService],
     controllers: [StripeClientController],
