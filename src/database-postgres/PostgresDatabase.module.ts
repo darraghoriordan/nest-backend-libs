@@ -8,12 +8,7 @@ import {PostgresTypeOrmConfigurationProvider} from "./PostgresTypeOrmConfigurati
     imports: [
         TypeOrmModule.forRootAsync({
             useFactory: () =>
-                Object.assign(
-                    PostgresTypeOrmConfigurationProvider.getTypeOrmConfig(),
-                    {
-                        autoLoadEntities: true,
-                    }
-                ),
+                PostgresTypeOrmConfigurationProvider.getNestTypeOrmConfig(),
         }),
     ],
     exports: [DatabaseConfigurationService, TypeOrmModule],

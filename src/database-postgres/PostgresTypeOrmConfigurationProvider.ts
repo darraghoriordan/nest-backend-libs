@@ -10,7 +10,7 @@ export class PostgresTypeOrmConfigurationProvider {
      * to NestJS injection.
      * @returns
      */
-    public static getTypeOrmConfig(): TypeOrmModuleOptions {
+    public static getTypeOrmConfig(): DataSourceOptions {
         console.log("DIRNAME", __dirname);
         const nodeModuleCorePath = path.join(
             __dirname,
@@ -69,5 +69,12 @@ export class PostgresTypeOrmConfigurationProvider {
                 migrationsDir: "src/migrations",
             },
         } as DataSourceOptions; // this is dynamic based on the type discriminator
+    }
+
+    public static getNestTypeOrmConfig(): TypeOrmModuleOptions {
+        return {
+            ...PostgresTypeOrmConfigurationProvider.getTypeOrmConfig(),
+            autoLoadEntities: true,
+        };
     }
 }

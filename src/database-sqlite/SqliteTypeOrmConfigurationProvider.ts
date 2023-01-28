@@ -10,7 +10,7 @@ export class SqliteTypeOrmConfigurationProvider {
      * to NestJS injection.
      * @returns
      */
-    public static getTypeOrmConfig(): TypeOrmModuleOptions {
+    public static getTypeOrmConfig(): DataSourceOptions {
         console.log("DIRNAME", __dirname);
         const nodeModuleCorePath = path.join(
             __dirname,
@@ -51,5 +51,12 @@ export class SqliteTypeOrmConfigurationProvider {
                 migrationsDir: "src/migrations",
             },
         } as DataSourceOptions;
+    }
+
+    public static getNestTypeOrmConfig(): TypeOrmModuleOptions {
+        return {
+            ...SqliteTypeOrmConfigurationProvider.getTypeOrmConfig(),
+            autoLoadEntities: true,
+        };
     }
 }

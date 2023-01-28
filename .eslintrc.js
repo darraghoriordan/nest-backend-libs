@@ -44,7 +44,7 @@ module.exports = {
         node: true,
         jest: true,
     },
-    ignorePatterns: [".eslintrc.cjs"],
+    ignorePatterns: [".eslintrc.js"],
     rules: {
         // "jest/no-try-expect":"off",
         // "jest/no-conditional-expect":"off",

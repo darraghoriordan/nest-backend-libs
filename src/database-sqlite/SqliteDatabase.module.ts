@@ -8,12 +8,7 @@ import {SqliteTypeOrmConfigurationProvider} from "./SqliteTypeOrmConfigurationPr
     imports: [
         TypeOrmModule.forRootAsync({
             useFactory: () =>
-                Object.assign(
-                    SqliteTypeOrmConfigurationProvider.getTypeOrmConfig(),
-                    {
-                        autoLoadEntities: true,
-                    }
-                ),
+                SqliteTypeOrmConfigurationProvider.getNestTypeOrmConfig(),
         }),
     ],
     exports: [SqliteDatabaseConfigurationService, TypeOrmModule],
