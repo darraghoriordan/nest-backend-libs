@@ -18,7 +18,7 @@ export const queueName = "smtp-emails";
         LoggerModule,
         TypeOrmModule.forFeature([Email]),
         BullModule.registerQueue({
-            name: queueName,
+            name: "smtp-emails",
         }),
     ],
     providers: [

@@ -18,7 +18,7 @@ export const queueName = "stripe-events";
         TypeOrmModule.forFeature([StripeCheckoutEvent]),
         CoreModule,
         BullModule.registerQueue({
-            name: queueName,
+            name: "stripe-events",
         }),
     ],
     providers: [
