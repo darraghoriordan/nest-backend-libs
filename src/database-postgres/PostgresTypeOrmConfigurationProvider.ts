@@ -11,32 +11,34 @@ export class PostgresTypeOrmConfigurationProvider {
      * @returns
      */
     public static getTypeOrmConfig(): DataSourceOptions {
-        console.log("DIRNAME", __dirname);
         const nodeModuleCorePath = path.join(
-            __dirname,
+            // __dirname,
             process.env.CORE_MODULE_ENTITY_PATH || "..",
             "**",
             "*.entity.{ts,js}"
         );
-        console.log("Using core entity path:", nodeModuleCorePath);
 
         const appModulePath = path.join(
-            __dirname,
+            // __dirname,
             process.env.APP_MODULE_ENTITY_PATH ||
                 "../../../../../apps/backend/dist",
             "**",
             "*.entity.{ts,js}"
         );
-        console.log("Using application entity path:", appModulePath);
 
         const migrationsPath = path.join(
-            __dirname,
+            // __dirname,
             process.env.MIGRATIONS_PATH || "../../../../../apps/backend/dist",
             "**",
             "migrations",
             "*.{ts,js}"
         );
-        console.log("Using migration path:", migrationsPath);
+        console.log("Using database configuration paths", {
+            appModulePath,
+            moduleLocalDirName: __dirname,
+            migrationsPath,
+            nodeModuleCorePath,
+        });
         // database url is used in dokku
         if (process.env.DATABASE_URL) {
             return {

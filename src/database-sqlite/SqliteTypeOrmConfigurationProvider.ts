@@ -11,14 +11,12 @@ export class SqliteTypeOrmConfigurationProvider {
      * @returns
      */
     public static getTypeOrmConfig(): DataSourceOptions {
-        console.log("DIRNAME", __dirname);
         const nodeModuleCorePath = path.join(
             __dirname,
             process.env.CORE_MODULE_ENTITY_PATH || "..",
             "**",
             "*.entity.{ts,js}"
         );
-        console.log("Using core entity path:", nodeModuleCorePath);
 
         const appModulePath = path.join(
             __dirname,
@@ -27,7 +25,6 @@ export class SqliteTypeOrmConfigurationProvider {
             "**",
             "*.entity.{ts,js}"
         );
-        console.log("Using application entity path:", appModulePath);
 
         const migrationsPath = path.join(
             __dirname,
@@ -36,7 +33,12 @@ export class SqliteTypeOrmConfigurationProvider {
             "migrations",
             "*.{ts,js}"
         );
-        console.log("Using migration path:", migrationsPath);
+        console.log("Using database configuration paths", {
+            appModulePath,
+            moduleLocalPath: __dirname,
+            migrationsPath,
+            nodeModuleCorePath,
+        });
 
         return {
             type: "sqlite",
