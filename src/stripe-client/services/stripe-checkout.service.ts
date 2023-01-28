@@ -1,9 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {Inject, Injectable} from "@nestjs/common";
+import {InjectRepository} from "@nestjs/typeorm";
 import Stripe from "stripe";
+import {Repository} from "typeorm";
 import CoreLoggerService from "../../logger/CoreLoggerService";
 import {Person} from "../../person/entities/person.entity";
-import {StripeCheckoutSessionParameters} from "../models/StripeCheckoutSessionParams";
+import {StripeCheckoutEvent} from "../entities/stripe-checkout-event.entity";
+import {StripeCheckoutSessionRequestDto} from "../models/StripeCheckoutSessionRequestDto";
+import {StripeCheckoutSessionResponseDto} from "../models/StripeCheckoutSessionResponseDto";
 import {StripeClientConfigurationService} from "../StripeClientConfigurationService";
 
 @Injectable()
@@ -12,7 +16,9 @@ export class StripeCheckoutService {
         private readonly logger: CoreLoggerService,
         @Inject("StripeClient")
         private readonly clientInstance: Stripe,
-        private readonly stripeClientConfigurationService: StripeClientConfigurationService
+        private readonly stripeClientConfigurationService: StripeClientConfigurationService,
+        @InjectRepository(StripeCheckoutEvent)
+        private eventRepository: Repository<StripeCheckoutEvent>
     ) {
         this.logger.log("Setting up twitter client");
     }
@@ -33,8 +39,8 @@ export class StripeCheckoutService {
     }
 
     public async createCheckoutSession(
-        parameters: StripeCheckoutSessionParameters
-    ): Promise<string> {
+        parameters: StripeCheckoutSessionRequestDto
+    ): Promise<StripeCheckoutSessionResponseDto> {
         const mappedParameters = {
             mode: parameters.mode as unknown as Stripe.Checkout.SessionCreateParams.Mode,
             client_reference_id: parameters.clientReferenceId,
@@ -53,6 +59,19 @@ export class StripeCheckoutService {
             throw new Error("Failed to create checkout session");
         }
 
-        return session.url;
+        const eventModel = this.eventRepository.create({
+            stripeData: JSON.stringify(session),
+            stripeObjectType: session.object,
+            stripeSessionId: session.id,
+        });
+
+        await this.eventRepository.save(eventModel);
+
+        const response = new StripeCheckoutSessionResponseDto();
+
+        response.stripeSessionUrl = session.url;
+        response.stripeSessionId = session.id;
+
+        return response;
     }
 }

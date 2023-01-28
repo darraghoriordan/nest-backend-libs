@@ -18,7 +18,7 @@ export class StripeCheckoutLineItem {
     quantity!: number;
 }
 
-export class StripeCheckoutSessionParameters {
+export class StripeCheckoutSessionRequestDto {
     @ApiPropertyOptional()
     @IsOptional()
     clientReferenceId?: string;

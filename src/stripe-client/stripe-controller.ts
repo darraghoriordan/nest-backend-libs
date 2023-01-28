@@ -15,10 +15,11 @@ import {
     ApiBadRequestResponse,
 } from "@nestjs/swagger";
 import {RequestWithUser} from "../authz/RequestWithUser";
-import {StripeCheckoutSessionParameters} from "./models/StripeCheckoutSessionParams";
+import {StripeCheckoutSessionRequestDto} from "./models/StripeCheckoutSessionRequestDto";
 import {StripeCheckoutService} from "./services/stripe-checkout.service";
 import {Request as ExpressRequest} from "express";
 import {StripeWebhookHandler} from "./services/stripe-webhook-handler.service";
+import {StripeCheckoutSessionResponseDto} from "./models/StripeCheckoutSessionResponseDto";
 
 @Controller("payments/stripe")
 @ApiTags("payments")
@@ -48,15 +49,15 @@ export class StripeClientController {
         });
     }
 
-    @UseGuards(AuthGuard("jwt"))
-    @ApiBearerAuth()
+    // @UseGuards(AuthGuard("jwt"))
+    // @ApiBearerAuth()
     @Post("checkout-session")
-    @ApiOkResponse()
+    @ApiOkResponse({type: StripeCheckoutSessionResponseDto})
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async createCheckoutSession(
         @Request() request: RequestWithUser,
-        @Body() createSessionDto: StripeCheckoutSessionParameters
-    ) {
+        @Body() createSessionDto: StripeCheckoutSessionRequestDto
+    ): Promise<StripeCheckoutSessionResponseDto> {
         return this.stripeService.createCheckoutSession(createSessionDto);
     }
 }
