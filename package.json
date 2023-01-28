@@ -27,6 +27,7 @@
         "nestjs"
     ],
     "bin": {
+        "miller": "dist/cli/cli.js",
         "write-db-config": "dist/database-postgres/write-typeorm-config.js",
         "generate-client": "dist/open-api-generation/generate.sh"
     },
