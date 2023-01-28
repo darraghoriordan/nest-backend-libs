@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "module": "ES2022",
+        "module": "CommonJS",
         "declaration": true,
         "removeComments": false,
         "emitDecoratorMetadata": true,
