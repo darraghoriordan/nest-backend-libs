@@ -31,7 +31,6 @@ export class Organisation {
     public uuid!: string;
 
     @OneToMany(() => OrganisationMembership, (om) => om.organisation, {
-        eager: true,
         cascade: ["insert", "update"],
     })
     memberships!: OrganisationMembership[];
