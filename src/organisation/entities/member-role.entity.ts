@@ -7,7 +7,7 @@ import {
     Entity,
     ManyToOne,
     PrimaryGeneratedColumn,
-    //   RelationId,
+    RelationId,
     UpdateDateColumn,
 } from "typeorm";
 import {OrganisationMembership} from "./organisation-membership.entity";
@@ -18,14 +18,12 @@ export class MembershipRole {
     @ApiProperty()
     id!: number;
 
-    @ManyToOne(() => OrganisationMembership, (membership) => membership.roles, {
-        eager: true,
-    })
+    @ManyToOne(() => OrganisationMembership, (membership) => membership.roles)
     membership!: OrganisationMembership;
 
-    // @Column()
-    // @RelationId((mr: MembershipRole) => mr.membership)
-    // public membershipId!: number;
+    @Column()
+    @RelationId((mr: MembershipRole) => mr.membership)
+    public membershipId!: number;
 
     @Column()
     name!: string;
