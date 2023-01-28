@@ -26,6 +26,10 @@
     "keywords": [
         "nestjs"
     ],
+    "bin": {
+        "write-db-config": "dist/database-postgres/write-typeorm-config.js",
+        "generate-client": "dist/open-api-generation/generate.sh"
+    },
     "scripts": {
         "clean": "rm -Rf ./dist/",
         "build:ci": "yarn build",

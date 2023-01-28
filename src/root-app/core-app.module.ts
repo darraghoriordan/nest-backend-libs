@@ -62,6 +62,9 @@ export class CoreModule {
                     new LoggingInterceptor(loggerService)
                 );
 
+                const swaggerGen = app.get(SwaggerGen);
+                swaggerGen.generate(app, "open-api/swagger.json");
+
                 loggerService.log(
                     `will listen on port ${configService.webPort} (DEV: http://localhost:${configService.webPort} )`
                 );

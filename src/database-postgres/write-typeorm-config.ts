@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import fs = require("fs");
 import {PostgresTypeOrmConfigurationProvider} from "./PostgresTypeOrmConfigurationProvider";
 import dotenv from "dotenv";
