@@ -12,6 +12,7 @@ import {
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
+    RelationId,
     UpdateDateColumn,
 } from "typeorm";
 import {Organisation} from "../../organisation/entities/organisation.entity";
@@ -38,9 +39,9 @@ export class OrganisationMembership {
     })
     person!: Person;
 
-    // @Column()
-    // @RelationId((membership: OrganisationMembership) => membership.person)
-    // public personId!: number;
+    @Column()
+    @RelationId((membership: OrganisationMembership) => membership.person)
+    public personId!: number;
 
     @ManyToOne(() => Organisation, (org) => org.memberships, {
         eager: true,
@@ -48,9 +49,9 @@ export class OrganisationMembership {
     })
     organisation!: Organisation;
 
-    // @Column()
-    // @RelationId((membership: OrganisationMembership) => membership.organisation)
-    // public organisationId!: number;
+    @Column()
+    @RelationId((membership: OrganisationMembership) => membership.organisation)
+    public organisationId!: number;
 
     @OneToMany(() => MembershipRole, (role) => role.membership, {
         eager: true,
