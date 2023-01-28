@@ -13,10 +13,9 @@ import {Repository} from "typeorm";
 import CoreLoggerService from "../logger/CoreLoggerService";
 import {Email} from "./email.entity";
 import {EmailConfigurationService} from "./EmailConfigurationService";
-import {queueName} from "./smtp-email-client.module";
 
 @Injectable()
-@Processor(queueName)
+@Processor("smtp-emails")
 export class SmtpEmailHandler {
     constructor(
         private config: EmailConfigurationService,

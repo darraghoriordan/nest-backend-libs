@@ -4,7 +4,6 @@ import {Queue} from "bull";
 import {Request} from "express";
 import Stripe from "stripe";
 import CoreLoggerService from "../../logger/CoreLoggerService";
-import {queueName} from "../stripe-account.module";
 import {StripeClientConfigurationService} from "../StripeClientConfigurationService";
 
 export class StripeWebhookHandler {
@@ -13,7 +12,8 @@ export class StripeWebhookHandler {
         private readonly logger: CoreLoggerService,
         @Inject("StripeClient")
         private readonly clientInstance: Stripe,
-        @InjectQueue(queueName) private queue: Queue
+        @InjectQueue("stripe-events")
+        private queue: Queue
     ) {}
 
     public async handleWebhook(

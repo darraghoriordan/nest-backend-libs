@@ -11,7 +11,6 @@ import {StripeClientController} from "./stripe-controller";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {StripeCheckoutEvent} from "./entities/stripe-checkout-event.entity";
 
-export const queueName = "stripe-events";
 @Module({
     imports: [
         ConfigModule.forFeature(configVariables),

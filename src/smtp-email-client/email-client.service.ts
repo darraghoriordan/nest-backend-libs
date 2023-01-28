@@ -7,7 +7,6 @@ import {Repository} from "typeorm";
 import CoreLoggerService from "../logger/CoreLoggerService";
 import {Email} from "./email.entity";
 import {EmailConfigurationService} from "./EmailConfigurationService";
-import {queueName} from "./smtp-email-client.module";
 
 @Injectable()
 export class SmtpEmailClient {
@@ -17,7 +16,8 @@ export class SmtpEmailClient {
         private emailRepository: Repository<Email>,
         @Inject("SmtpEmailTransporter")
         private smtpEmailTransporter: Transporter,
-        @InjectQueue(queueName) private queue: Queue,
+        @InjectQueue("smtp-emails")
+        private queue: Queue,
         private config: EmailConfigurationService
     ) {}
 

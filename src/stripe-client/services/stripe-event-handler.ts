@@ -9,10 +9,9 @@ import {
 import {Job} from "bull";
 import CoreLoggerService from "../../logger/CoreLoggerService";
 import Stripe from "stripe";
-import {queueName} from "../stripe-account.module";
 
 @Injectable()
-@Processor(queueName)
+@Processor("stripe-events")
 // This should be provided manually to give the consumer ability to change logic
 // it is not part of this modules provided/exported services
 // eslint-disable-next-line @darraghor/nestjs-typed/injectable-should-be-provided

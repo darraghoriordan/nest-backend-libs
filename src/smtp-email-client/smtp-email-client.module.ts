@@ -11,7 +11,6 @@ import {EmailConfigurationService} from "./EmailConfigurationService";
 import configVariables from "./EmailConfigurationVariables";
 import {SmtpEmailHandler} from "./smtp-email-handler";
 
-export const queueName = "smtp-emails";
 @Module({
     imports: [
         ConfigModule.forFeature(configVariables),
