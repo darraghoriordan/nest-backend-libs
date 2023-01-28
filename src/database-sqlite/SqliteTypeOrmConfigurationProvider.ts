@@ -38,6 +38,7 @@ export class SqliteTypeOrmConfigurationProvider {
             moduleLocalPath: __dirname,
             migrationsPath,
             nodeModuleCorePath,
+            pwd: process.cwd(),
         });
 
         return {

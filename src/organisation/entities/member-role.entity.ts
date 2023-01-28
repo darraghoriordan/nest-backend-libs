@@ -5,11 +5,9 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
-    Index,
-    JoinColumn,
     ManyToOne,
     PrimaryGeneratedColumn,
-    RelationId,
+    //   RelationId,
     UpdateDateColumn,
 } from "typeorm";
 import {OrganisationMembership} from "./organisation-membership.entity";
@@ -24,13 +22,11 @@ export class MembershipRole {
         eager: true,
         cascade: true,
     })
-    @Index()
-    @JoinColumn()
     membership!: OrganisationMembership;
 
-    @Column()
-    @RelationId((membership: MembershipRole) => membership.membership)
-    public membershipId!: number;
+    // @Column()
+    // @RelationId((mr: MembershipRole) => mr.membership)
+    // public membershipId!: number;
 
     @Column()
     name!: string;

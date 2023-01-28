@@ -38,6 +38,7 @@ export class PostgresTypeOrmConfigurationProvider {
             moduleLocalDirName: __dirname,
             migrationsPath,
             nodeModuleCorePath,
+            pwd: process.cwd(),
         });
         // database url is used in dokku
         if (process.env.DATABASE_URL) {

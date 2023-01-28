@@ -9,12 +9,11 @@ import {
     DeleteDateColumn,
     Entity,
     Generated,
-    Index,
     OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
-import {Invitation} from "../../invitations/entities/invitation.entity";
+//import {Invitation} from "../../invitations/entities/invitation.entity";
 import {OrganisationMembership} from "./organisation-membership.entity";
 
 @Entity()
@@ -35,15 +34,14 @@ export class Organisation {
         eager: true,
         cascade: ["insert", "update"],
     })
-    @Index()
     memberships!: OrganisationMembership[];
 
-    @OneToMany(() => Invitation, (om) => om.organisation, {
-        eager: true,
-        cascade: ["insert", "update"],
-    })
-    @Index()
-    invitations!: Invitation[];
+    // @OneToMany(() => Invitation, (om) => om.organisation, {
+    //     eager: true,
+    //     cascade: ["insert", "update"],
+    // })
+    // @Index()
+    // invitations!: Invitation[];
 
     @Column()
     @ApiProperty()
