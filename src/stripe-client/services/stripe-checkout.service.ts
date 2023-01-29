@@ -3,8 +3,8 @@ import {Inject, Injectable} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import Stripe from "stripe";
 import {Repository} from "typeorm";
+import {RequestPerson} from "../../authz/RequestWithUser";
 import CoreLoggerService from "../../logger/CoreLoggerService";
-import {Person} from "../../person/entities/person.entity";
 import {StripeCheckoutEvent} from "../entities/stripe-checkout-event.entity";
 import {StripeCheckoutSessionRequestDto} from "../models/StripeCheckoutSessionRequestDto";
 import {StripeCheckoutSessionResponseDto} from "../models/StripeCheckoutSessionResponseDto";
@@ -24,7 +24,7 @@ export class StripeCheckoutService {
     }
 
     public async createCustomerPortalSession(parameters: {
-        user: Omit<Person, "nullChecks">;
+        user: RequestPerson;
     }) {
         // TODO: This is a hack to get the customer ID. We should be able to get it from the user.
         const customerId = parameters.user.auth0UserId;
@@ -36,6 +36,24 @@ export class StripeCheckoutService {
         );
 
         return session.url;
+    }
+
+    public async createAuthenticatedCheckoutSession(
+        parameters: StripeCheckoutSessionRequestDto,
+        user: RequestPerson
+    ): Promise<StripeCheckoutSessionResponseDto> {
+        const mappedParameters = {
+            mode: parameters.mode as unknown as Stripe.Checkout.SessionCreateParams.Mode,
+            client_reference_id: user.uuid,
+            line_items: parameters.lineItems,
+            customer_email: user.email,
+            success_url: `${this.stripeClientConfigurationService.stripeRedirectsBaseUrl}${parameters.successFrontendPath}`,
+            cancel_url: parameters.cancelFrontendPath
+                ? `${this.stripeClientConfigurationService.stripeRedirectsBaseUrl}${parameters.cancelFrontendPath}`
+                : undefined,
+        } as Stripe.Checkout.SessionCreateParams;
+
+        return this.createSession(mappedParameters);
     }
 
     public async createCheckoutSession(
@@ -51,6 +69,12 @@ export class StripeCheckoutService {
                 : undefined,
         } as Stripe.Checkout.SessionCreateParams;
 
+        return this.createSession(mappedParameters);
+    }
+
+    private async createSession(
+        mappedParameters: Stripe.Checkout.SessionCreateParams
+    ): Promise<StripeCheckoutSessionResponseDto> {
         const session = await this.clientInstance.checkout.sessions.create(
             mappedParameters
         );

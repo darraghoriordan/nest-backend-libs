@@ -5,9 +5,9 @@ import {Roles} from "../organisation/dto/RolesEnum";
 import {CreateInvitationDto} from "./dto/create-invitation.dto";
 import {Invitation} from "./entities/invitation.entity";
 import {SmtpEmailClient} from "../smtp-email-client/email-client.service";
-import {Person} from "../person/entities/person.entity";
 import {Organisation} from "../organisation/entities/organisation.entity";
 import {InvitationsConfigurationService} from "./InvitationConfigurationService";
+import {RequestPerson} from "../authz/RequestWithUser";
 
 @Injectable()
 export class InvitationService {
@@ -22,7 +22,7 @@ export class InvitationService {
 
     async create(
         createDto: CreateInvitationDto,
-        createdBy: Omit<Person, "nullChecks">
+        createdBy: RequestPerson
     ): Promise<Invitation> {
         const existingInvitations = await this.invitationRepository.find({
             where: {

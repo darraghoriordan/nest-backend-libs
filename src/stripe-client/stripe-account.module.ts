@@ -7,10 +7,11 @@ import {ConfigModule} from "@nestjs/config";
 import {CoreModule} from "../root-app/core-app.module";
 import {StripeClientProvider} from "./StripeClientProvider";
 import {BullModule} from "@nestjs/bull";
-import {StripeClientController} from "./stripe-controller";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {StripeCheckoutEvent} from "./entities/stripe-checkout-event.entity";
 import {StripeWebhookHandler} from "./services/stripe-webhook-handler.service";
+import {StripeWebhookController} from "./stripe-webhook-controller";
+import {StripeCustomerPortalController} from "./stripe-customer-Portal-controller";
 
 @Module({
     imports: [
@@ -28,6 +29,6 @@ import {StripeWebhookHandler} from "./services/stripe-webhook-handler.service";
         StripeWebhookHandler,
     ],
     exports: [StripeCheckoutService],
-    controllers: [StripeClientController],
+    controllers: [StripeWebhookController, StripeCustomerPortalController],
 })
 export class StripeAccountModule {}
