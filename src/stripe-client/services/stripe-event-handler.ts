@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicated-branches */
 import {Injectable} from "@nestjs/common";
 import {
     OnQueueActive,
@@ -47,6 +48,8 @@ export class StripeEventHandler {
     public async handleEvent(job: Job<Stripe.Event>): Promise<void> {
         const data = job.data.data;
         const eventType = job.data.type;
+
+        this.logger.log({data, eventType});
         // see - https://stripe.com/docs/billing/subscriptions/webhooks
         switch (eventType) {
             case "checkout.session.completed": {
@@ -54,7 +57,6 @@ export class StripeEventHandler {
                 // You should provision the subscription and save the customer ID to your database.
 
                 // e.g. set the billing status as paid until the next billing cycle + 1 or 2 days for grace period
-
                 // also called for payment links! - see https://stripe.com/docs/payments/checkout/fulfill-orders
                 return;
             }

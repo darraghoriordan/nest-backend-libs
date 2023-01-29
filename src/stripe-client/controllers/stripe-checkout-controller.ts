@@ -1,10 +1,10 @@
 import {UseGuards, Controller, Post, Body, Request} from "@nestjs/common";
 import {AuthGuard} from "@nestjs/passport";
 import {ApiBearerAuth, ApiTags, ApiOkResponse} from "@nestjs/swagger";
-import {RequestWithUser} from "../authz/RequestWithUser";
-import {StripeCheckoutSessionRequestDto} from "./models/StripeCheckoutSessionRequestDto";
-import {StripeCheckoutService} from "./services/stripe-checkout.service";
-import {StripeCheckoutSessionResponseDto} from "./models/StripeCheckoutSessionResponseDto";
+import {RequestWithUser} from "../../authz/RequestWithUser";
+import {StripeCheckoutSessionRequestDto} from "../models/StripeCheckoutSessionRequestDto";
+import {StripeCheckoutService} from "../services/stripe-checkout.service";
+import {StripeCheckoutSessionResponseDto} from "../models/StripeCheckoutSessionResponseDto";
 
 /**
  * This controller creates authenticated checkout sessions for Stripe.

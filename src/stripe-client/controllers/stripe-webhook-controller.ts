@@ -1,8 +1,7 @@
 import {Controller, Post, RawBodyRequest, Req} from "@nestjs/common";
-
 import {ApiTags, ApiOkResponse, ApiBadRequestResponse} from "@nestjs/swagger";
 import {Request as ExpressRequest} from "express";
-import {StripeWebhookHandler} from "./services/stripe-webhook-handler.service";
+import {StripeWebhookHandler} from "./../services/stripe-webhook-handler.service";
 
 /*
  * This is a controller that is used to receive webhooks from Stripe.

@@ -1,8 +1,8 @@
 import {UseGuards, Controller, Post, Request} from "@nestjs/common";
 import {AuthGuard} from "@nestjs/passport";
 import {ApiBearerAuth, ApiTags, ApiOkResponse} from "@nestjs/swagger";
-import {RequestWithUser} from "../authz/RequestWithUser";
-import {StripeCheckoutService} from "./services/stripe-checkout.service";
+import {RequestWithUser} from "../../authz/RequestWithUser";
+import {StripeCheckoutService} from "./../services/stripe-checkout.service";
 
 @Controller("payments/stripe")
 @ApiTags("payments")
