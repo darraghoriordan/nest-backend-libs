@@ -27,8 +27,6 @@ import {CliCommandService} from "./runningCommandLine/CliCommandService";
 import {ClaimsAuthorisationGuard} from "./authz/ClaimsAuthorisationGuard";
 import {MandatoryUserClaims} from "./authz/MandatoryUserClaims.decorator";
 //import {InvitationModule} from "./invitations/invitation.module";
-import {StripeAccountModule} from "./stripe-client/stripe-account.module";
-import {StripeEventHandler} from "./stripe-client/services/stripe-event-handler";
 
 export {
     CoreLoggerService,
@@ -59,6 +57,6 @@ export {
     ClaimsAuthorisationGuard,
     MandatoryUserClaims,
     // InvitationModule,
-    StripeAccountModule,
-    StripeEventHandler,
 };
+
+export * from "./stripe-client/index";

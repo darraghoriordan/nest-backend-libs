@@ -10,13 +10,7 @@ import {
     IsString,
     ValidateNested,
 } from "class-validator";
-
-export class StripeCheckoutLineItem {
-    @ApiProperty()
-    price!: string;
-    @ApiProperty()
-    quantity!: number;
-}
+import {StripeCheckoutLineItem} from "./StripeCheckoutLineItem";
 
 export class StripeCheckoutSessionRequestDto {
     @ApiPropertyOptional()
