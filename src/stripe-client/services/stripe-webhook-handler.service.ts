@@ -38,7 +38,9 @@ export class StripeWebhookHandler {
                 this.config.webhookVerificationKey
             );
 
-            await this.queue.add(event);
+            await this.queue.add(event, {
+                attempts: 2,
+            });
         } catch (error) {
             this.logger.error(`Webhook signature verification failed.`, error);
             throw new BadRequestException(

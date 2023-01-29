@@ -18,7 +18,7 @@ import {StripeCustomerPortalController} from "./controllers/stripe-customer-port
         ConfigModule.forFeature(configVariables),
         TypeOrmModule.forFeature([StripeCheckoutEvent]),
         CoreModule,
-        BullModule.registerQueue({
+        BullModule.registerQueueAsync({
             name: "stripe-events",
         }),
     ],
