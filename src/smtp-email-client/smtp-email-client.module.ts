@@ -16,7 +16,7 @@ import {SmtpEmailHandler} from "./smtp-email-handler";
         ConfigModule.forFeature(configVariables),
         LoggerModule,
         TypeOrmModule.forFeature([Email]),
-        BullModule.registerQueue({
+        BullModule.registerQueueAsync({
             name: "smtp-emails",
         }),
     ],
