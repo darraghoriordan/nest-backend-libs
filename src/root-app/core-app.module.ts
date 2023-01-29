@@ -39,7 +39,7 @@ import {BullModule} from "@nestjs/bull";
     ],
     controllers: [AppController],
     providers: [AppService, SwaggerGen],
-    exports: [SwaggerGen],
+    exports: [SwaggerGen, BullModule],
 })
 export class CoreModule {
     public static initApplication(
