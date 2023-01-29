@@ -27,6 +27,6 @@ import {SmtpEmailHandler} from "./smtp-email-handler";
         SmtpEmailHandler,
     ],
     controllers: [EmailClientController],
-    exports: [SmtpEmailClient],
+    exports: [SmtpEmailClient, BullModule],
 })
 export class SmtpEmailClientModule {}

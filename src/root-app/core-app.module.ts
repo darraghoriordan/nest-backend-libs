@@ -32,6 +32,7 @@ import {BullModule} from "@nestjs/bull";
             useFactory: async (configService: CoreConfigurationService) => ({
                 redis: {
                     host: configService.bullQueueHost,
+                    maxRetriesPerRequest: 2,
                 },
             }),
             inject: [CoreConfigurationService],

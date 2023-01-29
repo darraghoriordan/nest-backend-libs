@@ -28,7 +28,7 @@ import {StripeCustomerPortalController} from "./controllers/stripe-customer-port
         StripeCheckoutService,
         StripeWebhookHandler,
     ],
-    exports: [StripeCheckoutService],
+    exports: [StripeCheckoutService, BullModule],
     controllers: [StripeWebhookController, StripeCustomerPortalController],
 })
 export class StripeAccountModule {}
