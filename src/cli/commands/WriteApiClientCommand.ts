@@ -53,7 +53,9 @@ export class WriteApiClientCommand
         args: yargs.ArgumentsCamelCase<ArgumentsType>
     ): Promise<void> {
         // call the script
-
+        console.log(
+            "Starting api client write. Please be patient. This might take a minute..."
+        );
         const execPromise = util.promisify(exec);
         const commandArguments = [
             args.o,

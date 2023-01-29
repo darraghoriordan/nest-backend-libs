@@ -17,7 +17,7 @@ import {StripeCheckoutSessionResponseDto} from "./models/StripeCheckoutSessionRe
 export class StripeUnauthenticatedCheckoutController {
     constructor(private readonly stripeService: StripeCheckoutService) {}
 
-    @Post("checkout-session")
+    @Post("checkout-session-unauthenticated")
     @ApiOkResponse({type: StripeCheckoutSessionResponseDto})
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async createCheckoutSession(
