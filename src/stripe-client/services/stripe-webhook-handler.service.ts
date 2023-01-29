@@ -33,7 +33,7 @@ export class StripeWebhookHandler {
 
         try {
             const event = this.clientInstance.webhooks.constructEvent(
-                request.body as Buffer, // is a buffer according to nest docs
+                request.rawBody as Buffer, // is a buffer according to nest docs
                 signature,
                 this.config.webhookVerificationKey
             );

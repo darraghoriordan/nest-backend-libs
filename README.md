@@ -31,3 +31,20 @@ STRIPE_REDIRECTS_BASE_URL
 Why: To securely redirect the user to the correct website after checkout we don't use a full url
 in the request object, only a path which is combined with this base url
 Where: your frontend configuration
+
+### Testing
+
+https://stripe.com/docs/webhooks/test
+
+```bash
+brew install stripe/stripe-cli/stripe
+stripe login
+# setup webhook forwarding - change port to your BACKEND port
+ stripe listen --forward-to localhost:34522/payments/stripe/webhook-receiver
+
+# now you can test webhooks
+
+# if you like you can trigger a test webhook
+ stripe trigger checkout.session.completed
+ stripe trigger payment_intent.succeeded
+```
