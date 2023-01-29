@@ -9,4 +9,5 @@ export default registerAs("core", () => ({
     shouldUseNestCors: process.env.ENABLE_NEST_CORS,
     shouldAutomaticallyInstallApiModels: process.env.AUTO_INSTALL_API_MODELS,
     appTitle: process.env.APP_TITLE,
+    bullQueueHost: process.env.REDIS_URL,
 }));

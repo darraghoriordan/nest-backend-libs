@@ -19,12 +19,23 @@ import {CoreConfigurationService} from "../core-config/CoreConfigurationService"
 import {LoggingInterceptor} from "../logger/LoggingInterceptor";
 import {CoreConfigModule} from "../core-config/CoreConfig.module";
 import {ConfigModule} from "@nestjs/config";
+import {BullModule} from "@nestjs/bull";
 
 @Module({
     imports: [
         ConfigModule.forRoot({cache: true}),
         LoggerModule,
         CoreConfigModule,
+        BullModule.forRootAsync({
+            imports: [CoreConfigModule],
+            // eslint-disable-next-line @typescript-eslint/require-await
+            useFactory: async (configService: CoreConfigurationService) => ({
+                redis: {
+                    host: configService.bullQueueHost,
+                },
+            }),
+            inject: [CoreConfigurationService],
+        }),
     ],
     controllers: [AppController],
     providers: [AppService, SwaggerGen],

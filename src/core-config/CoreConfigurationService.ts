@@ -63,4 +63,10 @@ export class CoreConfigurationService extends ValidatedConfigurationService {
     get nodeEnv(): string {
         return this.configService.get<string>("core.nodeEnv")!;
     }
+
+    @IsDefined()
+    @IsString()
+    get bullQueueHost(): string {
+        return this.configService.get<string>("core.bullQueueHost")!;
+    }
 }
