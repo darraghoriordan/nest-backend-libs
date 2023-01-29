@@ -42,6 +42,7 @@ export class CoreModule {
             try {
                 const app = await NestFactory.create(rootModule, {
                     bodyParser: true,
+                    rawBody: true,
                 });
                 const loggerService = app.get(CoreLoggerService);
                 const configService = app.get(CoreConfigurationService);
