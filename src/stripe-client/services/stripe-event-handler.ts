@@ -49,7 +49,10 @@ export class StripeEventHandler {
         const data = job.data.data;
         const eventType = job.data.type;
 
-        this.logger.log({data, eventType});
+        this.logger.log("Handling queued item", {
+            eventType,
+            stripeSessionId: job.data.id,
+        });
         // see - https://stripe.com/docs/billing/subscriptions/webhooks
         switch (eventType) {
             case "checkout.session.completed": {
