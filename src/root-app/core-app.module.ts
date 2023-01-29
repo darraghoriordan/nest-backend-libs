@@ -27,28 +27,18 @@ import {BullModule} from "@nestjs/bull";
         LoggerModule,
         CoreConfigModule,
         BullModule.forRootAsync({
-            imports: [CoreConfigModule, LoggerModule],
+            imports: [CoreConfigModule],
 
             useFactory: async (
-                configService: CoreConfigurationService,
-                logger: CoreLoggerService
+                configService: CoreConfigurationService
+
                 // eslint-disable-next-line @typescript-eslint/require-await
             ) => {
-                console.log("BullModule configService.bullQueueHost", {
-                    queueHost: configService.bullQueueHost,
-                });
-                logger.log("BullModule configService.bullQueueHost", {
-                    queueHost: configService.bullQueueHost,
-                });
                 return {
-                    redis: {
-                        host: configService.bullQueueHost,
-                        commandTimeout: 500,
-                        maxRetriesPerRequest: 2,
-                    },
+                    redis: configService.bullQueueHost,
                 };
             },
-            inject: [CoreConfigurationService, CoreLoggerService],
+            inject: [CoreConfigurationService],
         }),
     ],
     controllers: [AppController],
