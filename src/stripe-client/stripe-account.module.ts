@@ -11,7 +11,7 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {StripeCheckoutEvent} from "./entities/stripe-checkout-event.entity";
 import {StripeWebhookHandler} from "./services/stripe-webhook-handler.service";
 import {StripeWebhookController} from "./stripe-webhook-controller";
-import {StripeCustomerPortalController} from "./stripe-customer-Portal-controller";
+import {StripeCustomerPortalController} from "./stripe-customer-portal-controller";
 
 @Module({
     imports: [
