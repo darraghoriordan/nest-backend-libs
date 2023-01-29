@@ -27,7 +27,7 @@ import {BullModule} from "@nestjs/bull";
         LoggerModule,
         CoreConfigModule,
         BullModule.forRootAsync({
-            imports: [CoreConfigModule],
+            imports: [CoreConfigModule, LoggerModule],
 
             useFactory: async (
                 configService: CoreConfigurationService,
@@ -48,7 +48,7 @@ import {BullModule} from "@nestjs/bull";
                     },
                 };
             },
-            inject: [CoreConfigurationService, LoggerModule],
+            inject: [CoreConfigurationService, CoreLoggerService],
         }),
     ],
     controllers: [AppController],
