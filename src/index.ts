@@ -3,10 +3,6 @@ import {RunningCommandLineModule} from "./runningCommandLine/RunningCommandLine.
 import {TwitterAccountModule} from "./twitter-client/twitter-account.module";
 import {SmtpEmailClientModule} from "./smtp-email-client/smtp-email-client.module";
 import {EUploadMimeType} from "twitter-api-v2";
-import {AuthzModule} from "./authz/authz.module";
-import {JwtStrategy} from "./authz/authzstrategy";
-import {DefaultAuthGuard} from "./authz/DefaultAuthGuard";
-import {RequestWithUser} from "./authz/RequestWithUser";
 import {ValidatedConfigurationService} from "./configuration/ValidatedConfigurationService";
 import {CoreConfigurationService} from "./core-config/CoreConfigurationService";
 import {PostgresDatabaseModule} from "./database-postgres/PostgresDatabase.module";
@@ -15,19 +11,12 @@ import {SqliteDatabaseModule} from "./database-sqlite/SqliteDatabase.module";
 import {SqliteDatabaseConfigurationService} from "./database-sqlite/SqliteDatabaseConfigurationService";
 import {SmtpEmailClient} from "./smtp-email-client/email-client.service";
 import CoreLoggerService from "./logger/CoreLoggerService";
-import {OrganisationModule} from "./organisation/organisation.module";
-import {Person} from "./person/entities/person.entity";
-import {PersonModule} from "./person/person.module";
-import {PersonService} from "./person/person.service";
+
 import {CoreModule} from "./root-app/core-app.module";
 import {SwaggerGen} from "./root-app/SwaggerGen";
 import {TwitterClientService} from "./twitter-client/services/twitter-client.service";
 import {CoreConfigModule} from "./core-config/CoreConfig.module";
 import {CliCommandService} from "./runningCommandLine/CliCommandService";
-import {ClaimsAuthorisationGuard} from "./authz/ClaimsAuthorisationGuard";
-import {MandatoryUserClaims} from "./authz/MandatoryUserClaims.decorator";
-import {OrganisationMembershipsModule} from "./organisation-memberships/organisation-memberships.module";
-//import {InvitationModule} from "./invitations/invitation.module";
 
 export {
     CoreLoggerService,
@@ -36,18 +25,10 @@ export {
     CoreModule,
     CoreConfigModule,
     SwaggerGen,
-    DefaultAuthGuard,
     PostgresDatabaseModule as DatabaseModule,
-    JwtStrategy,
-    AuthzModule,
-    Person,
     PostgresTypeOrmConfigurationProvider as TypeOrmConfigurationProvider,
     SmtpEmailClient,
     ValidatedConfigurationService,
-    RequestWithUser,
-    PersonModule,
-    OrganisationModule,
-    PersonService,
     SqliteDatabaseModule,
     SqliteDatabaseConfigurationService,
     TwitterClientService,
@@ -55,11 +36,12 @@ export {
     EUploadMimeType,
     RunningCommandLineModule,
     CliCommandService,
-    ClaimsAuthorisationGuard,
-    MandatoryUserClaims,
-    OrganisationMembershipsModule,
-    // InvitationModule,
 };
 
 export * from "./stripe-client/index";
 export * from "./organisation-memberships/index";
+export * from "./organisation-subscriptions/index";
+export * from "./organisation/index";
+export * from "./authz/index";
+export * from "./invitations/index";
+export * from "./person/index";
