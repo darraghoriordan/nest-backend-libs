@@ -4,7 +4,7 @@ import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
 import {SmtpEmailClient} from "./email-client.service";
 
 @ApiBearerAuth()
-@ApiTags("email-client")
+@ApiTags("Email-client")
 @UseGuards(AuthGuard("jwt"))
 @Controller("email-client")
 export class EmailClientController {

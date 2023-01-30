@@ -12,12 +12,14 @@ import {StripeCheckoutEvent} from "./entities/stripe-checkout-event.entity";
 import {StripeWebhookHandler} from "./services/stripe-webhook-handler.service";
 import {StripeWebhookController} from "./controllers/stripe-webhook-controller";
 import {StripeCustomerPortalController} from "./controllers/stripe-customer-portal-controller";
+import {OrganisationSubscriptionsModule} from "../organisation-subscriptions/organisation-subscriptions.module";
 
 @Module({
     imports: [
         ConfigModule.forFeature(configVariables),
         TypeOrmModule.forFeature([StripeCheckoutEvent]),
         CoreModule,
+        OrganisationSubscriptionsModule,
         BullModule.registerQueueAsync({
             name: "stripe-events",
         }),

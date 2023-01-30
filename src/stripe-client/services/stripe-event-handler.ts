@@ -106,6 +106,15 @@ export class StripeEventHandler {
                 // This approach helps you avoid hitting rate limits.
 
                 // e.g. set the billing status as paid until the next billing cycle + 1 or 2 days for grace period
+                // get the subscription via the invoice.subscription property
+                /*
+get an instance of the OrganisationSubscriptionService and save a new record. this will be checked later
+
+
+                use the subscription.current_period_end + 2 days as the next valid to.
+End of the current period that the subscription has been invoiced for. At the end of this period, a new invoice will be created.
+                */
+
                 return;
             }
             case "customer.subscription.trial_will_end": {

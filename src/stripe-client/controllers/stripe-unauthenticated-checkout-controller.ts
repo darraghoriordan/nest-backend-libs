@@ -12,7 +12,7 @@ import {StripeCheckoutSessionResponseDto} from "./../models/StripeCheckoutSessio
  * This is not automatically included in the StripeClientModule.
  */
 @Controller("payments/stripe")
-@ApiTags("payments")
+@ApiTags("Payments")
 // eslint-disable-next-line @darraghor/nestjs-typed/injectable-should-be-provided
 export class StripeUnauthenticatedCheckoutController {
     constructor(private readonly stripeService: StripeCheckoutService) {}

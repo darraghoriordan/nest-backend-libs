@@ -9,11 +9,13 @@ import {
     DeleteDateColumn,
     Entity,
     Generated,
+    Index,
     OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
 import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity";
+import {OrganisationSubscriptionRecord} from "../../organisation-subscriptions/entities/organisation-subscription.entity";
 
 @Entity()
 export class Organisation {
@@ -27,12 +29,22 @@ export class Organisation {
     })
     @Generated("uuid")
     @ApiProperty()
+    @Index()
     public uuid!: string;
 
     @OneToMany(() => OrganisationMembership, (om) => om.organisation, {
         cascade: ["insert", "update"],
     })
     memberships!: OrganisationMembership[];
+
+    @OneToMany(
+        () => OrganisationSubscriptionRecord,
+        (osr) => osr.organisation,
+        {
+            cascade: ["insert", "update"],
+        }
+    )
+    subscriptionRecords!: OrganisationSubscriptionRecord[];
 
     @Column()
     @ApiProperty()

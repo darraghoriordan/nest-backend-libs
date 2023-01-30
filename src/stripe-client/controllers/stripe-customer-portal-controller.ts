@@ -5,7 +5,7 @@ import {RequestWithUser} from "../../authz/RequestWithUser";
 import {StripeCheckoutService} from "./../services/stripe-checkout.service";
 
 @Controller("payments/stripe")
-@ApiTags("payments")
+@ApiTags("Payments")
 export class StripeCustomerPortalController {
     constructor(private readonly stripeService: StripeCheckoutService) {}
 

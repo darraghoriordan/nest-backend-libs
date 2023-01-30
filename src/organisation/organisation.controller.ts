@@ -18,7 +18,7 @@ import {RequestWithUser} from "../authz/RequestWithUser";
 @UseGuards(AuthGuard("jwt"))
 @ApiBearerAuth()
 @Controller("organisation")
-@ApiTags("organisations")
+@ApiTags("Organisations")
 export class OrganisationController {
     constructor(private readonly organisationService: OrganisationService) {}
 

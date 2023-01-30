@@ -6,9 +6,9 @@ import {
     Delete,
     UseGuards,
     Post,
+    Get,
 } from "@nestjs/common";
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
-
 import {AuthGuard} from "@nestjs/passport";
 import {RequestWithUser} from "../authz/RequestWithUser";
 import {OrganisationMembershipsService} from "./organisation-memberships.service";
@@ -18,9 +18,18 @@ import {CreateUpdateMembershipDto} from "./dtos/create-membership-dto";
 @UseGuards(AuthGuard("jwt"))
 @ApiBearerAuth()
 @Controller("organisation/:orgUuid/memberships")
-@ApiTags("organisations")
+@ApiTags("Organisations")
 export class OrganisationMembershipsController {
     constructor(private readonly omService: OrganisationMembershipsService) {}
+
+    @Get()
+    @ApiOkResponse({type: [Organisation]})
+    async findAll(
+        @Param("orgUuid") orgUuid: string,
+        @Request() request: RequestWithUser
+    ) {
+        return this.omService.findAllForOrgUser(orgUuid, request.user.id);
+    }
 
     @Post()
     @ApiOkResponse({type: Organisation})
@@ -37,7 +46,7 @@ export class OrganisationMembershipsController {
     }
 
     @Delete(":membershipUuid")
-    @ApiOkResponse({type: Organisation})
+    @ApiOkResponse({type: Boolean})
     async remove(
         @Param("orgUuid") orgUuid: string,
         @Param("membershipUuid") membershipUuid: string,

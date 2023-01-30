@@ -19,7 +19,7 @@ import {CreateInvitationDto} from "./dto/create-invitation.dto";
 @UseGuards(AuthGuard("jwt"))
 @ApiBearerAuth()
 @Controller("organisations/invitations")
-@ApiTags("organisations")
+@ApiTags("Organisations")
 export class InvitationController {
     constructor(private readonly invitationService: InvitationService) {}
 

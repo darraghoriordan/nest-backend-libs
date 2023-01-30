@@ -9,6 +9,7 @@ import {
     DeleteDateColumn,
     Entity,
     Generated,
+    Index,
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
@@ -31,6 +32,7 @@ export class OrganisationMembership {
     })
     @Generated("uuid")
     @ApiProperty()
+    @Index()
     public uuid!: string;
 
     @ManyToOne(() => Person, (person) => person.memberships, {

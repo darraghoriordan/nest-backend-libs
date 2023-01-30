@@ -32,6 +32,7 @@ export class Person {
     })
     @Generated("uuid")
     @ApiProperty()
+    @Index()
     public uuid!: string;
 
     @ApiProperty()

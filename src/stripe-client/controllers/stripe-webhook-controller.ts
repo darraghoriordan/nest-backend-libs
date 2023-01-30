@@ -9,7 +9,7 @@ import {StripeWebhookHandler} from "./../services/stripe-webhook-handler.service
  * It is automatically registered by the StripeClientModule.
  */
 @Controller("payments/stripe")
-@ApiTags("payments")
+@ApiTags("Payments")
 export class StripeWebhookController {
     constructor(private readonly stripeWebhookService: StripeWebhookHandler) {}
 

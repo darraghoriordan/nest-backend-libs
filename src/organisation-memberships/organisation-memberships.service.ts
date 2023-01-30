@@ -16,6 +16,29 @@ export class OrganisationMembershipsService {
         private membershipRepo: Repository<OrganisationMembership>
     ) {}
 
+    async findAllForOrgUser(
+        orgUuid: string,
+        currentUserId: number
+    ): Promise<OrganisationMembership[]> {
+        // no paging here ... yet!
+        const memberships = await this.membershipRepo.find({
+            where: {
+                organisation: {
+                    uuid: orgUuid,
+                },
+            },
+        });
+
+        // is the person a member of the organisation?
+        const isAMember = memberships.some(
+            (m) => m.person.id === currentUserId
+        );
+
+        if (!isAMember) {
+            throw new Error("You are not a member of this organisation");
+        }
+        return memberships;
+    }
     async createOrUpdate(
         orgUuid: string,
         createOmDto: CreateUpdateMembershipDto,
