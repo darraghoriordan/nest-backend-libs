@@ -8,6 +8,7 @@ import {
     Generated,
     ManyToOne,
     PrimaryGeneratedColumn,
+    RelationId,
     UpdateDateColumn,
 } from "typeorm";
 import {Organisation} from "../../organisation/entities/organisation.entity";
@@ -47,10 +48,12 @@ export class Invitation {
     acceptedOn?: Date;
 
     @ApiProperty()
-    @ManyToOne(() => Organisation, {
-        eager: true,
-    })
+    @ManyToOne(() => Organisation, {})
     organisation!: Organisation;
+
+    @ApiProperty()
+    @RelationId((invitation: Invitation) => invitation.organisation)
+    organisationId!: Organisation;
 
     @CreateDateColumn()
     @ApiProperty()

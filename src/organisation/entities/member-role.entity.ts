@@ -10,7 +10,7 @@ import {
     RelationId,
     UpdateDateColumn,
 } from "typeorm";
-import {OrganisationMembership} from "./organisation-membership.entity";
+import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity";
 
 @Entity()
 export class MembershipRole {

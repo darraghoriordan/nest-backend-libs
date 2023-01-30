@@ -15,7 +15,7 @@ A controller to generate a customer portal session for authenticated users is ad
 
 A controller to create a checkout session for either Authenticated or Unauthenticated users (your choice if you want your front end app to force users to auth or not)
 
-A handler for the webhook queue events (you can use the example directly in Miller if you haven't modified anything)
+A handler for the webhook queue events. You can see an example `StripeEventHandler` in Miller but you will probably want to do different actions for your customers.
 
 ### Env vars
 

@@ -15,9 +15,9 @@ import {
     RelationId,
     UpdateDateColumn,
 } from "typeorm";
+import {MembershipRole} from "../../organisation/entities/member-role.entity";
 import {Organisation} from "../../organisation/entities/organisation.entity";
 import {Person} from "../../person/entities/person.entity";
-import {MembershipRole} from "./member-role.entity";
 
 @Entity()
 export class OrganisationMembership {
@@ -53,6 +53,7 @@ export class OrganisationMembership {
     @RelationId((membership: OrganisationMembership) => membership.organisation)
     public organisationId!: number;
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     @OneToMany(() => MembershipRole, (role) => role.membership, {
         eager: true,
         cascade: true,

@@ -1,6 +1,6 @@
 import {Injectable} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import {Repository} from "typeorm";
+import {MoreThan, Repository} from "typeorm";
 import {Roles} from "../organisation/dto/RolesEnum";
 import {CreateInvitationDto} from "./dto/create-invitation.dto";
 import {Invitation} from "./entities/invitation.entity";
@@ -30,13 +30,12 @@ export class InvitationService {
                 organisation: {
                     id: createDto.organisationId,
                 },
+                // and it's not expired
+                expiresOn: MoreThan(new Date()),
             },
         });
 
-        const hasUnexpiredInvitations = existingInvitations.some(
-            (invitation) => invitation.expiresOn > new Date()
-        );
-        if (hasUnexpiredInvitations) {
+        if (existingInvitations) {
             throw new Error(
                 "An valid invitation already exists for this email address for this organisation"
             );

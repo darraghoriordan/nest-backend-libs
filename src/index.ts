@@ -26,6 +26,7 @@ import {CoreConfigModule} from "./core-config/CoreConfig.module";
 import {CliCommandService} from "./runningCommandLine/CliCommandService";
 import {ClaimsAuthorisationGuard} from "./authz/ClaimsAuthorisationGuard";
 import {MandatoryUserClaims} from "./authz/MandatoryUserClaims.decorator";
+import {OrganisationMembershipsModule} from "./organisation-memberships/organisation-memberships.module";
 //import {InvitationModule} from "./invitations/invitation.module";
 
 export {
@@ -56,7 +57,9 @@ export {
     CliCommandService,
     ClaimsAuthorisationGuard,
     MandatoryUserClaims,
+    OrganisationMembershipsModule,
     // InvitationModule,
 };
 
 export * from "./stripe-client/index";
+export * from "./organisation-memberships/index";

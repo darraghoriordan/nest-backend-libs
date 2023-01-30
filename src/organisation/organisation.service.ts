@@ -1,11 +1,11 @@
 import {Injectable} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {DeleteResult, Repository, UpdateResult} from "typeorm";
+import {OrganisationMembership} from "../organisation-memberships/entities/organisation-membership.entity";
 import {CreateOrganisationDto} from "./dto/create-organisation.dto";
 import {Roles} from "./dto/RolesEnum";
 import {UpdateOrganisationDto} from "./dto/update-organisation.dto";
 import {MembershipRole} from "./entities/member-role.entity";
-import {OrganisationMembership} from "./entities/organisation-membership.entity";
 import {Organisation} from "./entities/organisation.entity";
 
 @Injectable()

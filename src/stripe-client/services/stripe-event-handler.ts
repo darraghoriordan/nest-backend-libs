@@ -13,34 +13,31 @@ import Stripe from "stripe";
 
 @Injectable()
 @Processor("stripe-events")
-// This should be provided manually to give the consumer ability to change logic
-// it is not part of this modules provided/exported services
+// This is just an example with notes. You should create your own handler
+//
 // eslint-disable-next-line @darraghor/nestjs-typed/injectable-should-be-provided
 export class StripeEventHandler {
     constructor(private readonly logger: CoreLoggerService) {}
     @OnQueueFailed()
-    onError(job: Job<Stripe.Event>, error: any) {
+    onError(job: Job<Stripe.Event>, error: Error) {
         this.logger.error(
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unsafe-member-access
             `Failed job ${job.id} of type ${job.name}: ${error.message as any}`,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            error.stack
+            {errorStack: error}
         );
     }
 
     @OnQueueActive()
     // eslint-disable-next-line sonarjs/no-identical-functions
     onActive(job: Job<Stripe.Event>) {
-        this.logger.log(`Active job ${job.id} of type ${job.name}`, job.data);
+        this.logger.log(`Active job ${job.id} of type ${job.name}`);
     }
 
     @OnQueueCompleted()
     // eslint-disable-next-line sonarjs/no-identical-functions
     onComplete(job: Job<Stripe.Event>) {
-        this.logger.log(
-            `Completed job ${job.id} of type ${job.name}`,
-            job.data
-        );
+        this.logger.log(`Completed job ${job.id} of type ${job.name}`);
     }
 
     // eslint-disable-next-line @typescript-eslint/require-await
@@ -56,11 +53,18 @@ export class StripeEventHandler {
         // see - https://stripe.com/docs/billing/subscriptions/webhooks
         switch (eventType) {
             case "checkout.session.completed": {
-                // Payment is successful and the subscription is created.
+                // Payment is successful and for example the subscription can be created.
                 // You should provision the subscription and save the customer ID to your database.
 
                 // e.g. set the billing status as paid until the next billing cycle + 1 or 2 days for grace period
                 // also called for payment links! - see https://stripe.com/docs/payments/checkout/fulfill-orders
+
+                /*
+                this object has customer_details.email
+                payment_status: 'paid',
+                status: 'complete',
+                */
+
                 return;
             }
             case "checkout.session.async_payment_succeeded": {
@@ -71,6 +75,31 @@ export class StripeEventHandler {
                 // Payment link payment is NOT successful for async payment methods. (bank drafts, etc.)
                 return;
             }
+            case "charge.succeeded": {
+                // Payment is successful.
+                /*
+                event.data.object is the main model
+
+                object.object = "charge" has these fields
+
+               billing_details.email = dar@gmail.com
+               paid: true
+               receipt_url: <a url>
+
+               this was followed by a payment_intent.succeeded event - no billing deets present
+               lastly a checkout.session.completed event
+                */
+                return;
+            }
+            case "payment_intent.succeeded": {
+                // These are triggered but you can use the checkout.session.completed event instead
+                return;
+            }
+            case "payment_intent.created": {
+                // These are triggered but you can use the checkout.session.completed event instead
+                return;
+            }
+
             case "invoice.paid": {
                 // Continue to provision the subscription as payments continue to be made.
                 // Store the status in your database and check when a user accesses your service.
@@ -86,6 +115,7 @@ export class StripeEventHandler {
 
             case "invoice.payment_failed": {
                 // The payment failed or the customer does not have a valid payment method.
+
                 // The subscription becomes past_due. Notify your customer and send them to the
                 // customer portal to update their payment information.
                 return;
@@ -106,7 +136,7 @@ export class StripeEventHandler {
             }
             case "customer.subscription.updated": {
                 /**
-                 * 	Sent when the subscription is successfully started, after the payment is confirmed.
+                 * Sent when the subscription is successfully started, after the payment is confirmed.
                  * Also sent whenever a subscription is changed.
                  * For example, adding a coupon, applying a discount,
                  * adding an invoice item, and changing plans all trigger this event.

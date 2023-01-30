@@ -4,12 +4,14 @@ import {OrganisationController} from "./organisation.controller";
 import {LoggerModule} from "../logger/logger.module";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {Organisation} from "./entities/organisation.entity";
-import {OrganisationMembership} from "./entities/organisation-membership.entity";
 import {MembershipRole} from "./entities/member-role.entity";
+import {OrganisationMembership} from "../organisation-memberships/entities/organisation-membership.entity";
+import {OrganisationMembershipsModule} from "../organisation-memberships/organisation-memberships.module";
 
 @Module({
     imports: [
         LoggerModule,
+        OrganisationMembershipsModule,
         TypeOrmModule.forFeature([
             Organisation,
             OrganisationMembership,
