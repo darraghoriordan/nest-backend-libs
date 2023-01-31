@@ -4,13 +4,14 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {OrganisationSubscriptionService} from "./organisation-subscriptions.service";
 import {Organisation} from "../organisation/entities/organisation.entity";
 import {OrganisationSubscriptionsController} from "./organisation-subscriptions.controller";
+import {OrganisationSubscriptionRecord} from "./entities/organisation-subscription.entity";
 
 @Module({
     imports: [
         LoggerModule,
         TypeOrmModule.forFeature([
             Organisation,
-            OrganisationSubscriptionService,
+            OrganisationSubscriptionRecord,
         ]),
     ],
     controllers: [OrganisationSubscriptionsController],
