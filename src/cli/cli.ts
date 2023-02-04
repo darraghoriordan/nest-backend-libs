@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import "reflect-metadata";
-import yargs from "yargs";
+import * as yargs from "yargs";
 import {WriteApiClientCommand} from "./commands/WriteApiClientCommand";
 
 void yargs

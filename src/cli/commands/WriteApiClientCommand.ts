@@ -50,7 +50,7 @@ export class WriteApiClientCommand
 
     async handler(
         // eslint-disable-next-line unicorn/prevent-abbreviations
-        args: yargs.ArgumentsCamelCase<ArgumentsType>
+        args: yargs.ArgumentsCamelCase<any> // this breaks if i use ArgumentsType but change back for dev
     ): Promise<void> {
         // call the script
         console.log(

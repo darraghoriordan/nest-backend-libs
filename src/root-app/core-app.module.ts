@@ -21,6 +21,7 @@ import {LoggingInterceptor} from "../logger/LoggingInterceptor";
 import {CoreConfigModule} from "../core-config/CoreConfig.module";
 import {ConfigModule} from "@nestjs/config";
 import {BullModule} from "@nestjs/bull";
+import {HealthModule} from "../health/Health.module";
 
 @Module({
     imports: [
@@ -41,6 +42,7 @@ import {BullModule} from "@nestjs/bull";
             },
             inject: [CoreConfigurationService],
         }),
+        HealthModule,
     ],
     controllers: [AppController],
     providers: [AppService, SwaggerGen],
