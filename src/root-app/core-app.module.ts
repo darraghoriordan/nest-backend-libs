@@ -36,8 +36,17 @@ import {HealthModule} from "../health/Health.module";
 
                 // eslint-disable-next-line @typescript-eslint/require-await
             ) => {
+                const redisUrl = new URL(
+                    configService.bullQueueHost || "redis://localhost"
+                );
                 return {
-                    redis: configService.bullQueueHost,
+                    redis: {
+                        host: redisUrl.hostname,
+                        password: redisUrl.password,
+                        port: Number(redisUrl.port),
+                        username: redisUrl.username,
+                        maxRetriesPerRequest: 3,
+                    },
                 };
             },
             inject: [CoreConfigurationService],

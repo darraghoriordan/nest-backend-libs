@@ -1,5 +1,5 @@
 import {Controller, Get} from "@nestjs/common";
-import {Transport} from "@nestjs/microservices";
+import {RedisOptions, Transport} from "@nestjs/microservices";
 import {ApiOkResponse, ApiTags} from "@nestjs/swagger";
 import {
     HealthCheckService,
@@ -24,6 +24,7 @@ export class HealthController {
     @HealthCheck()
     @ApiOkResponse()
     async check(): Promise<HealthCheckResult> {
+        const redisUrl = new URL(process.env.REDIS_URL || "redis://localhost");
         return this.health.check([
             () =>
                 this.http.pingCheck(
@@ -37,9 +38,14 @@ export class HealthController {
                 ),
             () => this.database.pingCheck("app-database"),
             () =>
-                this.microservice.pingCheck("app-redis", {
+                this.microservice.pingCheck<RedisOptions>("app-redis", {
                     transport: Transport.REDIS,
-                    options: {url: process.env.REDIS_URL},
+                    options: {
+                        host: redisUrl.hostname,
+                        password: redisUrl.password,
+                        port: Number(redisUrl.port),
+                        username: redisUrl.username,
+                    },
                 }),
         ]);
     }
