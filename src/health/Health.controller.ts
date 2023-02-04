@@ -1,4 +1,5 @@
 import {Controller, Get} from "@nestjs/common";
+import {Transport} from "@nestjs/microservices";
 import {ApiOkResponse, ApiTags} from "@nestjs/swagger";
 import {
     HealthCheckService,
@@ -6,6 +7,7 @@ import {
     HealthCheck,
     HealthCheckResult,
     TypeOrmHealthIndicator,
+    MicroserviceHealthIndicator,
 } from "@nestjs/terminus";
 
 @Controller("health")
@@ -14,7 +16,8 @@ export class HealthController {
     constructor(
         private health: HealthCheckService,
         private http: HttpHealthIndicator,
-        private database: TypeOrmHealthIndicator
+        private database: TypeOrmHealthIndicator,
+        private microservice: MicroserviceHealthIndicator
     ) {}
 
     @Get()
@@ -33,6 +36,11 @@ export class HealthController {
                     process.env.BACKEND_APP_URL || "http://localhost"
                 ),
             () => this.database.pingCheck("app-database"),
+            () =>
+                this.microservice.pingCheck("app-redis", {
+                    transport: Transport.REDIS,
+                    options: {url: process.env.REDIS_URL},
+                }),
         ]);
     }
 }

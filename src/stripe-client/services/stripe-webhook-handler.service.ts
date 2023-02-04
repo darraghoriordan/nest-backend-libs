@@ -37,7 +37,9 @@ export class StripeWebhookHandler {
                 signature,
                 this.config.webhookVerificationKey
             );
-
+            this.logger.log(
+                "stripe event verified, attempting to add to queue"
+            );
             await this.queue.add(event, {
                 attempts: 2,
             });
