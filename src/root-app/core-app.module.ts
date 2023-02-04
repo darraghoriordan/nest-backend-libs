@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import "reflect-metadata";
+import helmet from "helmet";
 import {
     ClassSerializerInterceptor,
     INestApplication,
@@ -62,7 +63,7 @@ export class CoreModule {
                 const loggerService = app.get(CoreLoggerService);
                 const configService = app.get(CoreConfigurationService);
                 app.useLogger(loggerService);
-
+                app.use(helmet());
                 app.enableCors({origin: configService.frontEndAppUrl});
                 app.useGlobalPipes(
                     new ValidationPipe({
@@ -87,7 +88,7 @@ export class CoreModule {
                 loggerService.log(
                     `swagger will be available at (DEV: http://localhost:${configService.webPort}/swagger )`
                 );
-
+                app.enableShutdownHooks();
                 await callback(app);
             } catch (initialisationError) {
                 // we don't use logger service in case that is broken at initialisation
