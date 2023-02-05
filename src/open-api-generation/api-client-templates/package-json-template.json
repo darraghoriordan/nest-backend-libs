@@ -8,7 +8,7 @@
     "typings": "dist/index.d.ts",
     "scripts": {
         "build": "tsc",
-        "prepare": "yarn build"
+        "prepare": "pnpm build"
     },
     "devDependencies": {
         "typescript": "^3.9.5"
