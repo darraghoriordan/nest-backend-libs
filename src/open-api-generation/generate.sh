@@ -5,14 +5,14 @@ npx @openapitools/openapi-generator-cli generate -i ./open-api/swagger.json -g t
 cp ./node_modules/@darraghor/nest-backend-libs/dist/open-api-generation/api-client-templates/api-client-ts-config-template.json $1/tsconfig.json
 cp ./node_modules/@darraghor/nest-backend-libs/dist/open-api-generation/api-client-templates/package-json-template.json $1/package.json
 cd $1
-yarn
+pnpm install -r
 
-# install latest into the client
-cd $2
-rm -rf ./node_modules/shared-api-client
-yarn install --check-files
+# # install latest into the client
+# cd $2
+# rm -rf ./node_modules/shared-api-client
+# pnpm install --check-files
 
-# install latest into the e2e tests
-cd $3
-rm -rf ./node_modules/shared-api-client
-yarn install --check-files
+# # install latest into the e2e tests
+# cd $3
+# rm -rf ./node_modules/shared-api-client
+# pnpm install --check-files
