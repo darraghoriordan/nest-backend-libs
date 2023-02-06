@@ -21,7 +21,7 @@ import {RequestWithUser} from "../authz/RequestWithUser";
 export class PersonController {
     constructor(private readonly personService: PersonService) {}
 
-    @Get()
+    @Get("me")
     @ApiOkResponse({type: Person})
     async findSelf(@Request() request: RequestWithUser) {
         return this.personService.findOne(request.user.id);
