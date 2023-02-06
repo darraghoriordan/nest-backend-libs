@@ -7,6 +7,7 @@ import {
     Param,
     Delete,
     UseGuards,
+    BadRequestException,
 } from "@nestjs/common";
 import {PersonService} from "./person.service";
 import {UpdatePersonDto} from "./dto/update-person.dto";
@@ -14,6 +15,7 @@ import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
 import {Person} from "./entities/person.entity";
 import {AuthGuard} from "@nestjs/passport";
 import {RequestWithUser} from "../authz/RequestWithUser";
+import {isUUID} from "class-validator";
 @UseGuards(AuthGuard("jwt"))
 @ApiBearerAuth()
 @Controller("person")
@@ -29,6 +31,9 @@ export class PersonController {
     ) {
         if (uuid === "me") {
             return this.personService.findOne(request.user.id);
+        }
+        if (isUUID(uuid, "4")) {
+            throw new BadRequestException(uuid, "Invalid UUID");
         }
 
         // find the person if they are in the same organisation as the user
