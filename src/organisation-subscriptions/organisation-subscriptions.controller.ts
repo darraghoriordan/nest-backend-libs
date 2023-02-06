@@ -37,7 +37,10 @@ export class OrganisationSubscriptionsController {
     @MandatoryUserClaims("modify:all")
     @Post()
     @ApiOkResponse({type: OrganisationSubscriptionRecord})
-    async addSubscription(@Body() body: SaveOrganisationSubscriptionRecordDto) {
+    async addSubscription(
+        @Param("orgUuid") orgUuid: string,
+        @Body() body: SaveOrganisationSubscriptionRecordDto
+    ) {
         return this.osrService.create(body);
     }
 
@@ -46,6 +49,7 @@ export class OrganisationSubscriptionsController {
     @ApiOkResponse({type: OrganisationSubscriptionRecord})
     async updateSubscription(
         @Param("uuid") subUuid: string,
+        @Param("orgUuid") orgUuid: string,
         @Body() body: SaveOrganisationSubscriptionRecordDto
     ) {
         return this.osrService.update(subUuid, body);
@@ -53,7 +57,10 @@ export class OrganisationSubscriptionsController {
     @MandatoryUserClaims("modify:all")
     @Delete(":uuid")
     @ApiOkResponse({type: [OrganisationSubscriptionRecord]})
-    async deleteSubscription(@Param("uuid") uuid: string) {
+    async deleteSubscription(
+        @Param("orgUuid") orgUuid: string,
+        @Param("uuid") uuid: string
+    ) {
         return this.osrService.delete(uuid);
     }
 }
