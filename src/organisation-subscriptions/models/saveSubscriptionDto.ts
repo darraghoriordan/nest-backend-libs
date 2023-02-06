@@ -1,6 +1,6 @@
 import {ApiProperty} from "@nestjs/swagger";
 import {Transform, Type} from "class-transformer";
-import {IsDateString, IsString} from "class-validator";
+import {IsDate, IsString} from "class-validator";
 
 export class SaveOrganisationSubscriptionRecordDto {
     @ApiProperty()
@@ -15,9 +15,9 @@ export class SaveOrganisationSubscriptionRecordDto {
     @IsString()
     stripePriceId!: string;
 
-    @ApiProperty()
-    @Transform(() => Date)
+    @Transform(({value}) => new Date(value as string))
     @Type(() => Date)
-    @IsDateString()
+    @IsDate()
+    @ApiProperty({type: Date})
     validUntil!: Date;
 }
