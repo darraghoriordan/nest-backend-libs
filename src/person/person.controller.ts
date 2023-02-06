@@ -32,7 +32,7 @@ export class PersonController {
         if (uuid === "me") {
             return this.personService.findOne(request.user.id);
         }
-        if (isUUID(uuid, "4")) {
+        if (!isUUID(uuid, "4")) {
             throw new BadRequestException(uuid, "Invalid UUID");
         }
 
