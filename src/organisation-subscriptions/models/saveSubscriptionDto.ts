@@ -1,6 +1,6 @@
 import {ApiProperty} from "@nestjs/swagger";
 import {Transform, Type} from "class-transformer";
-import {IsDate, IsString} from "class-validator";
+import {IsDateString, IsString} from "class-validator";
 
 export class SaveOrganisationSubscriptionRecordDto {
     @ApiProperty()
@@ -18,6 +18,6 @@ export class SaveOrganisationSubscriptionRecordDto {
     @ApiProperty()
     @Transform(() => Date)
     @Type(() => Date)
-    @IsDate()
+    @IsDateString()
     validUntil!: Date;
 }
