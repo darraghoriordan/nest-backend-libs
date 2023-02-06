@@ -21,10 +21,21 @@ import {RequestWithUser} from "../authz/RequestWithUser";
 export class PersonController {
     constructor(private readonly personService: PersonService) {}
 
-    @Get("me")
+    @Get(":uuid")
     @ApiOkResponse({type: Person})
-    async findSelf(@Request() request: RequestWithUser) {
-        return this.personService.findOne(request.user.id);
+    async findSelf(
+        @Request() request: RequestWithUser,
+        @Param("uuid") uuid: string
+    ) {
+        if (uuid === "me") {
+            return this.personService.findOne(request.user.id);
+        }
+
+        // find the person if they are in the same organisation as the user
+        return await this.personService.findOneIfSameOrganisation(
+            uuid,
+            request.user
+        );
     }
 
     @Patch(":uuid")

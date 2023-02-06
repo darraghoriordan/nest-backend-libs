@@ -2,6 +2,7 @@ import {Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
 import {AccessToken} from "../authz/AccessToken";
+import {RequestPerson} from "../authz/RequestWithUser";
 import {AuthZClientService} from "../authzclient/authz.service";
 import {UserProfile} from "../authzclient/UserProfile.dto";
 import CoreLoggerService from "../logger/CoreLoggerService";
@@ -106,6 +107,31 @@ export class PersonService {
         });
     }
 
+    async findOneIfSameOrganisation(
+        uuid: string,
+        currentUser: RequestPerson
+    ): Promise<Person> {
+        const person = await this.repository.findOneOrFail({
+            where: {
+                uuid,
+            },
+            relations: {
+                memberships: {
+                    roles: true,
+                },
+            },
+        });
+        if (
+            person.memberships.some((m) =>
+                currentUser.memberships.some(
+                    (cu) => cu.organisationId === m.organisationId
+                )
+            )
+        ) {
+            return person;
+        }
+        throw new NotFoundException();
+    }
     async findOne(id: number) {
         return this.repository.findOneOrFail({where: {id}});
     }
