@@ -56,11 +56,11 @@ export class OrganisationSubscriptionsController {
     }
     @MandatoryUserClaims("modify:all")
     @Delete(":uuid")
-    @ApiOkResponse({type: [OrganisationSubscriptionRecord]})
+    @ApiOkResponse({type: Boolean})
     async deleteSubscription(
         @Param("orgUuid") orgUuid: string,
         @Param("uuid") uuid: string
-    ) {
+    ): Promise<boolean> {
         return this.osrService.delete(uuid);
     }
 }
