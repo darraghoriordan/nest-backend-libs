@@ -23,7 +23,7 @@ export class PersonController {
 
     @Get(":uuid")
     @ApiOkResponse({type: Person})
-    async findSelf(
+    async findOne(
         @Request() request: RequestWithUser,
         @Param("uuid") uuid: string
     ) {
