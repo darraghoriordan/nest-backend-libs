@@ -32,7 +32,7 @@ export class PersonService {
         payload: AccessToken,
         rawAccessToken: string
     ): Promise<Person | undefined> {
-        // try to get org with person as a member
+        // try to find the person and their memberships
         const foundPerson = await this.repository.findOne({
             where: {auth0UserId: payload.sub},
             relations: ["memberships"],
@@ -55,9 +55,9 @@ export class PersonService {
 
         // create a new organisation
         const unsavedOrganisation = new Organisation();
-        unsavedOrganisation.name = `${
-            auth0User.given_name ?? "My"
-        } Organisation`;
+        unsavedOrganisation.name = auth0User.given_name
+            ? `${auth0User.given_name}'s Organisation`
+            : `My Organisation`;
 
         // create roles
         const ownerRole = new MembershipRole();
@@ -74,15 +74,18 @@ export class PersonService {
             return this.repository.save(foundPerson);
         }
 
-        // otherwise create a new person.
         const person = this.repository.create();
+        person.memberships = [membership];
+        return this.updatePersonFromAuth0(person, auth0User);
+    }
+
+    async updatePersonFromAuth0(person: Person, auth0User: UserProfile) {
         person.auth0UserId = auth0User.sub;
         person.blocked = false;
         person.email = auth0User.email;
         person.emailVerified = auth0User.email_verified;
         person.familyName = auth0User.family_name;
         person.givenName = auth0User.given_name;
-        person.memberships = [membership];
         person.name = auth0User.name;
         person.picture = auth0User.picture;
         person.username = auth0User.preferred_username;
