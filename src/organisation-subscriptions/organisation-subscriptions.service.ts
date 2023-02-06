@@ -4,6 +4,7 @@ import {Repository} from "typeorm";
 import {Roles} from "../organisation/dto/RolesEnum";
 import {Organisation} from "../organisation/entities/organisation.entity";
 import {OrganisationSubscriptionRecord} from "./entities/organisation-subscription.entity";
+import {SaveOrganisationSubscriptionRecordDto} from "./models/saveSubscriptionDto";
 
 @Injectable()
 export class OrganisationSubscriptionService {
@@ -38,26 +39,59 @@ export class OrganisationSubscriptionService {
     }
 
     async create(
-        orgSub: OrganisationSubscriptionRecord,
-        currentUserId: number
+        subRecord: SaveOrganisationSubscriptionRecordDto
     ): Promise<OrganisationSubscriptionRecord> {
         // find the org
-
-        await this.orgRepo.findOneOrFail({
+        const org = await this.orgRepo.findOneOrFail({
             where: {
-                id: orgSub.organisationId,
-                memberships: {
-                    personId: currentUserId,
-                    roles: {
-                        name: Roles.owner,
-                    },
-                },
-            },
-            relations: {
-                subscriptionRecords: true,
+                uuid: subRecord.organisationUuid,
             },
         });
 
-        return await this.orgSubRepository.save(orgSub);
+        const sub = this.orgSubRepository.create();
+        sub.organisationId = org.id;
+        sub.stripeCustomerId = subRecord.stripeCustomerId;
+        sub.stripePriceId = subRecord.stripePriceId;
+        sub.stripeSubscriptionId = subRecord.stripeSubscriptionId;
+        sub.validUntil = subRecord.validUntil;
+
+        return this.orgSubRepository.save(sub);
+    }
+
+    async update(
+        subUuid: string,
+        subRecord: SaveOrganisationSubscriptionRecordDto
+    ): Promise<OrganisationSubscriptionRecord> {
+        const org = await this.orgRepo.findOneOrFail({
+            where: {
+                uuid: subRecord.organisationUuid,
+            },
+        });
+
+        const sub = await this.orgSubRepository.findOneOrFail({
+            where: {
+                uuid: subUuid,
+            },
+        });
+
+        sub.organisationId = org.id;
+        sub.stripeCustomerId = subRecord.stripeCustomerId;
+        sub.stripePriceId = subRecord.stripePriceId;
+        sub.stripeSubscriptionId = subRecord.stripeSubscriptionId;
+        sub.validUntil = subRecord.validUntil;
+
+        return this.orgSubRepository.save(sub);
+    }
+
+    async delete(subUuid: string): Promise<boolean> {
+        const result = await this.orgSubRepository.delete({
+            uuid: subUuid,
+        });
+
+        return (
+            result.affected !== undefined &&
+            result.affected !== null &&
+            result.affected > 0
+        );
     }
 }

@@ -1,4 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
+import {Type} from "class-transformer";
 
 import {
     Column,
@@ -41,7 +42,8 @@ export class OrganisationSubscriptionRecord {
 
     @Column()
     @ApiProperty()
-    validUntil!: string;
+    @Type(() => Date)
+    validUntil!: Date;
 
     @ManyToOne(() => Organisation, (org) => org.subscriptionRecords, {})
     organisation!: Organisation;
