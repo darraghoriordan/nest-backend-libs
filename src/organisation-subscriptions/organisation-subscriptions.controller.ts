@@ -41,7 +41,7 @@ export class OrganisationSubscriptionsController {
         @Param("orgUuid") orgUuid: string,
         @Body() body: SaveOrganisationSubscriptionRecordDto
     ) {
-        return this.osrService.create(body);
+        return this.osrService.create(body, orgUuid);
     }
 
     @MandatoryUserClaims("modify:all")
@@ -52,7 +52,7 @@ export class OrganisationSubscriptionsController {
         @Param("orgUuid") orgUuid: string,
         @Body() body: SaveOrganisationSubscriptionRecordDto
     ) {
-        return this.osrService.update(subUuid, body);
+        return this.osrService.update(subUuid, body, orgUuid);
     }
     @MandatoryUserClaims("modify:all")
     @Delete(":uuid")

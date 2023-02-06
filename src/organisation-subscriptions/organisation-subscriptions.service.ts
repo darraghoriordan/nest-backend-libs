@@ -39,12 +39,13 @@ export class OrganisationSubscriptionService {
     }
 
     async create(
-        subRecord: SaveOrganisationSubscriptionRecordDto
+        subRecord: SaveOrganisationSubscriptionRecordDto,
+        orgUuid: string
     ): Promise<OrganisationSubscriptionRecord> {
         // find the org
         const org = await this.orgRepo.findOneOrFail({
             where: {
-                uuid: subRecord.organisationUuid,
+                uuid: orgUuid,
             },
         });
 
@@ -60,11 +61,12 @@ export class OrganisationSubscriptionService {
 
     async update(
         subUuid: string,
-        subRecord: SaveOrganisationSubscriptionRecordDto
+        subRecord: SaveOrganisationSubscriptionRecordDto,
+        orgUuid: string
     ): Promise<OrganisationSubscriptionRecord> {
         const org = await this.orgRepo.findOneOrFail({
             where: {
-                uuid: subRecord.organisationUuid,
+                uuid: orgUuid,
             },
         });
 

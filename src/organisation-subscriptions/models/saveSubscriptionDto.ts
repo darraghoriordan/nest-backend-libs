@@ -20,8 +20,4 @@ export class SaveOrganisationSubscriptionRecordDto {
     @Type(() => Date)
     @IsDate()
     validUntil!: Date;
-
-    @ApiProperty()
-    @IsString()
-    organisationUuid!: string;
 }
