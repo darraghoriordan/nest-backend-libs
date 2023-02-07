@@ -58,7 +58,7 @@ export class PersonController {
     }
 
     @Delete(":uuid")
-    @ApiOkResponse({type: Person})
+    @ApiOkResponse({type: Boolean})
     async remove(
         @Param("uuid") uuid: string,
         @Request() request: RequestWithUser

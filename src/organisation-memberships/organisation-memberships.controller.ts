@@ -14,20 +14,21 @@ import {RequestWithUser} from "../authz/RequestWithUser";
 import {OrganisationMembershipsService} from "./organisation-memberships.service";
 import {Organisation} from "../organisation/entities/organisation.entity";
 import {CreateUpdateMembershipDto} from "./dtos/create-membership-dto";
+import {OrganisationMembership} from "./entities/organisation-membership.entity";
 
 @UseGuards(AuthGuard("jwt"))
 @ApiBearerAuth()
 @Controller("organisation/:orgUuid/memberships")
-@ApiTags("Organisations")
+@ApiTags("Organisation Memberships")
 export class OrganisationMembershipsController {
     constructor(private readonly omService: OrganisationMembershipsService) {}
 
     @Get()
-    @ApiOkResponse({type: [Organisation]})
+    @ApiOkResponse({type: [OrganisationMembership]})
     async findAll(
         @Param("orgUuid") orgUuid: string,
         @Request() request: RequestWithUser
-    ) {
+    ): Promise<OrganisationMembership[]> {
         return this.omService.findAllForOrgUser(orgUuid, request.user.id);
     }
 

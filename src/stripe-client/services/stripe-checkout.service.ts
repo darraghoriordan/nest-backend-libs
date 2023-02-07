@@ -25,9 +25,8 @@ export class StripeCheckoutService {
 
     public async createCustomerPortalSession(parameters: {
         user: RequestPerson;
-    }) {
-        // TODO: This is a hack to get the customer ID. We should be able to get it from the user.
-        const customerId = parameters.user.auth0UserId;
+    }): Promise<string> {
+        const customerId = parameters.user.uuid;
         const session = await this.clientInstance.billingPortal.sessions.create(
             {
                 customer: customerId,

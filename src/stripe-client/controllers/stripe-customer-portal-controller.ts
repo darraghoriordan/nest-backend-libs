@@ -12,7 +12,10 @@ export class StripeCustomerPortalController {
     @UseGuards(AuthGuard("jwt"))
     @ApiBearerAuth()
     @Post("customer-portal-session")
-    @ApiOkResponse()
+    @ApiOkResponse({
+        type: String,
+        description: "The URL to the customer portal",
+    })
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async createCustomerPortalSession(@Request() request: RequestWithUser) {
         return this.stripeService.createCustomerPortalSession({

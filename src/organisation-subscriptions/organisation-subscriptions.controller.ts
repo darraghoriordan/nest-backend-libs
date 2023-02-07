@@ -21,7 +21,7 @@ import {SaveOrganisationSubscriptionRecordDto} from "./models/saveSubscriptionDt
 @UseGuards(AuthGuard("jwt"), ClaimsAuthorisationGuard)
 @ApiBearerAuth()
 @Controller("organisation/:orgUuid/subscriptions")
-@ApiTags("Organisations")
+@ApiTags("Organisation Subscriptions")
 export class OrganisationSubscriptionsController {
     constructor(private readonly osrService: OrganisationSubscriptionService) {}
 

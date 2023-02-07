@@ -33,7 +33,7 @@ export class InvitationController {
     }
 
     @Delete(":uuid")
-    @ApiOkResponse({type: Invitation})
+    @ApiOkResponse({type: Boolean})
     async remove(
         @Param("uuid") uuid: string,
         @Request() request: RequestWithUser
