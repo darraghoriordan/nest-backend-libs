@@ -41,6 +41,7 @@ export class OrganisationMembershipsService {
         if (!isAMember) {
             throw new Error("You are not a member of this organisation");
         }
+        console.log("memberships", memberships);
         return memberships;
     }
     async createOrUpdate(
