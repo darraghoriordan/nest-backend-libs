@@ -28,6 +28,9 @@ export class OrganisationMembershipsService {
                     uuid: orgUuid,
                 },
             },
+            relations: {
+                roles: true,
+            },
         });
 
         // is the person a member of the organisation?

@@ -42,6 +42,7 @@ export class OrganisationMembership {
     person!: Person;
 
     @Column()
+    @ApiProperty()
     @RelationId((membership: OrganisationMembership) => membership.person)
     public personId!: number;
 
@@ -52,6 +53,7 @@ export class OrganisationMembership {
     organisation!: Organisation;
 
     @Column()
+    @ApiProperty()
     @RelationId((membership: OrganisationMembership) => membership.organisation)
     public organisationId!: number;
 
