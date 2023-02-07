@@ -48,6 +48,7 @@ export class OrganisationSubscriptionRecord {
     @ManyToOne(() => Organisation, (org) => org.subscriptionRecords, {})
     organisation!: Organisation;
 
+    @ApiProperty()
     @Column()
     @RelationId((sub: OrganisationSubscriptionRecord) => sub.organisation)
     public organisationId!: number;

@@ -55,6 +55,7 @@ export class OrganisationMembership {
     @RelationId((membership: OrganisationMembership) => membership.organisation)
     public organisationId!: number;
 
+    @ApiProperty({type: () => MembershipRole, isArray: true})
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     @OneToMany(() => MembershipRole, (role) => role.membership, {
         eager: true,

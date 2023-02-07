@@ -18,13 +18,16 @@ export class MembershipRole {
     @ApiProperty()
     id!: number;
 
+    // we don't expose this because the roles are exposed on the membership
     @ManyToOne(() => OrganisationMembership, (membership) => membership.roles)
     membership!: OrganisationMembership;
 
+    @ApiProperty()
     @Column()
     @RelationId((mr: MembershipRole) => mr.membership)
     public membershipId!: number;
 
+    @ApiProperty()
     @Column()
     name!: string;
 
