@@ -1,4 +1,4 @@
-import {Injectable} from "@nestjs/common";
+import {Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {DeleteResult, Repository} from "typeorm";
 import {Roles} from "../organisation/dto/RolesEnum";
@@ -15,7 +15,8 @@ export class OrganisationMembershipsService {
         @InjectRepository(OrganisationMembership)
         private membershipRepo: Repository<OrganisationMembership>
     ) {}
-
+    private notFoundMessage =
+        "Organisation not found or you are not owner of it";
     async findAllForOrgUser(
         orgUuid: string,
         currentUserId: number
@@ -45,7 +46,7 @@ export class OrganisationMembershipsService {
         currentUserId: number
     ): Promise<Organisation> {
         // find the org
-        const org = await this.orgRepo.findOneOrFail({
+        const org = await this.orgRepo.findOne({
             where: {
                 uuid: orgUuid,
             },
@@ -55,7 +56,9 @@ export class OrganisationMembershipsService {
                 },
             },
         });
-
+        if (!org) {
+            throw new NotFoundException(this.notFoundMessage);
+        }
         // check if the user is allowed to work with memberships
         this.currentUserIsOwnerGuard(org, currentUserId);
 
@@ -101,7 +104,7 @@ export class OrganisationMembershipsService {
                 m.roles.some((r) => r.name === Roles.owner)
         );
         if (!membership) {
-            throw new Error(
+            throw new NotFoundException(
                 "You are not allowed to add a member to this organisation"
             );
         }
@@ -113,7 +116,7 @@ export class OrganisationMembershipsService {
         currentUserId: number
     ): Promise<DeleteResult> {
         // find the org
-        const org = await this.orgRepo.findOneOrFail({
+        const org = await this.orgRepo.findOne({
             where: {
                 uuid: orgUuid,
             },
@@ -123,7 +126,9 @@ export class OrganisationMembershipsService {
                 },
             },
         });
-
+        if (!org) {
+            throw new NotFoundException(this.notFoundMessage);
+        }
         // check if the user is allowed to work with memberships
         this.currentUserIsOwnerGuard(org, currentUserId);
 

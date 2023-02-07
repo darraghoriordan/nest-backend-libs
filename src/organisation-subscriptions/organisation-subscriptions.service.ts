@@ -1,4 +1,4 @@
-import {Injectable} from "@nestjs/common";
+import {Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
 import {Roles} from "../organisation/dto/RolesEnum";
@@ -14,13 +14,14 @@ export class OrganisationSubscriptionService {
         @InjectRepository(OrganisationSubscriptionRecord)
         private orgSubRepository: Repository<OrganisationSubscriptionRecord>
     ) {}
-
+    private notFoundMessage =
+        "Organisation not found or you are not owner of it";
     async findAllForOwnerOfOrg(
         orgUuid: string,
         currentUserId: number
     ): Promise<OrganisationSubscriptionRecord[]> {
         // find the org if the user is owner
-        const org = await this.orgRepo.findOneOrFail({
+        const org = await this.orgRepo.findOne({
             where: {
                 uuid: orgUuid,
                 memberships: {
@@ -34,6 +35,9 @@ export class OrganisationSubscriptionService {
                 subscriptionRecords: true,
             },
         });
+        if (!org) {
+            throw new NotFoundException(this.notFoundMessage);
+        }
 
         return org.subscriptionRecords;
     }
@@ -43,11 +47,14 @@ export class OrganisationSubscriptionService {
         orgUuid: string
     ): Promise<OrganisationSubscriptionRecord> {
         // find the org
-        const org = await this.orgRepo.findOneOrFail({
+        const org = await this.orgRepo.findOne({
             where: {
                 uuid: orgUuid,
             },
         });
+        if (!org) {
+            throw new NotFoundException(this.notFoundMessage);
+        }
 
         const sub = this.orgSubRepository.create();
         sub.organisationId = org.id;
@@ -64,18 +71,22 @@ export class OrganisationSubscriptionService {
         subRecord: SaveOrganisationSubscriptionRecordDto,
         orgUuid: string
     ): Promise<OrganisationSubscriptionRecord> {
-        const org = await this.orgRepo.findOneOrFail({
+        const org = await this.orgRepo.findOne({
             where: {
                 uuid: orgUuid,
             },
         });
-
-        const sub = await this.orgSubRepository.findOneOrFail({
+        if (!org) {
+            throw new NotFoundException(this.notFoundMessage);
+        }
+        const sub = await this.orgSubRepository.findOne({
             where: {
                 uuid: subUuid,
             },
         });
-
+        if (!sub) {
+            throw new NotFoundException(this.notFoundMessage);
+        }
         sub.organisationId = org.id;
         sub.stripeCustomerId = subRecord.stripeCustomerId;
         sub.stripePriceId = subRecord.stripePriceId;

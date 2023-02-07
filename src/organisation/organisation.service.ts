@@ -1,4 +1,4 @@
-import {Injectable} from "@nestjs/common";
+import {Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {DeleteResult, Repository, UpdateResult} from "typeorm";
 import {OrganisationMembership} from "../organisation-memberships/entities/organisation-membership.entity";
@@ -14,7 +14,8 @@ export class OrganisationService {
         @InjectRepository(Organisation)
         private repository: Repository<Organisation>
     ) {}
-
+    private notFoundMessage =
+        "Organisation not found or you are not owner of it";
     async create(
         createOrganisationDto: CreateOrganisationDto
     ): Promise<Organisation> {
@@ -61,7 +62,7 @@ export class OrganisationService {
     }
 
     async findOne(uuid: string, currentUserId: number): Promise<Organisation> {
-        return this.repository.findOneOrFail({
+        const org = await this.repository.findOne({
             where: {
                 uuid,
                 memberships: {
@@ -71,6 +72,12 @@ export class OrganisationService {
                 },
             },
         });
+
+        if (!org) {
+            throw new NotFoundException(this.notFoundMessage);
+        }
+
+        return org;
     }
 
     async update(
