@@ -4,12 +4,14 @@ import {Type} from "class-transformer";
 import {
     Column,
     CreateDateColumn,
+    DeleteDateColumn,
     Entity,
     Generated,
     Index,
     ManyToOne,
     PrimaryGeneratedColumn,
     RelationId,
+    UpdateDateColumn,
 } from "typeorm";
 import {Organisation} from "../../organisation/entities/organisation.entity";
 
@@ -30,15 +32,27 @@ export class OrganisationSubscriptionRecord {
 
     @Column()
     @ApiProperty()
-    stripeSubscriptionId!: string;
+    productDisplayName!: string;
 
     @Column()
     @ApiProperty()
-    stripeCustomerId!: string;
+    paymentSystemTransactionId!: string;
 
     @Column()
     @ApiProperty()
-    stripePriceId!: string;
+    paymentSystemProductId!: string;
+
+    @Column()
+    @ApiProperty()
+    paymentSystemCustomerId!: string;
+
+    @Column()
+    @ApiProperty()
+    paymentSystemMode!: string;
+
+    @Column()
+    @ApiProperty()
+    paymentSystemName!: string;
 
     @Column()
     @ApiProperty()
@@ -56,4 +70,12 @@ export class OrganisationSubscriptionRecord {
     @CreateDateColumn()
     @ApiProperty()
     createdDate!: Date;
+
+    @UpdateDateColumn()
+    @ApiProperty()
+    updatedDate!: Date;
+
+    @DeleteDateColumn()
+    @ApiProperty()
+    deletedDate!: Date;
 }

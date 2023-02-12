@@ -13,6 +13,7 @@ import {StripeWebhookHandler} from "./services/stripe-webhook-handler.service";
 import {StripeWebhookController} from "./controllers/stripe-webhook-controller";
 import {StripeCustomerPortalController} from "./controllers/stripe-customer-portal-controller";
 import {OrganisationSubscriptionsModule} from "../organisation-subscriptions/organisation-subscriptions.module";
+import {PaymentSessionModule} from "../payment-sessions/payment-session.module";
 
 @Module({
     imports: [
@@ -23,6 +24,7 @@ import {OrganisationSubscriptionsModule} from "../organisation-subscriptions/org
         BullModule.registerQueueAsync({
             name: "stripe-events",
         }),
+        PaymentSessionModule,
     ],
     providers: [
         StripeClientProvider,

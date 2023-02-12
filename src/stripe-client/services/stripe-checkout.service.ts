@@ -1,14 +1,12 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {Inject, Injectable} from "@nestjs/common";
-import {InjectRepository} from "@nestjs/typeorm";
 import Stripe from "stripe";
-import {Repository} from "typeorm";
 import {RequestPerson} from "../../authz/RequestWithUser";
 import CoreLoggerService from "../../logger/CoreLoggerService";
-import {StripeCheckoutEvent} from "../entities/stripe-checkout-event.entity";
 import {StripeCheckoutSessionRequestDto} from "../models/StripeCheckoutSessionRequestDto";
 import {StripeCheckoutSessionResponseDto} from "../models/StripeCheckoutSessionResponseDto";
 import {StripeClientConfigurationService} from "../StripeClientConfigurationService";
+import {PaymentSessionService} from "../../payment-sessions/payment-session.service";
 
 @Injectable()
 export class StripeCheckoutService {
@@ -17,12 +15,10 @@ export class StripeCheckoutService {
         @Inject("StripeClient")
         private readonly clientInstance: Stripe,
         private readonly stripeClientConfigurationService: StripeClientConfigurationService,
-        @InjectRepository(StripeCheckoutEvent)
-        private eventRepository: Repository<StripeCheckoutEvent>
-    ) {
-        this.logger.log("Setting up twitter client");
-    }
+        private readonly paymentSessionService: PaymentSessionService
+    ) {}
 
+    // must set the org id to the customer id field so we can get this later
     public async createCustomerPortalSession(parameters: {
         user: RequestPerson;
     }): Promise<string> {
@@ -41,9 +37,17 @@ export class StripeCheckoutService {
         parameters: StripeCheckoutSessionRequestDto,
         user: RequestPerson
     ): Promise<StripeCheckoutSessionResponseDto> {
+        // create a new session in the database
+        const paymentReference = await this.paymentSessionService.createSession(
+            {
+                organisationUuid: parameters.organisationId,
+                personUuid: user.uuid,
+            }
+        );
+
         const mappedParameters = {
             mode: parameters.mode as unknown as Stripe.Checkout.SessionCreateParams.Mode,
-            client_reference_id: user.uuid,
+            client_reference_id: paymentReference.uuid,
             line_items: parameters.lineItems,
             customer_email: user.email,
             success_url: `${this.stripeClientConfigurationService.stripeRedirectsBaseUrl}${parameters.successFrontendPath}`,
@@ -52,15 +56,22 @@ export class StripeCheckoutService {
                 : undefined,
         } as Stripe.Checkout.SessionCreateParams;
 
-        return this.createSession(mappedParameters);
+        return this.createStripeSession(mappedParameters);
     }
 
     public async createCheckoutSession(
         parameters: StripeCheckoutSessionRequestDto
     ): Promise<StripeCheckoutSessionResponseDto> {
+        // create a new session in the database
+        const paymentReference = await this.paymentSessionService.createSession(
+            {
+                organisationUuid: parameters.organisationId,
+            }
+        );
+
         const mappedParameters = {
             mode: parameters.mode as unknown as Stripe.Checkout.SessionCreateParams.Mode,
-            client_reference_id: parameters.clientReferenceId,
+            client_reference_id: paymentReference.uuid,
             line_items: parameters.lineItems,
             success_url: `${this.stripeClientConfigurationService.stripeRedirectsBaseUrl}${parameters.successFrontendPath}`,
             cancel_url: parameters.cancelFrontendPath
@@ -68,10 +79,10 @@ export class StripeCheckoutService {
                 : undefined,
         } as Stripe.Checkout.SessionCreateParams;
 
-        return this.createSession(mappedParameters);
+        return this.createStripeSession(mappedParameters);
     }
 
-    private async createSession(
+    private async createStripeSession(
         mappedParameters: Stripe.Checkout.SessionCreateParams
     ): Promise<StripeCheckoutSessionResponseDto> {
         const session = await this.clientInstance.checkout.sessions.create(
@@ -79,16 +90,11 @@ export class StripeCheckoutService {
         );
 
         if (!session.url) {
+            this.logger.error("Failed to create stripe checkout session", {
+                mappedParameters,
+            });
             throw new Error("Failed to create checkout session");
         }
-
-        const eventModel = this.eventRepository.create({
-            stripeData: JSON.stringify(session),
-            stripeObjectType: session.object,
-            stripeSessionId: session.id,
-        });
-
-        await this.eventRepository.save(eventModel);
 
         const response = new StripeCheckoutSessionResponseDto();
 

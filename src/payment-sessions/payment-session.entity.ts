@@ -3,28 +3,33 @@ import {
     Column,
     CreateDateColumn,
     Entity,
+    Generated,
+    Index,
     PrimaryGeneratedColumn,
 } from "typeorm";
 
 @Entity()
-export class StripeCheckoutEvent {
+export class PaymentSessionReference {
     @PrimaryGeneratedColumn()
     @ApiProperty()
     id!: number;
+
+    @Column("uuid", {
+        name: "uuid",
+        default: () => "uuid_generate_v4()",
+    })
+    @Generated("uuid")
+    @ApiProperty()
+    @Index()
+    public uuid!: string;
 
     @CreateDateColumn()
     @ApiProperty()
     createdDate!: Date;
 
     @Column({nullable: true})
-    clientReferenceId?: string;
+    organisationUuid?: string;
 
     @Column()
-    stripeSessionId!: string;
-
-    @Column()
-    stripeObjectType!: string;
-
-    @Column("jsonb", {name: "stripeObject", nullable: false})
-    stripeData: any;
+    personUuid!: string;
 }

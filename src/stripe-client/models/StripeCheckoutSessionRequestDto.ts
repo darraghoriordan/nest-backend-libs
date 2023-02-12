@@ -15,7 +15,7 @@ import {StripeCheckoutLineItem} from "./StripeCheckoutLineItem";
 export class StripeCheckoutSessionRequestDto {
     @ApiPropertyOptional()
     @IsOptional()
-    clientReferenceId?: string;
+    organisationId?: string;
 
     @ApiProperty({isArray: true, type: StripeCheckoutLineItem})
     @IsArray()

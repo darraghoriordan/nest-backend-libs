@@ -7,7 +7,6 @@ import {
     Get,
     Post,
     Body,
-    Put,
     Delete,
 } from "@nestjs/common";
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
@@ -16,7 +15,7 @@ import {RequestWithUser} from "../authz/RequestWithUser";
 import {OrganisationSubscriptionRecord} from "./entities/organisation-subscription.entity";
 import {OrganisationSubscriptionService} from "./organisation-subscriptions.service";
 import {ClaimsAuthorisationGuard, MandatoryUserClaims} from "../authz";
-import {SaveOrganisationSubscriptionRecordDto} from "./models/saveSubscriptionDto";
+import {SaveOrganisationSubscriptionRecordDto} from "./models/fulfillSubscriptionDto";
 
 @UseGuards(AuthGuard("jwt"), ClaimsAuthorisationGuard)
 @ApiBearerAuth()
@@ -39,21 +38,11 @@ export class OrganisationSubscriptionsController {
     @ApiOkResponse({type: OrganisationSubscriptionRecord})
     async addSubscription(
         @Param("orgUuid") orgUuid: string,
-        @Body() body: SaveOrganisationSubscriptionRecordDto
+        @Body() body: SaveOrganisationSubscriptionRecordDto[]
     ) {
-        return this.osrService.create(body, orgUuid);
+        return this.osrService.save(body);
     }
 
-    @MandatoryUserClaims("modify:all")
-    @Put(":uuid")
-    @ApiOkResponse({type: OrganisationSubscriptionRecord})
-    async updateSubscription(
-        @Param("uuid") subUuid: string,
-        @Param("orgUuid") orgUuid: string,
-        @Body() body: SaveOrganisationSubscriptionRecordDto
-    ) {
-        return this.osrService.update(subUuid, body, orgUuid);
-    }
     @MandatoryUserClaims("modify:all")
     @Delete(":uuid")
     @ApiOkResponse({type: Boolean})
