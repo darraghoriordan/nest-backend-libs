@@ -32,7 +32,7 @@ import {PaymentSessionModule} from "../payment-sessions/payment-session.module";
         StripeCheckoutService,
         StripeWebhookHandler,
     ],
-    exports: [StripeCheckoutService, BullModule],
+    exports: [StripeCheckoutService, BullModule, StripeWebhookHandler],
     controllers: [StripeWebhookController, StripeCustomerPortalController],
 })
 export class StripeAccountModule {}
