@@ -20,7 +20,7 @@ import {SaveOrganisationSubscriptionRecordDto} from "../../organisation-subscrip
 // This is just an example with notes. You should create your own handler
 //
 // eslint-disable-next-line @darraghor/nestjs-typed/injectable-should-be-provided
-export class PaymentEventHandler {
+export class StripeEventHandler {
     constructor(
         private readonly logger: CoreLoggerService,
         @Inject("StripeClient")
