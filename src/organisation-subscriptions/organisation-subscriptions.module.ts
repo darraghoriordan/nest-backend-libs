@@ -5,6 +5,7 @@ import {OrganisationSubscriptionService} from "./organisation-subscriptions.serv
 import {Organisation} from "../organisation/entities/organisation.entity";
 import {OrganisationSubscriptionsController} from "./organisation-subscriptions.controller";
 import {OrganisationSubscriptionRecord} from "./entities/organisation-subscription.entity";
+import {PaymentSessionModule} from "../payment-sessions/payment-session.module";
 
 @Module({
     imports: [
@@ -13,6 +14,7 @@ import {OrganisationSubscriptionRecord} from "./entities/organisation-subscripti
             Organisation,
             OrganisationSubscriptionRecord,
         ]),
+        PaymentSessionModule,
     ],
     controllers: [OrganisationSubscriptionsController],
     providers: [OrganisationSubscriptionService],
