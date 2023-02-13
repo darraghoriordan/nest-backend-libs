@@ -4,3 +4,4 @@ export {StripeCheckoutSessionRequestDto} from "./models/StripeCheckoutSessionReq
 export {StripeCheckoutSessionResponseDto} from "./models/StripeCheckoutSessionResponseDto";
 export {StripeCheckoutLineItem} from "./models/StripeCheckoutLineItem";
 export {StripeAccountModule} from "./stripe-account.module";
+export {StripeEventHandler} from "./services/queued-payment-event.handler";
