@@ -82,6 +82,15 @@ export class OrganisationSubscriptionService {
                 let org: Organisation | undefined;
 
                 if (!orgUuid) {
+                    if (!subRecord.millerPaymentReferenceUuid) {
+                        this.logger.error(
+                            "No organisation uuid or payment reference uuid provided. Cannot match this payment to a customer",
+                            subRecord
+                        );
+                        throw new NotFoundException(
+                            "No organisation uuid or payment reference uuid provided.  Cannot match this payment to a customer"
+                        );
+                    }
                     const paymentReference =
                         await this.paymentSessionService.findSessionByUuid(
                             subRecord.millerPaymentReferenceUuid ?? ""

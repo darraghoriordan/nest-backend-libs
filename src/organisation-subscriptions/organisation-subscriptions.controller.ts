@@ -41,7 +41,7 @@ export class OrganisationSubscriptionsController {
         @Param("orgUuid") orgUuid: string,
         @Body() body: SaveOrganisationSubscriptionRecordDto
     ): Promise<OrganisationSubscriptionRecord[]> {
-        return this.osrService.save([body]);
+        return this.osrService.save([body], orgUuid);
     }
 
     @MandatoryUserClaims("modify:all")
