@@ -1,4 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
+import {Type} from "class-transformer";
 
 import {
     AfterInsert,
@@ -35,6 +36,7 @@ export class Organisation {
     @OneToMany(() => OrganisationMembership, (om) => om.organisation, {
         cascade: ["insert", "update"],
     })
+    @Type(() => OrganisationMembership)
     memberships!: OrganisationMembership[];
 
     @OneToMany(
@@ -44,6 +46,7 @@ export class Organisation {
             cascade: ["insert", "update"],
         }
     )
+    @Type(() => OrganisationSubscriptionRecord)
     subscriptionRecords!: OrganisationSubscriptionRecord[];
 
     @Column()

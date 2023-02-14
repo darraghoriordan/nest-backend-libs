@@ -1,4 +1,5 @@
 import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
+import {Type} from "class-transformer";
 import {
     AfterInsert,
     AfterLoad,
@@ -68,6 +69,7 @@ export class Person {
     username?: string;
 
     @ApiProperty({type: () => OrganisationMembership, isArray: true})
+    @Type(() => OrganisationMembership)
     @OneToMany(() => OrganisationMembership, (om) => om.person, {
         cascade: ["insert", "update"],
     })

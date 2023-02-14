@@ -1,4 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
+import {Type} from "class-transformer";
 
 import {
     AfterInsert,
@@ -63,6 +64,7 @@ export class OrganisationMembership {
         eager: true,
         cascade: true,
     })
+    @Type(() => MembershipRole)
     roles!: MembershipRole[];
 
     @CreateDateColumn()
