@@ -128,19 +128,28 @@ export class PersonService {
                 )
             )
         ) {
-            this.logger.debug("Found person in same organisation", {person});
-
             return person;
         }
         throw new NotFoundException();
     }
     async findOne(id: number) {
-        return this.repository.findOneOrFail({where: {id}});
+        return this.repository.findOneOrFail({
+            where: {id},
+            relations: {
+                memberships: {
+                    roles: true,
+                },
+            },
+        });
     }
 
     async findOneByUuid(uuid: string): Promise<Person> {
         return this.repository.findOneOrFail({
-            relations: ["memberships"],
+            relations: {
+                memberships: {
+                    roles: true,
+                },
+            },
             where: {uuid},
         });
     }
