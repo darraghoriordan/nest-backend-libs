@@ -20,7 +20,7 @@ import {CoreConfigModule} from "../core-config/CoreConfig.module";
 import {ConfigModule} from "@nestjs/config";
 import {BullModule} from "@nestjs/bull";
 import {HealthModule} from "../health/Health.module";
-import {LoggerModule as LoggingConfigModule} from "../logger/Logger.module";
+import {LoggerModule as LoggingConfigModule} from "../logger/logger.module";
 import {LoggingConfigurationService} from "../logger/LoggingConfigurationService";
 @Module({
     imports: [
