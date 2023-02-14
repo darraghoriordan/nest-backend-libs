@@ -86,9 +86,8 @@ export class StripeQueuedEventHandler {
             subscriptionFulfilmentDto.millerPaymentReferenceUuid =
                 fullSession.client_reference_id ?? undefined;
 
-            subscriptionFulfilmentDto.paymentSystemCustomerId = (
-                fullSession.customer as Stripe.Customer
-            ).id;
+            subscriptionFulfilmentDto.paymentSystemCustomerId =
+                (fullSession.customer as Stripe.Customer)?.id || "unknown";
 
             subscriptionFulfilmentDto.paymentSystemName = "stripe";
             subscriptionFulfilmentDto.paymentSystemProductId = lineItem.price
@@ -135,9 +134,8 @@ export class StripeQueuedEventHandler {
             }
             subscriptionFulfilmentDto.validUntil = newValidUntil;
 
-            subscriptionFulfilmentDto.paymentSystemCustomerId = (
-                fullInvoice.customer as Stripe.Customer
-            ).id;
+            subscriptionFulfilmentDto.paymentSystemCustomerId =
+                (fullInvoice.customer as Stripe.Customer)?.id || "unknown";
 
             subscriptionFulfilmentDto.paymentSystemName = "stripe";
             subscriptionFulfilmentDto.paymentSystemProductId = lineItem.price
@@ -174,9 +172,8 @@ export class StripeQueuedEventHandler {
 
             subscriptionFulfilmentDto.validUntil = newValidUntil;
 
-            subscriptionFulfilmentDto.paymentSystemCustomerId = (
-                fullSubscription.customer as Stripe.Customer
-            ).id;
+            subscriptionFulfilmentDto.paymentSystemCustomerId =
+                (fullSubscription.customer as Stripe.Customer)?.id || "unknown";
             subscriptionFulfilmentDto.paymentSystemMode = "subscription";
             subscriptionFulfilmentDto.paymentSystemName = "stripe";
             subscriptionFulfilmentDto.paymentSystemProductId = lineItem.price
