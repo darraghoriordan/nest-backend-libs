@@ -16,11 +16,11 @@ import {OrganisationSubscriptionService} from "../../organisation-subscriptions"
 import {SaveOrganisationSubscriptionRecordDto} from "../../organisation-subscriptions/models/fulfillSubscriptionDto";
 
 @Injectable()
-@Processor("payment-events")
+@Processor("stripe-events")
 // This is just an example with notes. You should create your own handler
 //
 // eslint-disable-next-line @darraghor/nestjs-typed/injectable-should-be-provided
-export class StripeEventHandler {
+export class StripeQueuedEventHandler {
     constructor(
         private readonly logger: CoreLoggerService,
         @Inject("StripeClient")
