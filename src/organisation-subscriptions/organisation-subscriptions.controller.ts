@@ -39,9 +39,9 @@ export class OrganisationSubscriptionsController {
     @ApiOkResponse({type: [OrganisationSubscriptionRecord]})
     async addSubscription(
         @Param("orgUuid") orgUuid: string,
-        @Body() body: SaveOrganisationSubscriptionRecordDto[]
+        @Body() body: SaveOrganisationSubscriptionRecordDto
     ): Promise<OrganisationSubscriptionRecord[]> {
-        return this.osrService.save(body);
+        return this.osrService.save([body]);
     }
 
     @MandatoryUserClaims("modify:all")
