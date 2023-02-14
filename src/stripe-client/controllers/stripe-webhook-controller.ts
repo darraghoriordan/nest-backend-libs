@@ -21,6 +21,7 @@ import {
     MandatoryUserClaims,
 } from "../../authz";
 import {StripeWebhookHandler} from "./../services/stripe-webhook-handler.service";
+import {QueueItemDto} from "../../root-app/models/QueueItemDto";
 
 /*
  * This is a controller that is used to receive webhooks from Stripe.
@@ -94,14 +95,4 @@ export class StripeWebhookController {
             };
         });
     }
-}
-
-export class QueueItemDto {
-    id!: string;
-    queueDateLocal!: Date;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    result!: string;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    data!: string;
-    failReason?: string;
 }
