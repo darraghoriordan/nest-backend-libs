@@ -31,7 +31,12 @@ import {LoggingConfigurationService} from "../logger/LoggingConfigurationService
             // eslint-disable-next-line @typescript-eslint/require-await
             useFactory: async (config: LoggingConfigurationService) => {
                 return {
-                    pinoHttp: {level: config.minLevel},
+                    pinoHttp: {
+                        level: config.minLevel,
+                        transport: config.usePrettyLogs
+                            ? {target: "pino-pretty"}
+                            : undefined,
+                    },
                 };
             },
         }),

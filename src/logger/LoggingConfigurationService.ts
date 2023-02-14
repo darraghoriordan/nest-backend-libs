@@ -31,4 +31,12 @@ export class LoggingConfigurationService extends ValidatedConfigurationService {
             this.configService.get<string>("logging.loggerMinLevel") || "debug"
         );
     }
+
+    @IsBoolean()
+    @IsOptional()
+    get usePrettyLogs(): boolean {
+        return (
+            this.configService.get<string>("logging.usePrettyLogs") === "true"
+        );
+    }
 }
