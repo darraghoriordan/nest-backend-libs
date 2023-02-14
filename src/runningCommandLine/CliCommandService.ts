@@ -1,14 +1,14 @@
-import {Injectable} from "@nestjs/common";
+import {Injectable, Logger} from "@nestjs/common";
 import {exec} from "child_process";
 // eslint-disable-next-line unicorn/import-style
 import util from "util";
-import CoreLoggerService from "../logger/CoreLoggerService";
 
 const execPromise = util.promisify(exec);
 
 @Injectable()
 export class CliCommandService {
-    constructor(private readonly logger: CoreLoggerService) {}
+    private readonly logger = new Logger(CliCommandService.name);
+
     public async execAsPromised(
         command: string,
         commandArguments: string[],

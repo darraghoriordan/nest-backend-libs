@@ -1,7 +1,6 @@
-import {Injectable, NotFoundException} from "@nestjs/common";
+import {Injectable, Logger, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
-import CoreLoggerService from "../logger/CoreLoggerService";
 import {Roles} from "../organisation/dto/RolesEnum";
 import {Organisation} from "../organisation/entities/organisation.entity";
 import {PaymentSessionService} from "../payment-sessions/payment-session.service";
@@ -10,8 +9,8 @@ import {SaveOrganisationSubscriptionRecordDto} from "./models/fulfillSubscriptio
 
 @Injectable()
 export class OrganisationSubscriptionService {
+    private readonly logger = new Logger(OrganisationSubscriptionService.name);
     constructor(
-        private readonly logger: CoreLoggerService,
         @InjectRepository(Organisation)
         private orgRepo: Repository<Organisation>,
         @InjectRepository(OrganisationSubscriptionRecord)

@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import {Inject, Injectable} from "@nestjs/common";
+import {Inject, Injectable, Logger} from "@nestjs/common";
 import {EUploadMimeType, TwitterApiReadWrite} from "twitter-api-v2";
-import CoreLoggerService from "../../logger/CoreLoggerService";
 
 @Injectable()
 export class TwitterClientService {
+    private readonly logger = new Logger(TwitterClientService.name);
     constructor(
-        private readonly logger: CoreLoggerService,
         @Inject("TwitterClient")
         private readonly clientInstance: TwitterApiReadWrite
     ) {

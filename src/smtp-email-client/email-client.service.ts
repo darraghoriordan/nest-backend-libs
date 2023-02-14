@@ -1,17 +1,16 @@
 import {InjectQueue} from "@nestjs/bull";
-import {Inject, Injectable} from "@nestjs/common";
+import {Inject, Injectable, Logger} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Queue} from "bull";
 import {Transporter} from "nodemailer";
 import {Repository} from "typeorm";
-import CoreLoggerService from "../logger/CoreLoggerService";
 import {Email} from "./email.entity";
 import {EmailConfigurationService} from "./EmailConfigurationService";
 
 @Injectable()
 export class SmtpEmailClient {
+    private readonly logger = new Logger(SmtpEmailClient.name);
     constructor(
-        private logger: CoreLoggerService,
         @InjectRepository(Email)
         private emailRepository: Repository<Email>,
         @Inject("SmtpEmailTransporter")

@@ -1,15 +1,18 @@
-import {CanActivate, ExecutionContext, Injectable} from "@nestjs/common";
+import {
+    CanActivate,
+    ExecutionContext,
+    Injectable,
+    Logger,
+} from "@nestjs/common";
 import {Observable} from "rxjs";
 import {Reflector} from "@nestjs/core";
 import {RequestWithUser} from "./RequestWithUser";
-import CoreLoggerService from "../logger/CoreLoggerService";
 
 @Injectable()
 export class ClaimsAuthorisationGuard implements CanActivate {
-    constructor(
-        private readonly reflector: Reflector,
-        private readonly logger: CoreLoggerService
-    ) {}
+    private readonly logger = new Logger(ClaimsAuthorisationGuard.name);
+
+    constructor(private readonly reflector: Reflector) {}
 
     canActivate(
         context: ExecutionContext

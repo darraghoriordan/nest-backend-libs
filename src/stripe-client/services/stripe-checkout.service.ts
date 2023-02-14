@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import {Inject, Injectable} from "@nestjs/common";
+import {Inject, Injectable, Logger} from "@nestjs/common";
 import Stripe from "stripe";
 import {RequestPerson} from "../../authz/RequestWithUser";
-import CoreLoggerService from "../../logger/CoreLoggerService";
 import {StripeCheckoutSessionRequestDto} from "../models/StripeCheckoutSessionRequestDto";
 import {StripeCheckoutSessionResponseDto} from "../models/StripeCheckoutSessionResponseDto";
 import {StripeClientConfigurationService} from "../StripeClientConfigurationService";
@@ -10,8 +9,8 @@ import {PaymentSessionService} from "../../payment-sessions/payment-session.serv
 
 @Injectable()
 export class StripeCheckoutService {
+    private readonly logger = new Logger(StripeCheckoutService.name);
     constructor(
-        private readonly logger: CoreLoggerService,
         @Inject("StripeClient")
         private readonly clientInstance: Stripe,
         private readonly stripeClientConfigurationService: StripeClientConfigurationService,

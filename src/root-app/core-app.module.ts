@@ -10,23 +10,31 @@ import {
     NestApplicationOptions,
     ValidationPipe,
 } from "@nestjs/common";
-import {LoggerModule} from "../logger/logger.module";
+import {Logger, LoggerModule} from "nestjs-pino";
 import {AppController} from "./app.controller";
 import {AppService} from "./app.service";
 import {SwaggerGen} from "./SwaggerGen";
 import {NestFactory, Reflector} from "@nestjs/core";
-import CoreLoggerService from "../logger/CoreLoggerService";
 import {CoreConfigurationService} from "../core-config/CoreConfigurationService";
-import {LoggingInterceptor} from "../logger/LoggingInterceptor";
 import {CoreConfigModule} from "../core-config/CoreConfig.module";
 import {ConfigModule} from "@nestjs/config";
 import {BullModule} from "@nestjs/bull";
 import {HealthModule} from "../health/Health.module";
-
+import {LoggerModule as LoggingConfigModule} from "../logger/Logger.module";
+import {LoggingConfigurationService} from "../logger/LoggingConfigurationService";
 @Module({
     imports: [
         ConfigModule.forRoot({cache: true}),
-        LoggerModule,
+        LoggerModule.forRootAsync({
+            imports: [LoggingConfigModule],
+            inject: [LoggingConfigurationService],
+            // eslint-disable-next-line @typescript-eslint/require-await
+            useFactory: async (config: LoggingConfigurationService) => {
+                return {
+                    pinoHttp: {level: config.minLevel},
+                };
+            },
+        }),
         CoreConfigModule,
         BullModule.forRootAsync({
             imports: [CoreConfigModule],
@@ -70,10 +78,13 @@ export class CoreModule {
                 const app = await NestFactory.create(rootModule, {
                     bodyParser: true,
                     rawBody: true,
+                    bufferLogs: true,
                 });
-                const loggerService = app.get(CoreLoggerService);
+                const loggerService = app.get(Logger);
                 const configService = app.get(CoreConfigurationService);
                 app.useLogger(loggerService);
+                app.flushLogs();
+
                 app.use(helmet());
                 app.enableCors({origin: configService.frontEndAppUrl});
                 app.useGlobalPipes(
@@ -86,8 +97,7 @@ export class CoreModule {
                     })
                 );
                 app.useGlobalInterceptors(
-                    new ClassSerializerInterceptor(app.get(Reflector)),
-                    new LoggingInterceptor(loggerService)
+                    new ClassSerializerInterceptor(app.get(Reflector))
                 );
 
                 const swaggerGen = app.get(SwaggerGen);

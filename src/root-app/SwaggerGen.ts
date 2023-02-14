@@ -1,20 +1,15 @@
-import {INestApplication, Injectable} from "@nestjs/common";
+import {INestApplication, Injectable, Logger} from "@nestjs/common";
 import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger";
 import fs from "fs";
-
 import {spawn} from "child_process";
-import CoreLoggerService from "../logger/CoreLoggerService";
 import {CoreConfigurationService} from "../core-config/CoreConfigurationService";
 
 /* istanbul ignore next */
 @Injectable()
 // eslint-disable-next-line @darraghor/nestjs-typed/injectable-should-be-provided
 export class SwaggerGen {
-    constructor(
-        private logger: CoreLoggerService,
-        private config: CoreConfigurationService
-    ) {}
-
+    constructor(private config: CoreConfigurationService) {}
+    private readonly logger = new Logger(SwaggerGen.name);
     public generate(app: INestApplication, pathToSave: string): void {
         if (!this.config.shouldGenerateSwagger) {
             this.logger.log(

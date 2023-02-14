@@ -1,6 +1,6 @@
 import {Injectable} from "@nestjs/common";
 import {ConfigService} from "@nestjs/config";
-import {IsBoolean, IsDefined, IsString} from "class-validator";
+import {IsBoolean, IsDefined, IsOptional, IsString} from "class-validator";
 import {ValidatedConfigurationService} from "../configuration/ValidatedConfigurationService";
 
 @Injectable()
@@ -21,6 +21,14 @@ export class LoggingConfigurationService extends ValidatedConfigurationService {
         return (
             this.configService.get<string>("logging.loggerName") ||
             "DefaultLogger"
+        );
+    }
+
+    @IsString()
+    @IsOptional()
+    get minLevel(): string {
+        return (
+            this.configService.get<string>("logging.loggerMinLevel") || "debug"
         );
     }
 }

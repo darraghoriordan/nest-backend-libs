@@ -1,7 +1,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable sonarjs/no-duplicated-branches */
-import {Inject, Injectable} from "@nestjs/common";
+import {Inject, Injectable, Logger} from "@nestjs/common";
 import {
     OnQueueActive,
     OnQueueCompleted,
@@ -10,7 +10,6 @@ import {
     Processor,
 } from "@nestjs/bull";
 import {Job} from "bull";
-import CoreLoggerService from "../../logger/CoreLoggerService";
 import Stripe from "stripe";
 import {OrganisationSubscriptionService} from "../../organisation-subscriptions";
 import {SaveOrganisationSubscriptionRecordDto} from "../../organisation-subscriptions/models/fulfillSubscriptionDto";
@@ -21,8 +20,8 @@ import {SaveOrganisationSubscriptionRecordDto} from "../../organisation-subscrip
 //
 // eslint-disable-next-line @darraghor/nestjs-typed/injectable-should-be-provided
 export class StripeQueuedEventHandler {
+    private readonly logger = new Logger(StripeQueuedEventHandler.name);
     constructor(
-        private readonly logger: CoreLoggerService,
         @Inject("StripeClient")
         private readonly stripe: Stripe,
         private readonly organisationSubscriptionService: OrganisationSubscriptionService

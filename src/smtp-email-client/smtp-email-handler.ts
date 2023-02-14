@@ -5,26 +5,25 @@ import {
     OnQueueCompleted,
     Process,
 } from "@nestjs/bull";
-import {Inject, Injectable} from "@nestjs/common";
+import {Inject, Injectable, Logger} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Job} from "bull";
 import {Transporter} from "nodemailer";
 import Mail from "nodemailer/lib/mailer";
 import {Repository} from "typeorm";
-import CoreLoggerService from "../logger/CoreLoggerService";
 import {Email} from "./email.entity";
 import {EmailConfigurationService} from "./EmailConfigurationService";
 
 @Injectable()
 @Processor("smtp-emails")
 export class SmtpEmailHandler {
+    private readonly logger = new Logger(SmtpEmailHandler.name);
     constructor(
         private config: EmailConfigurationService,
         @InjectRepository(Email)
         private emailRepository: Repository<Email>,
         @Inject("SmtpEmailTransporter")
-        private smtpEmailTransporter: Transporter,
-        private readonly logger: CoreLoggerService
+        private smtpEmailTransporter: Transporter
     ) {}
 
     @OnQueueFailed()

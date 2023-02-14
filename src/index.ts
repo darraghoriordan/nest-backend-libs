@@ -10,8 +10,6 @@ import {PostgresTypeOrmConfigurationProvider} from "./database-postgres/Postgres
 import {SqliteDatabaseModule} from "./database-sqlite/SqliteDatabase.module";
 import {SqliteDatabaseConfigurationService} from "./database-sqlite/SqliteDatabaseConfigurationService";
 import {SmtpEmailClient} from "./smtp-email-client/email-client.service";
-import CoreLoggerService from "./logger/CoreLoggerService";
-
 import {CoreModule} from "./root-app/core-app.module";
 import {SwaggerGen} from "./root-app/SwaggerGen";
 import {TwitterClientService} from "./twitter-client/services/twitter-client.service";
@@ -19,7 +17,6 @@ import {CoreConfigModule} from "./core-config/CoreConfig.module";
 import {CliCommandService} from "./runningCommandLine/CliCommandService";
 
 export {
-    CoreLoggerService,
     CoreConfigurationService,
     SmtpEmailClientModule,
     CoreModule,

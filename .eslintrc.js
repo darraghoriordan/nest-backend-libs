@@ -94,6 +94,12 @@ module.exports = {
                 format: ["camelCase"],
             },
             {
+                selector: "memberLike",
+                modifiers: ["private"],
+                format: ["camelCase"],
+                leadingUnderscore: "forbid",
+            },
+            {
                 selector: "variable",
                 format: ["PascalCase", "UPPER_CASE"],
                 types: ["boolean"],
@@ -108,12 +114,7 @@ module.exports = {
                 selector: "parameter",
                 format: ["camelCase"],
             },
-            {
-                selector: "memberLike",
-                modifiers: ["private"],
-                format: ["camelCase"],
-                leadingUnderscore: "forbid",
-            },
+
             {
                 selector: "typeLike",
                 format: ["PascalCase"],
@@ -121,7 +122,7 @@ module.exports = {
             {
                 selector: "property",
                 modifiers: ["readonly"],
-                format: ["PascalCase"],
+                format: ["camelCase"],
             },
             {
                 selector: "enumMember",

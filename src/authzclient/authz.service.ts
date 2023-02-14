@@ -1,11 +1,10 @@
-import {Inject, Injectable} from "@nestjs/common";
+import {Inject, Injectable, Logger} from "@nestjs/common";
 import {AuthenticationClient} from "auth0";
-import CoreLoggerService from "../logger/CoreLoggerService";
 import {UserProfile} from "./UserProfile.dto";
 @Injectable()
 export class AuthZClientService {
+    private readonly logger = new Logger(AuthZClientService.name);
     constructor(
-        private readonly logger: CoreLoggerService,
         @Inject("AuthzClient")
         private readonly auth0Client: AuthenticationClient
     ) {}

@@ -1,11 +1,10 @@
-import {Injectable, NotFoundException} from "@nestjs/common";
+import {Injectable, Logger, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
 import {AccessToken} from "../authz/AccessToken";
 import {RequestPerson} from "../authz/RequestWithUser";
 import {AuthZClientService} from "../authzclient/authz.service";
 import {UserProfile} from "../authzclient/UserProfile.dto";
-import CoreLoggerService from "../logger/CoreLoggerService";
 import {OrganisationMembership} from "../organisation-memberships/entities/organisation-membership.entity";
 import {Roles} from "../organisation/dto/RolesEnum";
 import {MembershipRole} from "../organisation/entities/member-role.entity";
@@ -15,10 +14,10 @@ import {Person} from "./entities/person.entity";
 
 @Injectable()
 export class PersonService {
+    private readonly logger = new Logger(PersonService.name);
     constructor(
         @InjectRepository(Person)
         private repository: Repository<Person>,
-        private logger: CoreLoggerService,
         private authzClient: AuthZClientService
     ) {}
 
