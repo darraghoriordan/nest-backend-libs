@@ -65,51 +65,71 @@ export class OrganisationSubscriptionService {
     }
 
     async save(
-        subRecordDtoCollection: SaveOrganisationSubscriptionRecordDto[]
+        subRecordDtoCollection: SaveOrganisationSubscriptionRecordDto[],
+        orgUuid?: string
     ): Promise<OrganisationSubscriptionRecord[]> {
         const results: OrganisationSubscriptionRecord[] = [];
         for (const subRecord of subRecordDtoCollection) {
-            let sub = await this.orgSubRepository.findOne({
+            let existingSubscription = await this.orgSubRepository.findOne({
                 where: {
                     paymentSystemTransactionId:
                         subRecord.paymentSystemTransactionId,
                 },
             });
 
-            if (!sub) {
-                if (!subRecord.millerPaymentReferenceUuid) {
+            if (!existingSubscription) {
+                // if no existing subscription then create a new one, get the org
+                let org: Organisation | undefined;
+
+                if (!orgUuid) {
+                    const paymentReference =
+                        await this.paymentSessionService.findSessionByUuid(
+                            subRecord.millerPaymentReferenceUuid ?? ""
+                        );
+
+                    orgUuid = paymentReference?.organisationUuid;
+                }
+
+                // eslint-disable-next-line prefer-const
+                org =
+                    (await this.orgRepo.findOne({
+                        where: {
+                            uuid: orgUuid,
+                        },
+                    })) || undefined;
+
+                existingSubscription = this.orgSubRepository.create({
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    organisation: org!,
+                });
+                if (!org) {
                     this.logger.error(
-                        "Payment reference uuid not found. Cannot match this payment to a customer",
+                        "Failed to find organisation. Cannot match this payment to a customer",
                         subRecord
                     );
                     throw new NotFoundException(
-                        "Payment reference uuid not found. Cannot match this payment to a customer"
+                        "Failed to find organisation.  Cannot match this payment to a customer"
                     );
                 }
-                const paymentReference =
-                    await this.paymentSessionService.findSessionByUuid(
-                        subRecord.millerPaymentReferenceUuid
-                    );
-                const org = await this.orgRepo.findOne({
-                    where: {
-                        uuid: paymentReference?.organisationUuid,
-                    },
-                });
-
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                sub = this.orgSubRepository.create({organisation: org!});
             }
 
-            sub.paymentSystemMode = subRecord.paymentSystemMode;
-            sub.paymentSystemCustomerId = subRecord.paymentSystemCustomerId;
-            sub.paymentSystemName = subRecord.paymentSystemName;
-            sub.paymentSystemProductId = subRecord.paymentSystemProductId;
-            sub.paymentSystemTransactionId =
+            existingSubscription.paymentSystemMode =
+                subRecord.paymentSystemMode;
+            existingSubscription.paymentSystemCustomerId =
+                subRecord.paymentSystemCustomerId;
+            existingSubscription.paymentSystemName =
+                subRecord.paymentSystemName;
+            existingSubscription.paymentSystemProductId =
+                subRecord.paymentSystemProductId;
+            existingSubscription.paymentSystemTransactionId =
                 subRecord.paymentSystemTransactionId;
-            sub.validUntil = subRecord.validUntil;
-            sub.productDisplayName = subRecord.productDisplayName;
+            existingSubscription.validUntil = subRecord.validUntil;
+            existingSubscription.productDisplayName =
+                subRecord.productDisplayName;
 
-            const result = await this.orgSubRepository.save(sub);
+            const result = await this.orgSubRepository.save(
+                existingSubscription
+            );
             results.push(result);
         }
 
