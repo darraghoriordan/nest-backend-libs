@@ -128,6 +128,8 @@ export class PersonService {
                 )
             )
         ) {
+            this.logger.debug("Found person in same organisation", {person});
+
             return person;
         }
         throw new NotFoundException();
