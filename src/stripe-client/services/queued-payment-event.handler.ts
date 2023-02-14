@@ -90,8 +90,9 @@ export class StripeQueuedEventHandler {
                 (fullSession.customer as Stripe.Customer)?.id || "unknown";
 
             subscriptionFulfilmentDto.paymentSystemName = "stripe";
-            subscriptionFulfilmentDto.paymentSystemProductId = lineItem.price
-                ?.product as string;
+            subscriptionFulfilmentDto.paymentSystemProductId = (
+                lineItem.price?.product as Stripe.Product
+            )?.id;
 
             subscriptionFulfilmentDto.productDisplayName = (
                 lineItem.price?.product as Stripe.Product
@@ -138,8 +139,9 @@ export class StripeQueuedEventHandler {
                 (fullInvoice.customer as Stripe.Customer)?.id || "unknown";
 
             subscriptionFulfilmentDto.paymentSystemName = "stripe";
-            subscriptionFulfilmentDto.paymentSystemProductId = lineItem.price
-                ?.product as string;
+            subscriptionFulfilmentDto.paymentSystemProductId = (
+                lineItem.price?.product as Stripe.Product
+            )?.id;
 
             subscriptionFulfilmentDto.productDisplayName = (
                 lineItem.price?.product as Stripe.Product
@@ -176,8 +178,9 @@ export class StripeQueuedEventHandler {
                 (fullSubscription.customer as Stripe.Customer)?.id || "unknown";
             subscriptionFulfilmentDto.paymentSystemMode = "subscription";
             subscriptionFulfilmentDto.paymentSystemName = "stripe";
-            subscriptionFulfilmentDto.paymentSystemProductId = lineItem.price
-                ?.product as string;
+            subscriptionFulfilmentDto.paymentSystemProductId = (
+                lineItem.price?.product as Stripe.Product
+            )?.id;
 
             subscriptionFulfilmentDto.productDisplayName = (
                 lineItem.price?.product as Stripe.Product

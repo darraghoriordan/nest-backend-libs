@@ -11,6 +11,10 @@ export class PaymentSessionService {
         private paymentReferenceRepository: Repository<PaymentSessionReference>
     ) {}
 
+    async findAll(): Promise<PaymentSessionReference[]> {
+        return await this.paymentReferenceRepository.find();
+    }
+
     async findSessionByUuid(
         uuid: string
     ): Promise<PaymentSessionReference | undefined> {
