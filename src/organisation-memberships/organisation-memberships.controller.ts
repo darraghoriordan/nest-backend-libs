@@ -15,6 +15,7 @@ import {OrganisationMembershipsService} from "./organisation-memberships.service
 import {Organisation} from "../organisation/entities/organisation.entity";
 import {CreateUpdateMembershipDto} from "./dtos/create-membership-dto";
 import {OrganisationMembership} from "./entities/organisation-membership.entity";
+import {BooleanResult} from "../root-app/models/boolean-result";
 
 @UseGuards(AuthGuard("jwt"))
 @ApiBearerAuth()
@@ -47,22 +48,23 @@ export class OrganisationMembershipsController {
     }
 
     @Delete(":membershipUuid")
-    @ApiOkResponse({type: Boolean})
+    @ApiOkResponse({type: BooleanResult})
     async remove(
         @Param("orgUuid") orgUuid: string,
         @Param("membershipUuid") membershipUuid: string,
         @Request() request: RequestWithUser
-    ): Promise<boolean> {
+    ): Promise<BooleanResult> {
         const deleteResult = await this.omService.remove(
             orgUuid,
             membershipUuid,
             request.user.id
         );
-        return (
-            deleteResult !== undefined &&
-            deleteResult.affected !== undefined &&
-            deleteResult?.affected !== null &&
-            deleteResult?.affected > 0
-        );
+        return {
+            result:
+                deleteResult !== undefined &&
+                deleteResult.affected !== undefined &&
+                deleteResult?.affected !== null &&
+                deleteResult?.affected > 0,
+        };
     }
 }

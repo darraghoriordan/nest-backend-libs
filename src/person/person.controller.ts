@@ -16,6 +16,7 @@ import {Person} from "./entities/person.entity";
 import {AuthGuard} from "@nestjs/passport";
 import {RequestWithUser} from "../authz/RequestWithUser";
 import {isUUID} from "class-validator";
+import {BooleanResult} from "../root-app/models/boolean-result";
 @UseGuards(AuthGuard("jwt"))
 @ApiBearerAuth()
 @Controller("person")
@@ -44,29 +45,30 @@ export class PersonController {
     }
 
     @Patch(":uuid")
-    @ApiOkResponse({type: Person})
+    @ApiOkResponse({type: BooleanResult})
     async update(
         @Param("uuid") uuid: string,
         @Body() updatePersonDto: UpdatePersonDto,
         @Request() request: RequestWithUser
     ) {
-        return this.personService.update(
+        const result = await this.personService.update(
             uuid,
             updatePersonDto,
             request.user.uuid
         );
+        return {result: result.affected && result.affected > 0};
     }
 
     @Delete(":uuid")
-    @ApiOkResponse({type: Boolean})
+    @ApiOkResponse({type: BooleanResult})
     async remove(
         @Param("uuid") uuid: string,
         @Request() request: RequestWithUser
-    ): Promise<boolean> {
+    ): Promise<BooleanResult> {
         const deleteResult = await this.personService.remove(
             uuid,
             request.user.uuid
         );
-        return deleteResult !== undefined;
+        return {result: deleteResult !== undefined};
     }
 }

@@ -16,6 +16,7 @@ import {OrganisationSubscriptionRecord} from "./entities/organisation-subscripti
 import {OrganisationSubscriptionService} from "./organisation-subscriptions.service";
 import {ClaimsAuthorisationGuard, MandatoryUserClaims} from "../authz";
 import {SaveOrganisationSubscriptionRecordDto} from "./models/fulfillSubscriptionDto";
+import {BooleanResult} from "../root-app/models/boolean-result";
 
 @UseGuards(AuthGuard("jwt"), ClaimsAuthorisationGuard)
 @ApiBearerAuth()
@@ -29,27 +30,28 @@ export class OrganisationSubscriptionsController {
     async findAll(
         @Param("orgUuid") orgUuid: string,
         @Request() request: RequestWithUser
-    ) {
+    ): Promise<OrganisationSubscriptionRecord[]> {
         return this.osrService.findAllForOwnerOfOrg(orgUuid, request.user.id);
     }
 
     @MandatoryUserClaims("modify:all")
     @Post()
-    @ApiOkResponse({type: OrganisationSubscriptionRecord})
+    @ApiOkResponse({type: [OrganisationSubscriptionRecord]})
     async addSubscription(
         @Param("orgUuid") orgUuid: string,
         @Body() body: SaveOrganisationSubscriptionRecordDto[]
-    ) {
+    ): Promise<OrganisationSubscriptionRecord[]> {
         return this.osrService.save(body);
     }
 
     @MandatoryUserClaims("modify:all")
     @Delete(":uuid")
-    @ApiOkResponse({type: Boolean})
+    @ApiOkResponse({type: BooleanResult})
     async deleteSubscription(
         @Param("orgUuid") orgUuid: string,
         @Param("uuid") uuid: string
-    ): Promise<boolean> {
-        return this.osrService.delete(uuid);
+    ): Promise<BooleanResult> {
+        const isDeleted = await this.osrService.delete(uuid);
+        return {result: isDeleted};
     }
 }

@@ -14,6 +14,7 @@ import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
 import {Organisation} from "./entities/organisation.entity";
 import {AuthGuard} from "@nestjs/passport";
 import {RequestWithUser} from "../authz/RequestWithUser";
+import {BooleanResult} from "../root-app/models/boolean-result";
 
 @UseGuards(AuthGuard("jwt"))
 @ApiBearerAuth()
@@ -55,20 +56,21 @@ export class OrganisationController {
     }
 
     @Delete(":uuid")
-    @ApiOkResponse({type: Organisation})
+    @ApiOkResponse({type: BooleanResult})
     async remove(
         @Param("uuid") uuid: string,
         @Request() request: RequestWithUser
-    ): Promise<boolean> {
+    ): Promise<BooleanResult> {
         const deleteResult = await this.organisationService.remove(
             uuid,
             request.user.id
         );
-        return (
-            deleteResult !== undefined &&
-            deleteResult.affected !== undefined &&
-            deleteResult?.affected !== null &&
-            deleteResult?.affected > 0
-        );
+        return {
+            result:
+                deleteResult !== undefined &&
+                deleteResult.affected !== undefined &&
+                deleteResult?.affected !== null &&
+                deleteResult?.affected > 0,
+        };
     }
 }

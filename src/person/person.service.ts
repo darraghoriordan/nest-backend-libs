@@ -149,6 +149,7 @@ export class PersonService {
         currentUserUuid: string
     ) {
         this.isOwnerGuard(uuid, currentUserUuid, "update");
+
         return this.repository.update({uuid}, updatePersonDto);
     }
 

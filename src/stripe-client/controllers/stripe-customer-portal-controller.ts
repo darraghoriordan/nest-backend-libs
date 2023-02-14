@@ -3,6 +3,7 @@ import {AuthGuard} from "@nestjs/passport";
 import {ApiBearerAuth, ApiTags, ApiOkResponse} from "@nestjs/swagger";
 import {RequestWithUser} from "../../authz/RequestWithUser";
 import {StripeCheckoutService} from "./../services/stripe-checkout.service";
+import {UrlResponseDto} from "../models/UrlResponseDto";
 
 @Controller("payments/stripe")
 @ApiTags("Payments")
@@ -13,13 +14,16 @@ export class StripeCustomerPortalController {
     @ApiBearerAuth()
     @Post("customer-portal-session")
     @ApiOkResponse({
-        type: String,
+        type: UrlResponseDto,
         description: "The URL to the customer portal",
     })
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async createCustomerPortalSession(@Request() request: RequestWithUser) {
-        return this.stripeService.createCustomerPortalSession({
+        const result = await this.stripeService.createCustomerPortalSession({
             user: request.user,
         });
+        return {
+            url: result,
+        };
     }
 }
