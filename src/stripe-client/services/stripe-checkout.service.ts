@@ -7,15 +7,8 @@ import {StripeCheckoutSessionResponseDto} from "../models/StripeCheckoutSessionR
 import {StripeClientConfigurationService} from "../StripeClientConfigurationService";
 import {PaymentSessionService} from "../../payment-sessions/payment-session.service";
 import {OrganisationSubscriptionService} from "../../organisation-subscriptions";
-
-export class StripeCustomerPortalRequestDto {
-    public subscriptionRecordUuid!: string;
-    public returnUrl!: string;
-}
-
-export class StripeCustomerPortalResponseDto {
-    public sessionUrl!: string;
-}
+import {StripeCustomerPortalResponseDto} from "../models/StripeCustomerPortalResponseDto";
+import {StripeCustomerPortalRequestDto} from "../models/StripeCustomerPortalRequestDto";
 
 @Injectable()
 export class StripeCheckoutService {
