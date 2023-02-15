@@ -131,6 +131,8 @@ export class OrganisationSubscriptionService {
                 subRecord.paymentSystemProductId;
             existingSubscription.paymentSystemTransactionId =
                 subRecord.paymentSystemTransactionId;
+            existingSubscription.paymentSystemCustomerEmail =
+                subRecord.paymentSystemCustomerEmail;
             existingSubscription.validUntil = subRecord.validUntil;
             existingSubscription.productDisplayName =
                 subRecord.productDisplayName;

@@ -26,6 +26,10 @@ export class SaveOrganisationSubscriptionRecordDto {
 
     @IsString()
     @ApiProperty()
+    paymentSystemCustomerEmail!: string;
+
+    @IsString()
+    @ApiProperty()
     paymentSystemMode!: string;
 
     @IsString()

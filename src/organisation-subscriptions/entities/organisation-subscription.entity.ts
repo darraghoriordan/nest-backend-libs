@@ -48,6 +48,10 @@ export class OrganisationSubscriptionRecord {
 
     @Column()
     @ApiProperty()
+    paymentSystemCustomerEmail!: string;
+
+    @Column()
+    @ApiProperty()
     paymentSystemMode!: string;
 
     @Column()

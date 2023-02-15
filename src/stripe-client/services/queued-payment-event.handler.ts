@@ -87,7 +87,10 @@ export class StripeQueuedEventHandler {
 
             subscriptionFulfilmentDto.paymentSystemCustomerId =
                 (fullSession.customer as Stripe.Customer)?.id || "unknown";
-
+            subscriptionFulfilmentDto.paymentSystemCustomerEmail =
+                fullSession.customer_email ||
+                fullSession.customer_details?.email ||
+                "unknown";
             subscriptionFulfilmentDto.paymentSystemName = "stripe";
             subscriptionFulfilmentDto.paymentSystemProductId = (
                 lineItem.price?.product as Stripe.Product
@@ -207,7 +210,6 @@ export class StripeQueuedEventHandler {
                     .object as Stripe.Checkout.Session;
                 if (stripeDataProperty.payment_status === "paid") {
                     // fulfil it
-                    // otherwise we will get a checkout.session.async_payment_succeeded
                     const fullSession =
                         await this.stripe.checkout.sessions.retrieve(
                             stripeDataProperty.id,
