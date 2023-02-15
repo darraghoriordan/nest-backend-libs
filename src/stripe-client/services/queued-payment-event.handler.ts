@@ -117,6 +117,8 @@ export class StripeQueuedEventHandler {
             const subscriptionFulfilmentDto: SaveOrganisationSubscriptionRecordDto =
                 new SaveOrganisationSubscriptionRecordDto();
             let newValidUntil: Date = new Date();
+
+            // this is for invoice paid so we assume it's active
             if (lineItem.price?.type === "recurring") {
                 const twoDaysInMilliSeconds = 2 * 24 * 60 * 60 * 1000;
                 newValidUntil = new Date(
@@ -160,7 +162,10 @@ export class StripeQueuedEventHandler {
     }
 
     public mapSubscriptionToSubFulfilment(
-        fullSubscription: Stripe.Response<Stripe.Subscription>
+        fullSubscription: Stripe.Response<Stripe.Subscription>,
+        additionalMeta: {
+            isActive: boolean;
+        }
     ): SaveOrganisationSubscriptionRecordDto[] {
         // for subscription products use stripes subscription end date
         // for one-off products use today + 100 years
@@ -168,25 +173,19 @@ export class StripeQueuedEventHandler {
         for (const lineItem of fullSubscription.items.data) {
             const subscriptionFulfilmentDto: SaveOrganisationSubscriptionRecordDto =
                 new SaveOrganisationSubscriptionRecordDto();
-            let newValidUntil: Date = new Date();
 
-            if (
-                fullSubscription.status === "active" ||
-                fullSubscription.status === "trialing"
-            ) {
+            subscriptionFulfilmentDto.paymentSystemTransactionId =
+                fullSubscription.id;
+            let newValidUntil: Date = new Date(); // today by default (not active)
+
+            if (additionalMeta.isActive) {
                 const twoDaysInMilliSeconds = 2 * 24 * 60 * 60 * 1000;
                 newValidUntil = new Date(
                     //prettier-ignore
                     fullSubscription.current_period_end
-                + twoDaysInMilliSeconds
+                    + twoDaysInMilliSeconds
                 );
-            } else {
-                // today - so it will be expired
-                newValidUntil = new Date();
             }
-            subscriptionFulfilmentDto.paymentSystemTransactionId =
-                fullSubscription.id;
-
             subscriptionFulfilmentDto.validUntil = newValidUntil;
 
             subscriptionFulfilmentDto.paymentSystemCustomerId =
@@ -360,7 +359,9 @@ export class StripeQueuedEventHandler {
                         expand: ["items.data.price.product", "customer"],
                     }
                 );
-                const subs = this.mapSubscriptionToSubFulfilment(fullSession);
+                const subs = this.mapSubscriptionToSubFulfilment(fullSession, {
+                    isActive: false,
+                });
                 for (const sub of subs) {
                     sub.validUntil = new Date();
                 }
@@ -384,13 +385,21 @@ export class StripeQueuedEventHandler {
                  */
                 const stripeDataProperty = job.data.data
                     .object as Stripe.Subscription;
-                const fullSession = await this.stripe.subscriptions.retrieve(
-                    stripeDataProperty.id,
+                const fullSubscription =
+                    await this.stripe.subscriptions.retrieve(
+                        stripeDataProperty.id,
+                        {
+                            expand: ["items.data.price.product", "customer"],
+                        }
+                    );
+                const subs = this.mapSubscriptionToSubFulfilment(
+                    fullSubscription,
                     {
-                        expand: ["items.data.price.product", "customer"],
+                        isActive:
+                            fullSubscription.status === "active" ||
+                            fullSubscription.status === "trialing",
                     }
                 );
-                const subs = this.mapSubscriptionToSubFulfilment(fullSession);
 
                 const result = await this.organisationSubscriptionService.save(
                     subs
