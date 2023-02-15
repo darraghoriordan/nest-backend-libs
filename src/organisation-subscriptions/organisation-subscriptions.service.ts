@@ -53,6 +53,9 @@ export class OrganisationSubscriptionService {
             where: {
                 uuid: subscriptionUuid,
             },
+            relations: {
+                organisation: true,
+            },
         });
 
         if (!record) {
