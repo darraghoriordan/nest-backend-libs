@@ -35,7 +35,9 @@ export class PersonService {
         // try to find the person and their memberships
         const foundPerson = await this.repository.findOne({
             where: {auth0UserId: payload.sub},
-            relations: ["memberships"],
+            relations: {
+                memberships: true,
+            },
         });
 
         // if person already configured then get out of here

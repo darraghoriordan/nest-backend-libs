@@ -6,6 +6,16 @@ import {StripeCheckoutSessionRequestDto} from "../models/StripeCheckoutSessionRe
 import {StripeCheckoutSessionResponseDto} from "../models/StripeCheckoutSessionResponseDto";
 import {StripeClientConfigurationService} from "../StripeClientConfigurationService";
 import {PaymentSessionService} from "../../payment-sessions/payment-session.service";
+import {OrganisationSubscriptionService} from "../../organisation-subscriptions";
+
+export class StripeCustomerPortalRequestDto {
+    public subscriptionRecordUuid!: string;
+    public returnUrl!: string;
+}
+
+export class StripeCustomerPortalResponseDto {
+    public sessionUrl!: string;
+}
 
 @Injectable()
 export class StripeCheckoutService {
@@ -14,22 +24,40 @@ export class StripeCheckoutService {
         @Inject("StripeClient")
         private readonly clientInstance: Stripe,
         private readonly stripeClientConfigurationService: StripeClientConfigurationService,
-        private readonly paymentSessionService: PaymentSessionService
+        private readonly paymentSessionService: PaymentSessionService,
+        private readonly organisationSubscriptionService: OrganisationSubscriptionService
     ) {}
 
     // must set the org id to the customer id field so we can get this later
-    public async createCustomerPortalSession(parameters: {
-        user: RequestPerson;
-    }): Promise<string> {
-        const customerId = parameters.user.uuid;
+    public async createCustomerPortalSession(
+        parameters: StripeCustomerPortalRequestDto,
+        user: RequestPerson
+    ): Promise<StripeCustomerPortalResponseDto> {
+        // is the user a member of the organisation with the subscription record
+        const subscriptionRecord =
+            await this.organisationSubscriptionService.findOne(
+                parameters.subscriptionRecordUuid
+            );
+        if (
+            !user.memberships
+                .map((m) => m.organisation.uuid)
+                .includes(subscriptionRecord.organisation.uuid)
+        ) {
+            {
+                throw new Error(
+                    "You are not a member of the organisation associated with this billing account"
+                );
+            }
+        }
+
         const session = await this.clientInstance.billingPortal.sessions.create(
             {
-                customer: customerId,
-                return_url: `${this.stripeClientConfigurationService.stripeRedirectsBaseUrl}/my/account`,
+                customer: subscriptionRecord.paymentSystemCustomerId,
+                return_url: `${this.stripeClientConfigurationService.stripeRedirectsBaseUrl}${parameters.returnUrl}`,
             }
         );
 
-        return session.url;
+        return {sessionUrl: session.url};
     }
 
     public async createAuthenticatedCheckoutSession(

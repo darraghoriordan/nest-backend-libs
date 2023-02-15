@@ -44,6 +44,24 @@ export class OrganisationSubscriptionService {
 
         return org.subscriptionRecords;
     }
+
+    async findOne(
+        subscriptionUuid: string
+    ): Promise<OrganisationSubscriptionRecord> {
+        // find the org if the user is owner
+        const record = await this.orgSubRepository.findOne({
+            where: {
+                uuid: subscriptionUuid,
+            },
+        });
+
+        if (!record) {
+            throw new NotFoundException("Subscription not found");
+        }
+
+        return record;
+    }
+
     async findAllForOrg(
         orgUuid: string
     ): Promise<OrganisationSubscriptionRecord[]> {
