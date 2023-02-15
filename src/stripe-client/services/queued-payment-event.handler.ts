@@ -88,6 +88,7 @@ export class StripeQueuedEventHandler {
             subscriptionFulfilmentDto.paymentSystemCustomerId =
                 (fullSession.customer as Stripe.Customer)?.id || "unknown";
             subscriptionFulfilmentDto.paymentSystemCustomerEmail =
+                (fullSession.customer as Stripe.Customer)?.email ||
                 fullSession.customer_email ||
                 fullSession.customer_details?.email ||
                 "unknown";
@@ -140,6 +141,10 @@ export class StripeQueuedEventHandler {
             subscriptionFulfilmentDto.paymentSystemCustomerId =
                 (fullInvoice.customer as Stripe.Customer)?.id || "unknown";
 
+            subscriptionFulfilmentDto.paymentSystemCustomerEmail =
+                (fullInvoice.customer as Stripe.Customer)?.email ||
+                fullInvoice.customer_email ||
+                "unknown";
             subscriptionFulfilmentDto.paymentSystemName = "stripe";
             subscriptionFulfilmentDto.paymentSystemProductId = (
                 lineItem.price?.product as Stripe.Product
@@ -165,12 +170,20 @@ export class StripeQueuedEventHandler {
                 new SaveOrganisationSubscriptionRecordDto();
             let newValidUntil: Date = new Date();
 
-            const twoDaysInMilliSeconds = 2 * 24 * 60 * 60 * 1000;
-            newValidUntil = new Date(
-                //prettier-ignore
-                fullSubscription.current_period_end
+            if (
+                fullSubscription.status === "active" ||
+                fullSubscription.status === "trialing"
+            ) {
+                const twoDaysInMilliSeconds = 2 * 24 * 60 * 60 * 1000;
+                newValidUntil = new Date(
+                    //prettier-ignore
+                    fullSubscription.current_period_end
                 + twoDaysInMilliSeconds
-            );
+                );
+            } else {
+                // today - so it will be expired
+                newValidUntil = new Date();
+            }
             subscriptionFulfilmentDto.paymentSystemTransactionId =
                 fullSubscription.id;
 
@@ -178,6 +191,10 @@ export class StripeQueuedEventHandler {
 
             subscriptionFulfilmentDto.paymentSystemCustomerId =
                 (fullSubscription.customer as Stripe.Customer)?.id || "unknown";
+
+            subscriptionFulfilmentDto.paymentSystemCustomerEmail =
+                (fullSubscription.customer as Stripe.Customer)?.email ||
+                "unknown";
             subscriptionFulfilmentDto.paymentSystemMode = "subscription";
             subscriptionFulfilmentDto.paymentSystemName = "stripe";
             subscriptionFulfilmentDto.paymentSystemProductId = (
@@ -365,6 +382,21 @@ export class StripeQueuedEventHandler {
                  * For example, adding a coupon, applying a discount,
                  * adding an invoice item, and changing plans all trigger this event.
                  */
+                const stripeDataProperty = job.data.data
+                    .object as Stripe.Subscription;
+                const fullSession = await this.stripe.subscriptions.retrieve(
+                    stripeDataProperty.id,
+                    {
+                        expand: ["items.data.price.product", "customer"],
+                    }
+                );
+                const subs = this.mapSubscriptionToSubFulfilment(fullSession);
+
+                const result = await this.organisationSubscriptionService.save(
+                    subs
+                );
+
+                this.logger.log("Subscription updated", {result});
                 return;
             }
 
