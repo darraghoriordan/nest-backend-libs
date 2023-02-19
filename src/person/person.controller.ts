@@ -12,11 +12,12 @@ import {
 import {PersonService} from "./person.service";
 import {UpdatePersonDto} from "./dto/update-person.dto";
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
-import {Person} from "./entities/person.entity";
 import {AuthGuard} from "@nestjs/passport";
 import {RequestWithUser} from "../authz/RequestWithUser";
 import {isUUID} from "class-validator";
 import {BooleanResult} from "../root-app/models/boolean-result";
+import {PersonDto} from "./dto/personResponseDto";
+
 @UseGuards(AuthGuard("jwt"))
 @ApiBearerAuth()
 @Controller("person")
@@ -25,23 +26,31 @@ export class PersonController {
     constructor(private readonly personService: PersonService) {}
 
     @Get(":uuid")
-    @ApiOkResponse({type: Person})
+    @ApiOkResponse({type: PersonDto})
     async findOne(
         @Request() request: RequestWithUser,
         @Param("uuid") uuid: string
-    ) {
+    ): Promise<PersonDto> {
         if (uuid === "me") {
-            return this.personService.findOne(request.user.id);
+            const result = await this.personService.findOne(request.user.id);
+            return {
+                ...result,
+                isSuper: request.user.permissions.includes("write:all"),
+            };
         }
         if (!isUUID(uuid, "4")) {
             throw new BadRequestException(uuid, "Invalid UUID");
         }
 
         // find the person if they are in the same organisation as the user
-        return await this.personService.findOneIfSameOrganisation(
+        const result = await this.personService.findOneIfSameOrganisation(
             uuid,
             request.user
         );
+        return {
+            ...result,
+            isSuper: request.user.permissions.includes("write:all"),
+        };
     }
 
     @Patch(":uuid")

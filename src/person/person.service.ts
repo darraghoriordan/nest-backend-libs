@@ -78,7 +78,9 @@ export class PersonService {
 
         const person = this.repository.create();
         person.memberships = [membership];
-        return this.updatePersonFromAuth0(person, auth0User);
+        // eslint-disable-next-line sonarjs/prefer-immediate-return
+        const updatedPerson = this.updatePersonFromAuth0(person, auth0User);
+        return updatedPerson;
     }
 
     async updatePersonFromAuth0(person: Person, auth0User: UserProfile) {
