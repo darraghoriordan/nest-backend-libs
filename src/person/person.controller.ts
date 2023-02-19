@@ -35,7 +35,7 @@ export class PersonController {
             const result = await this.personService.findOne(request.user.id);
             return {
                 ...result,
-                isSuper: request.user.permissions.includes("write:all"),
+                isSuper: request.user.permissions.includes("modify:all"),
             };
         }
         if (!isUUID(uuid, "4")) {
