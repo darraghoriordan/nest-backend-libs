@@ -49,7 +49,7 @@ export class PersonController {
         );
         return {
             ...result,
-            isSuper: request.user.permissions.includes("write:all"),
+            isSuper: request.user.permissions.includes("modify:all"),
         };
     }
 
