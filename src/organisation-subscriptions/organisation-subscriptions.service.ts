@@ -20,13 +20,13 @@ export class OrganisationSubscriptionService {
     private notFoundMessage =
         "Organisation not found or you are not owner of it";
     async findAllForOwnerOfOrg(
-        orgUuid: string,
+        orgId: number,
         currentUserId: number
     ): Promise<OrganisationSubscriptionRecord[]> {
         // find the org if the user is owner
         const org = await this.orgRepo.findOne({
             where: {
-                uuid: orgUuid,
+                id: orgId,
                 memberships: {
                     personId: currentUserId,
                     roles: {
@@ -84,9 +84,10 @@ export class OrganisationSubscriptionService {
         return org.subscriptionRecords;
     }
 
+    // eslint-disable-next-line sonarjs/cognitive-complexity
     async save(
         subRecordDtoCollection: SaveOrganisationSubscriptionRecordDto[],
-        orgUuid?: string
+        orgId?: number
     ): Promise<OrganisationSubscriptionRecord[]> {
         const results: OrganisationSubscriptionRecord[] = [];
         for (const subRecord of subRecordDtoCollection) {
@@ -101,7 +102,7 @@ export class OrganisationSubscriptionService {
                 // if no existing subscription then create a new one, get the org
                 let org: Organisation | undefined;
 
-                if (!orgUuid) {
+                if (orgId === undefined) {
                     if (!subRecord.millerPaymentReferenceUuid) {
                         this.logger.error(
                             "No organisation uuid or payment reference uuid provided. Cannot match this payment to a customer",
@@ -116,16 +117,21 @@ export class OrganisationSubscriptionService {
                             subRecord.millerPaymentReferenceUuid ?? ""
                         );
 
-                    orgUuid = paymentReference?.organisationUuid;
+                    org =
+                        (await this.orgRepo.findOne({
+                            where: {
+                                uuid: paymentReference?.organisationUuid,
+                            },
+                        })) || undefined;
+                } else {
+                    // eslint-disable-next-line prefer-const
+                    org =
+                        (await this.orgRepo.findOne({
+                            where: {
+                                id: orgId,
+                            },
+                        })) || undefined;
                 }
-
-                // eslint-disable-next-line prefer-const
-                org =
-                    (await this.orgRepo.findOne({
-                        where: {
-                            uuid: orgUuid,
-                        },
-                    })) || undefined;
 
                 existingSubscription = this.orgSubRepository.create({
                     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

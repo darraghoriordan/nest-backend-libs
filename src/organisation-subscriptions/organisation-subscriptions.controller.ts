@@ -20,7 +20,7 @@ import {BooleanResult} from "../root-app/models/boolean-result";
 
 @UseGuards(AuthGuard("jwt"), ClaimsAuthorisationGuard)
 @ApiBearerAuth()
-@Controller("organisation/:orgUuid/subscriptions")
+@Controller("organisation/:orgId/subscriptions")
 @ApiTags("Organisation Subscriptions")
 export class OrganisationSubscriptionsController {
     constructor(private readonly osrService: OrganisationSubscriptionService) {}
@@ -28,27 +28,27 @@ export class OrganisationSubscriptionsController {
     @Get()
     @ApiOkResponse({type: [OrganisationSubscriptionRecord]})
     async findAll(
-        @Param("orgUuid") orgUuid: string,
+        @Param("orgId") orgId: number,
         @Request() request: RequestWithUser
     ): Promise<OrganisationSubscriptionRecord[]> {
-        return this.osrService.findAllForOwnerOfOrg(orgUuid, request.user.id);
+        return this.osrService.findAllForOwnerOfOrg(orgId, request.user.id);
     }
 
     @MandatoryUserClaims("modify:all")
     @Post()
     @ApiOkResponse({type: [OrganisationSubscriptionRecord]})
     async addSubscription(
-        @Param("orgUuid") orgUuid: string,
+        @Param("orgId") orgId: number,
         @Body() body: SaveOrganisationSubscriptionRecordDto
     ): Promise<OrganisationSubscriptionRecord[]> {
-        return this.osrService.save([body], orgUuid);
+        return this.osrService.save([body], orgId);
     }
 
     @MandatoryUserClaims("modify:all")
     @Delete(":uuid")
     @ApiOkResponse({type: BooleanResult})
     async deleteSubscription(
-        @Param("orgUuid") orgUuid: string,
+        @Param("orgId") orgId: number,
         @Param("uuid") uuid: string
     ): Promise<BooleanResult> {
         const isDeleted = await this.osrService.delete(uuid);
