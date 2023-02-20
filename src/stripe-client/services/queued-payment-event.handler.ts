@@ -78,6 +78,12 @@ export class StripeQueuedEventHandler {
                 subscriptionFulfilmentDto.paymentSystemTransactionId = (
                     fullSession.subscription! as Stripe.Subscription
                 ).id;
+                this.logger.log(
+                    `CHK: set valid until to ${newValidUntil.toISOString()} based on sub ${
+                        (fullSession.subscription! as Stripe.Subscription)
+                            .current_period_end
+                    }`
+                );
             } else {
                 const todayPlus100 = new Date();
                 todayPlus100.setFullYear(todayPlus100.getFullYear() + 100);
@@ -135,6 +141,12 @@ export class StripeQueuedEventHandler {
                 subscriptionFulfilmentDto.paymentSystemTransactionId = (
                     fullInvoice.subscription! as Stripe.Subscription
                 ).id;
+                this.logger.log(
+                    `INV: set valid until to ${newValidUntil.toISOString()} based on sub ${
+                        (fullInvoice.subscription! as Stripe.Subscription)
+                            .current_period_end
+                    }`
+                );
             } else {
                 const todayPlus100 = new Date();
                 todayPlus100.setFullYear(todayPlus100.getFullYear() + 100);
@@ -189,6 +201,11 @@ export class StripeQueuedEventHandler {
                     //prettier-ignore
                     fullSubscription.current_period_end
                     + twoDaysInMilliSeconds
+                );
+                this.logger.log(
+                    `SUB: set valid until to ${newValidUntil.toISOString()} based on sub ${
+                        fullSubscription.current_period_end
+                    }`
                 );
             }
             subscriptionFulfilmentDto.validUntil = newValidUntil;
