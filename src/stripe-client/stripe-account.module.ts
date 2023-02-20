@@ -33,6 +33,7 @@ import {PaymentSessionModule} from "../payment-sessions/payment-session.module";
         StripeWebhookHandler,
     ],
     exports: [
+        TypeOrmModule,
         StripeCheckoutService,
         BullModule,
         StripeWebhookHandler,
