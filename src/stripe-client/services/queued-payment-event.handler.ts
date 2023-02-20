@@ -61,62 +61,67 @@ export class StripeQueuedEventHandler {
         const subs = [];
 
         for (const lineItem of fullSession.line_items!.data) {
-            const subscriptionFulfilmentDto: SaveOrganisationSubscriptionRecordDto =
-                new SaveOrganisationSubscriptionRecordDto();
-            let newValidUntil: Date = new Date();
-            if (
+            const subscriptionFulfilmentDto = this.stripeFulfillmentDtoFactory(
+                lineItem.price?.product,
+                fullSession.customer,
+                fullSession.customer_email,
+                fullSession.customer_details?.email
+            );
+
+            subscriptionFulfilmentDto.paymentSystemMode = this.mapPaymentType(
+                lineItem.price?.type,
+                fullSession.mode
+            );
+            subscriptionFulfilmentDto.validUntil = this.mapNewValidUntil(
+                subscriptionFulfilmentDto.paymentSystemMode,
+                true,
+                (fullSession.subscription! as Stripe.Subscription)
+                    .current_period_end
+            );
+
+            subscriptionFulfilmentDto.paymentSystemTransactionId =
                 fullSession.mode === "subscription" ||
                 lineItem.price?.type === "recurring"
-            ) {
-                const twoDaysInMilliSeconds = 2 * 24 * 60 * 60 * 1000;
-                newValidUntil = new Date(
-                    //prettier-ignore
-                    (fullSession.subscription! as Stripe.Subscription).current_period_end
-                + twoDaysInMilliSeconds
-                );
-                subscriptionFulfilmentDto.paymentSystemMode = "subscription";
-                subscriptionFulfilmentDto.paymentSystemTransactionId = (
-                    fullSession.subscription! as Stripe.Subscription
-                ).id;
-                this.logger.log(
-                    `CHK: set valid until to ${newValidUntil.toISOString()} based on sub ${
-                        (fullSession.subscription! as Stripe.Subscription)
-                            .current_period_end
-                    }`
-                );
-            } else {
-                const todayPlus100 = new Date();
-                todayPlus100.setFullYear(todayPlus100.getFullYear() + 100);
-                newValidUntil = todayPlus100;
-                subscriptionFulfilmentDto.paymentSystemMode = "payment";
-                subscriptionFulfilmentDto.paymentSystemTransactionId =
-                    fullSession.id;
-            }
-            subscriptionFulfilmentDto.validUntil = newValidUntil;
+                    ? (fullSession.subscription! as Stripe.Subscription).id
+                    : fullSession.id;
+
             subscriptionFulfilmentDto.millerPaymentReferenceUuid =
                 fullSession.client_reference_id ?? undefined;
-
-            subscriptionFulfilmentDto.paymentSystemCustomerId =
-                (fullSession.customer as Stripe.Customer)?.id || "unknown";
-            subscriptionFulfilmentDto.paymentSystemCustomerEmail =
-                (fullSession.customer as Stripe.Customer)?.email ||
-                fullSession.customer_email ||
-                fullSession.customer_details?.email ||
-                "unknown";
-            subscriptionFulfilmentDto.paymentSystemName = "stripe";
-            subscriptionFulfilmentDto.paymentSystemProductId = (
-                lineItem.price?.product as Stripe.Product
-            )?.id;
-
-            subscriptionFulfilmentDto.productDisplayName = (
-                lineItem.price?.product as Stripe.Product
-            ).name;
 
             subs.push(subscriptionFulfilmentDto);
         }
         return subs;
     }
+    private stripeFulfillmentDtoFactory(
+        product?: unknown,
+        customer?: unknown,
+        altEmail?: string | null,
+        altEmail2?: string | null
+    ): SaveOrganisationSubscriptionRecordDto {
+        const subscriptionFulfilmentDto: SaveOrganisationSubscriptionRecordDto =
+            new SaveOrganisationSubscriptionRecordDto();
 
+        subscriptionFulfilmentDto.paymentSystemName = "stripe";
+
+        subscriptionFulfilmentDto.paymentSystemProductId = (
+            product as Stripe.Product
+        )?.id;
+
+        subscriptionFulfilmentDto.productDisplayName = (
+            product as Stripe.Product
+        ).name;
+
+        subscriptionFulfilmentDto.paymentSystemCustomerId =
+            (customer as Stripe.Customer)?.id || "unknown";
+
+        subscriptionFulfilmentDto.paymentSystemCustomerEmail =
+            (customer as Stripe.Customer)?.email ||
+            altEmail ||
+            altEmail2 ||
+            "unknown";
+
+        return subscriptionFulfilmentDto;
+    }
     public mapInvoiceToSubFulfilment(
         fullInvoice: Stripe.Response<Stripe.Invoice>
     ): SaveOrganisationSubscriptionRecordDto[] {
@@ -125,57 +130,74 @@ export class StripeQueuedEventHandler {
 
         const subs = [];
         for (const lineItem of fullInvoice.lines.data) {
-            const subscriptionFulfilmentDto: SaveOrganisationSubscriptionRecordDto =
-                new SaveOrganisationSubscriptionRecordDto();
-            let newValidUntil: Date = new Date();
+            const subscriptionFulfilmentDto = this.stripeFulfillmentDtoFactory(
+                lineItem.price?.product,
+                fullInvoice.customer,
+                fullInvoice.customer_email
+            );
 
-            // this is for invoice paid so we assume it's active
-            if (lineItem.price?.type === "recurring") {
-                const twoDaysInMilliSeconds = 2 * 24 * 60 * 60 * 1000;
-                newValidUntil = new Date(
-                    //prettier-ignore
-                    (fullInvoice.subscription! as Stripe.Subscription).current_period_end
-                + twoDaysInMilliSeconds
-                );
-                subscriptionFulfilmentDto.paymentSystemMode = "subscription";
-                subscriptionFulfilmentDto.paymentSystemTransactionId = (
-                    fullInvoice.subscription! as Stripe.Subscription
-                ).id;
-                this.logger.log(
-                    `INV: set valid until to ${newValidUntil.toISOString()} based on sub ${
-                        (fullInvoice.subscription! as Stripe.Subscription)
-                            .current_period_end
-                    }`
-                );
-            } else {
-                const todayPlus100 = new Date();
-                todayPlus100.setFullYear(todayPlus100.getFullYear() + 100);
-                newValidUntil = todayPlus100;
-                subscriptionFulfilmentDto.paymentSystemMode = "payment";
-                subscriptionFulfilmentDto.paymentSystemTransactionId =
-                    fullInvoice.id;
-            }
-            subscriptionFulfilmentDto.validUntil = newValidUntil;
+            const fullSubscription =
+                fullInvoice.subscription! as Stripe.Subscription;
 
-            subscriptionFulfilmentDto.paymentSystemCustomerId =
-                (fullInvoice.customer as Stripe.Customer)?.id || "unknown";
+            subscriptionFulfilmentDto.paymentSystemMode = this.mapPaymentType(
+                lineItem.price?.type
+            );
+            subscriptionFulfilmentDto.validUntil = this.mapNewValidUntil(
+                subscriptionFulfilmentDto.paymentSystemMode,
+                fullSubscription.status === "active" ||
+                    fullSubscription.status === "trialing",
+                fullSubscription.current_period_end
+            );
 
-            subscriptionFulfilmentDto.paymentSystemCustomerEmail =
-                (fullInvoice.customer as Stripe.Customer)?.email ||
-                fullInvoice.customer_email ||
-                "unknown";
-            subscriptionFulfilmentDto.paymentSystemName = "stripe";
-            subscriptionFulfilmentDto.paymentSystemProductId = (
-                lineItem.price?.product as Stripe.Product
-            )?.id;
-
-            subscriptionFulfilmentDto.productDisplayName = (
-                lineItem.price?.product as Stripe.Product
-            ).name;
+            subscriptionFulfilmentDto.paymentSystemTransactionId =
+                lineItem.price?.type === "recurring"
+                    ? fullSubscription.id
+                    : fullInvoice.id;
 
             subs.push(subscriptionFulfilmentDto);
         }
         return subs;
+    }
+    private mapPaymentType(
+        type?: string,
+        sessionMode?: string
+    ): "subscription" | "payment" {
+        if (type === "recurring" || sessionMode === "subscription") {
+            return "subscription";
+        }
+        return "payment";
+    }
+    private mapNewValidUntil(
+        paymentSystemMode: string,
+        isActive: boolean,
+        stripeCurrentPeriodEnd?: number
+    ) {
+        let newValidUntil: Date = new Date();
+
+        if (paymentSystemMode === "payment") {
+            // the valid until is basically the end of time
+            const todayPlus100 = new Date();
+            todayPlus100.setFullYear(todayPlus100.getFullYear() + 500);
+            newValidUntil = todayPlus100;
+        }
+
+        // otherwise it's a subscription
+        if (paymentSystemMode === "subscription" && isActive) {
+            if (!stripeCurrentPeriodEnd) {
+                throw new Error("stripeCurrentPeriodEnd is not set");
+            }
+            const twoDaysInMilliSeconds = 2 * 24 * 60 * 60 * 1000;
+            const stripeCurrentPeriodEndMilliSeconds =
+                stripeCurrentPeriodEnd * 1000;
+            newValidUntil = new Date(
+                stripeCurrentPeriodEndMilliSeconds + twoDaysInMilliSeconds
+            );
+            this.logger.log(
+                `Set valid until to ${newValidUntil.toISOString()} based on sub ${stripeCurrentPeriodEnd}`
+            );
+        }
+
+        return newValidUntil;
     }
 
     public mapSubscriptionToSubFulfilment(
@@ -188,43 +210,20 @@ export class StripeQueuedEventHandler {
         // for one-off products use today + 100 years
         const subs = [];
         for (const lineItem of fullSubscription.items.data) {
-            const subscriptionFulfilmentDto: SaveOrganisationSubscriptionRecordDto =
-                new SaveOrganisationSubscriptionRecordDto();
+            const subscriptionFulfilmentDto = this.stripeFulfillmentDtoFactory(
+                lineItem.price?.product,
+                fullSubscription.customer
+            );
 
+            subscriptionFulfilmentDto.paymentSystemMode = "subscription";
             subscriptionFulfilmentDto.paymentSystemTransactionId =
                 fullSubscription.id;
-            let newValidUntil: Date = new Date(); // today by default (not active)
 
-            if (additionalMeta.isActive) {
-                const twoDaysInMilliSeconds = 2 * 24 * 60 * 60 * 1000;
-                newValidUntil = new Date(
-                    //prettier-ignore
-                    fullSubscription.current_period_end
-                    + twoDaysInMilliSeconds
-                );
-                this.logger.log(
-                    `SUB: set valid until to ${newValidUntil.toISOString()} based on sub ${
-                        fullSubscription.current_period_end
-                    }`
-                );
-            }
-            subscriptionFulfilmentDto.validUntil = newValidUntil;
-
-            subscriptionFulfilmentDto.paymentSystemCustomerId =
-                (fullSubscription.customer as Stripe.Customer)?.id || "unknown";
-
-            subscriptionFulfilmentDto.paymentSystemCustomerEmail =
-                (fullSubscription.customer as Stripe.Customer)?.email ||
-                "unknown";
-            subscriptionFulfilmentDto.paymentSystemMode = "subscription";
-            subscriptionFulfilmentDto.paymentSystemName = "stripe";
-            subscriptionFulfilmentDto.paymentSystemProductId = (
-                lineItem.price?.product as Stripe.Product
-            )?.id;
-
-            subscriptionFulfilmentDto.productDisplayName = (
-                lineItem.price?.product as Stripe.Product
-            ).name;
+            subscriptionFulfilmentDto.validUntil = this.mapNewValidUntil(
+                subscriptionFulfilmentDto.paymentSystemMode,
+                additionalMeta.isActive,
+                fullSubscription.current_period_end
+            );
 
             subs.push(subscriptionFulfilmentDto);
         }
