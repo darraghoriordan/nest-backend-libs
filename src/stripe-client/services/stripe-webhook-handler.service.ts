@@ -46,7 +46,7 @@ export class StripeWebhookHandler {
         } catch (error) {
             this.logger.error(`Webhook signature verification failed.`, error);
             throw new BadRequestException(
-                "Webhook signature verification failed."
+                "Webhook signature verification failed or other payment error."
             );
         }
     }

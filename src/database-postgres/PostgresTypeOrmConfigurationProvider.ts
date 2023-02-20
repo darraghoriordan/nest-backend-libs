@@ -45,7 +45,7 @@ export class PostgresTypeOrmConfigurationProvider {
             return {
                 type: "postgres",
                 url: process.env.DATABASE_URL,
-                logging: false,
+                logging: process.env.APP_POSTGRES_LOGGING === "true",
                 migrationsTableName: "migrations",
                 migrationsRun: true,
                 synchronize: false,
@@ -64,7 +64,7 @@ export class PostgresTypeOrmConfigurationProvider {
             schema: process.env.APP_POSTGRES_SCHEMA,
             migrationsTableName: "migrations",
             migrationsRun: true,
-            logging: true,
+            logging: process.env.APP_POSTGRES_LOGGING === "true",
             synchronize: false,
             entities: [nodeModuleCorePath, appModulePath],
             migrations: [migrationsPath],

@@ -13,6 +13,9 @@ import {Job} from "bull";
 import Stripe from "stripe";
 import {OrganisationSubscriptionService} from "../../organisation-subscriptions";
 import {SaveOrganisationSubscriptionRecordDto} from "../../organisation-subscriptions/models/fulfillSubscriptionDto";
+import {InjectRepository} from "@nestjs/typeorm";
+import {StripeCheckoutEvent} from "../entities/stripe-checkout-event.entity";
+import {Repository} from "typeorm";
 
 @Injectable()
 @Processor("stripe-events")
@@ -24,6 +27,8 @@ export class StripeQueuedEventHandler {
     constructor(
         @Inject("StripeClient")
         private readonly stripe: Stripe,
+        @InjectRepository(StripeCheckoutEvent)
+        private readonly stripeCheckoutEventRepository: Repository<StripeCheckoutEvent>,
         private readonly organisationSubscriptionService: OrganisationSubscriptionService
     ) {}
     @OnQueueFailed()
@@ -216,6 +221,21 @@ export class StripeQueuedEventHandler {
         this.logger.log("Handling queued item", {
             eventType,
         });
+        try {
+            const eventToStore = this.stripeCheckoutEventRepository.create();
+            eventToStore.stripeObjectType = eventType || "unknown";
+            eventToStore.clientReferenceId = "unknwon";
+
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            eventToStore.stripeSessionId =
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                (job?.data?.data?.object as any)?.id || "unknown";
+            eventToStore.stripeData = job.data;
+
+            await this.stripeCheckoutEventRepository.save(eventToStore);
+        } catch (error) {
+            this.logger.error("Error saving Stripe event", error);
+        }
         // see - https://stripe.com/docs/billing/subscriptions/webhooks
         switch (eventType) {
             case "checkout.session.completed": {
