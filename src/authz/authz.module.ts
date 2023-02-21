@@ -1,4 +1,4 @@
-import {Module} from "@nestjs/common";
+import {Global, Module} from "@nestjs/common";
 import {PassportModule} from "@nestjs/passport";
 import {LoggerModule} from "../logger/logger.module";
 import {AuthConfigurationService} from "./AuthConfigurationService";
@@ -9,7 +9,10 @@ import {UserValidationService} from "./UserValidation.service";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {Person} from "../person/entities/person.entity";
 import {AuthzClientModule} from "../authzclient/authz-client.module";
+import {DefaultAuthGuard} from "./DefaultAuthGuard";
+import {ClaimsAuthorisationGuard} from "./ClaimsAuthorisationGuard";
 
+@Global()
 @Module({
     imports: [
         ConfigModule.forFeature(configVariables),
@@ -18,7 +21,13 @@ import {AuthzClientModule} from "../authzclient/authz-client.module";
         LoggerModule,
         AuthzClientModule,
     ],
-    providers: [JwtStrategy, AuthConfigurationService, UserValidationService],
+    providers: [
+        JwtStrategy,
+        AuthConfigurationService,
+        UserValidationService,
+        DefaultAuthGuard,
+        ClaimsAuthorisationGuard,
+    ],
     exports: [PassportModule, AuthConfigurationService],
 })
 export class AuthzModule {}
