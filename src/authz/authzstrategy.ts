@@ -2,11 +2,11 @@ import {Injectable, Logger} from "@nestjs/common";
 import {PassportStrategy} from "@nestjs/passport";
 import {ExtractJwt, Strategy} from "passport-jwt";
 import {passportJwtSecret} from "jwks-rsa";
-import {PersonService} from "../person/person.service";
 import {AccessToken} from "./AccessToken";
 import {Request} from "express";
 import {AuthConfigurationService} from "./AuthConfigurationService";
 import {RequestPerson} from "./RequestWithUser";
+import {UserValidationService} from "./UserValidation.service";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -14,7 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // private readonly _config: AuthConfigurationService;
     private readonly logger = new Logger(JwtStrategy.name);
     constructor(
-        private readonly personService: PersonService,
+        private readonly userValidationService: UserValidationService,
         config: AuthConfigurationService
     ) {
         super({
@@ -44,7 +44,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             return;
         }
 
-        const personResult = await this.personService.validateUser(
+        const personResult = await this.userValidationService.validateUser(
             payload,
             rawAccessToken
         );

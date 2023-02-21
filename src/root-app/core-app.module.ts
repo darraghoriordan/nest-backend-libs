@@ -22,6 +22,7 @@ import {BullModule} from "@nestjs/bull";
 import {HealthModule} from "../health/Health.module";
 import {LoggerModule as LoggingConfigModule} from "../logger/logger.module";
 import {LoggingConfigurationService} from "../logger/LoggingConfigurationService";
+import {AuthzModule} from "../authz";
 @Module({
     imports: [
         ConfigModule.forRoot({cache: true}),
@@ -65,6 +66,7 @@ import {LoggingConfigurationService} from "../logger/LoggingConfigurationService
             inject: [CoreConfigurationService],
         }),
         HealthModule,
+        AuthzModule,
     ],
     controllers: [AppController],
     providers: [AppService, SwaggerGen],
