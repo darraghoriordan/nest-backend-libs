@@ -5,6 +5,7 @@ import "reflect-metadata";
 import helmet from "helmet";
 import {
     ClassSerializerInterceptor,
+    Global,
     INestApplication,
     Module,
     NestApplicationOptions,
@@ -23,6 +24,8 @@ import {HealthModule} from "../health/Health.module";
 import {LoggerModule as LoggingConfigModule} from "../logger/logger.module";
 import {LoggingConfigurationService} from "../logger/LoggingConfigurationService";
 import {AuthzModule} from "../authz";
+
+@Global()
 @Module({
     imports: [
         ConfigModule.forRoot({cache: true}),

@@ -1,6 +1,5 @@
 import {Global, Module} from "@nestjs/common";
 import {PassportModule} from "@nestjs/passport";
-import {LoggerModule} from "../logger/logger.module";
 import {AuthConfigurationService} from "./AuthConfigurationService";
 import {JwtStrategy} from "./authzstrategy";
 import configVariables from "./AuthConfigurationVariables";
@@ -18,7 +17,6 @@ import {ClaimsAuthorisationGuard} from "./ClaimsAuthorisationGuard";
         ConfigModule.forFeature(configVariables),
         TypeOrmModule.forFeature([Person]),
         PassportModule.register({defaultStrategy: "jwt"}),
-        LoggerModule,
         AuthzClientModule,
     ],
     providers: [

@@ -4,11 +4,10 @@ import {TwitterClientConfigurationService} from "./TwitterClientConfigurationSer
 import {TwitterClientService} from "./services/twitter-client.service";
 import configVariables from "./TwitterConfigurationVariables";
 import {ConfigModule} from "@nestjs/config";
-import {CoreModule} from "../root-app/core-app.module";
 import {TwitterClientProvider} from "./TwitterClientProvider";
 
 @Module({
-    imports: [ConfigModule.forFeature(configVariables), CoreModule],
+    imports: [ConfigModule.forFeature(configVariables)],
     providers: [
         TwitterClientProvider,
         TwitterClientConfigurationService,

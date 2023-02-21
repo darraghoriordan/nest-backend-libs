@@ -1,5 +1,4 @@
 import {Module} from "@nestjs/common";
-import {LoggerModule} from "../logger/logger.module";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {Invitation} from "./entities/invitation.entity";
 import {InvitationController} from "./invitation.controller";
@@ -14,7 +13,6 @@ import {Organisation} from "../organisation/entities/organisation.entity";
 @Module({
     imports: [
         ConfigModule.forFeature(configVariables),
-        LoggerModule,
         TypeOrmModule.forFeature([Invitation, Organisation]),
         SmtpEmailClientModule,
         OrganisationModule,
