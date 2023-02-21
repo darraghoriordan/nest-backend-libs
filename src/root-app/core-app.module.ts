@@ -73,7 +73,7 @@ import {AuthzModule} from "../authz";
     ],
     controllers: [AppController],
     providers: [AppService, SwaggerGen],
-    exports: [SwaggerGen, BullModule],
+    exports: [SwaggerGen, BullModule, LoggerModule],
 })
 export class CoreModule {
     public static initApplication(
