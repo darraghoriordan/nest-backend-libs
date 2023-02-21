@@ -1,4 +1,4 @@
-import {Injectable, Logger, NotFoundException} from "@nestjs/common";
+import {Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
 import {RequestPerson} from "../authz/RequestWithUser";
@@ -8,7 +8,7 @@ import {Person} from "./entities/person.entity";
 
 @Injectable()
 export class PersonService {
-    private readonly logger = new Logger(PersonService.name);
+    //private readonly logger = new Logger(PersonService.name);
     constructor(
         @InjectRepository(Person)
         private repository: Repository<Person>
@@ -117,13 +117,14 @@ export class PersonService {
     private isOwnerGuard(
         uuid: string,
         currentUserUuid: string,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         attemptedAction: string
     ) {
         if (uuid !== currentUserUuid) {
-            this.logger.warn(`Attempted to ${attemptedAction} another user`, {
-                currentUserUuid,
-                uuid,
-            });
+            // this.logger.warn(`Attempted to ${attemptedAction} another user`, {
+            //     currentUserUuid,
+            //     uuid,
+            // });
             throw new NotFoundException();
         }
     }
