@@ -16,13 +16,8 @@ import {RequestWithUser} from "../authz/RequestWithUser";
 import {isUUID} from "class-validator";
 import {BooleanResult} from "../root-app/models/boolean-result";
 import {PersonDto} from "./dto/personResponseDto";
-import {
-    // ClaimsAuthorisationGuard,
-    DefaultAuthGuard,
-    // MandatoryUserClaims,
-    SuperUserClaims,
-} from "../authz";
 import {Person} from "./entities/person.entity";
+import {DefaultAuthGuard, SuperUserClaims} from "../authz";
 
 @UseGuards(DefaultAuthGuard)
 @ApiBearerAuth()
