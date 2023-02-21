@@ -18,14 +18,13 @@ import {BooleanResult} from "../root-app/models/boolean-result";
 import {PersonDto} from "./dto/personResponseDto";
 import {
     // ClaimsAuthorisationGuard,
-    // DefaultAuthGuard,
+    DefaultAuthGuard,
     // MandatoryUserClaims,
     SuperUserClaims,
 } from "../authz";
 import {Person} from "./entities/person.entity";
-import {AuthGuard} from "@nestjs/passport";
 
-@UseGuards(AuthGuard("jwt"))
+@UseGuards(DefaultAuthGuard)
 @ApiBearerAuth()
 @Controller("person")
 @ApiTags("Persons")
