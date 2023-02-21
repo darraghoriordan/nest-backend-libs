@@ -17,14 +17,15 @@ import {isUUID} from "class-validator";
 import {BooleanResult} from "../root-app/models/boolean-result";
 import {PersonDto} from "./dto/personResponseDto";
 import {
-    ClaimsAuthorisationGuard,
-    DefaultAuthGuard,
-    MandatoryUserClaims,
+    // ClaimsAuthorisationGuard,
+    // DefaultAuthGuard,
+    // MandatoryUserClaims,
     SuperUserClaims,
 } from "../authz";
 import {Person} from "./entities/person.entity";
+import {AuthGuard} from "@nestjs/passport";
 
-@UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
+@UseGuards(AuthGuard("jwt"))
 @ApiBearerAuth()
 @Controller("person")
 @ApiTags("Persons")
@@ -64,7 +65,7 @@ export class PersonController {
     }
 
     @Get()
-    @MandatoryUserClaims("read:all")
+    //@MandatoryUserClaims("read:all")
     @ApiOkResponse({type: PersonDto, isArray: true})
     async findAll(): Promise<Person[]> {
         return await this.personService.findAll();
