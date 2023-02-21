@@ -29,7 +29,7 @@ export class EmailClientController {
         return {result: true};
     }
 
-    @MandatoryUserClaims("modify:all")
+    @MandatoryUserClaims("read:all")
     @Get("peekalljobs")
     @ApiOkResponse({type: [QueueItemDto]})
     async peekQueueJobs(): Promise<QueueItemDto[]> {
@@ -55,7 +55,7 @@ export class EmailClientController {
         });
     }
 
-    @MandatoryUserClaims("modify:all")
+    @MandatoryUserClaims("read:all")
     @Get("peekfailedjobs")
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     @ApiOkResponse({type: [QueueItemDto]})

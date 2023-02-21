@@ -48,7 +48,7 @@ export class StripeWebhookController {
 
     @UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
     @ApiBearerAuth()
-    @MandatoryUserClaims("modify:all")
+    @MandatoryUserClaims("read:all")
     @Get("peekalljobs")
     @ApiOkResponse({type: [QueueItemDto]})
     async peekQueueJobs(): Promise<QueueItemDto[]> {
@@ -76,7 +76,7 @@ export class StripeWebhookController {
 
     @UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
     @ApiBearerAuth()
-    @MandatoryUserClaims("modify:all")
+    @MandatoryUserClaims("read:all")
     @Get("peekfailedjobs")
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     @ApiOkResponse({type: [QueueItemDto]})
