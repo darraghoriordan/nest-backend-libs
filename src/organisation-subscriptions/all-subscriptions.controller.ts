@@ -1,12 +1,15 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import {Controller, UseGuards, Get} from "@nestjs/common";
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
-import {AuthGuard} from "@nestjs/passport";
 import {OrganisationSubscriptionRecord} from "./entities/organisation-subscription.entity";
 import {OrganisationSubscriptionService} from "./organisation-subscriptions.service";
-import {ClaimsAuthorisationGuard, MandatoryUserClaims} from "../authz";
+import {
+    ClaimsAuthorisationGuard,
+    DefaultAuthGuard,
+    MandatoryUserClaims,
+} from "../authz";
 
-@UseGuards(AuthGuard("jwt"), ClaimsAuthorisationGuard)
+@UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
 @ApiBearerAuth()
 @Controller("organisation/subscriptions")
 @ApiTags("Organisation Subscriptions")

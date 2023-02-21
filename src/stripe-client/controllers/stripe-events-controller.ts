@@ -3,7 +3,11 @@ import {ApiBearerAuth, ApiTags, ApiOkResponse, ApiQuery} from "@nestjs/swagger";
 import {RequestWithUser} from "../../authz/RequestWithUser";
 import {StripeCheckoutService} from "../services/stripe-checkout.service";
 import {StripeCheckoutSessionResponseDto} from "../models/StripeCheckoutSessionResponseDto";
-import {DefaultAuthGuard, MandatoryUserClaims} from "../../authz";
+import {
+    ClaimsAuthorisationGuard,
+    DefaultAuthGuard,
+    MandatoryUserClaims,
+} from "../../authz";
 import {StripeCheckoutEvent} from "../entities/stripe-checkout-event.entity";
 
 export type EventQuery = {
@@ -11,7 +15,7 @@ export type EventQuery = {
     skip: number;
 };
 
-@UseGuards(DefaultAuthGuard)
+@UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
 @ApiBearerAuth()
 @Controller("payments/stripe/events")
 @ApiTags("Payments")

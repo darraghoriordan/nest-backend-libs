@@ -10,15 +10,18 @@ import {
     Delete,
 } from "@nestjs/common";
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
-import {AuthGuard} from "@nestjs/passport";
 import {RequestWithUser} from "../authz/RequestWithUser";
 import {OrganisationSubscriptionRecord} from "./entities/organisation-subscription.entity";
 import {OrganisationSubscriptionService} from "./organisation-subscriptions.service";
-import {ClaimsAuthorisationGuard, MandatoryUserClaims} from "../authz";
+import {
+    ClaimsAuthorisationGuard,
+    DefaultAuthGuard,
+    MandatoryUserClaims,
+} from "../authz";
 import {SaveOrganisationSubscriptionRecordDto} from "./models/fulfillSubscriptionDto";
 import {BooleanResult} from "../root-app/models/boolean-result";
 
-@UseGuards(AuthGuard("jwt"), ClaimsAuthorisationGuard)
+@UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
 @ApiBearerAuth()
 @Controller("organisation/:orgId/subscriptions")
 @ApiTags("Organisation Subscriptions")

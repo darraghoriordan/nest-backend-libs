@@ -16,10 +16,15 @@ import {RequestWithUser} from "../authz/RequestWithUser";
 import {isUUID} from "class-validator";
 import {BooleanResult} from "../root-app/models/boolean-result";
 import {PersonDto} from "./dto/personResponseDto";
-import {DefaultAuthGuard, MandatoryUserClaims, SuperUserClaims} from "../authz";
+import {
+    ClaimsAuthorisationGuard,
+    DefaultAuthGuard,
+    MandatoryUserClaims,
+    SuperUserClaims,
+} from "../authz";
 import {Person} from "./entities/person.entity";
 
-@UseGuards(DefaultAuthGuard)
+@UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
 @ApiBearerAuth()
 @Controller("person")
 @ApiTags("Persons")
@@ -58,8 +63,8 @@ export class PersonController {
         };
     }
 
-    @MandatoryUserClaims("read:all")
     @Get()
+    @MandatoryUserClaims("read:all")
     @ApiOkResponse({type: PersonDto, isArray: true})
     async findAll(): Promise<Person[]> {
         return await this.personService.findAll();
