@@ -135,6 +135,11 @@ export class PersonService {
         }
         throw new NotFoundException();
     }
+
+    async findAllPeopleInSystem(): Promise<Person[]> {
+        return await this.repository.find();
+    }
+
     async findOne(id: number) {
         return this.repository.findOneOrFail({
             where: {id},

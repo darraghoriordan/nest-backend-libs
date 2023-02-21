@@ -13,14 +13,14 @@ import {StripeCheckoutSessionResponseDto} from "../models/StripeCheckoutSessionR
  *
  * This is not automatically included in the StripeClientModule.
  */
+@UseGuards(AuthGuard("jwt"))
+@ApiBearerAuth()
 @Controller("payments/stripe")
 @ApiTags("Payments")
 // eslint-disable-next-line @darraghor/nestjs-typed/injectable-should-be-provided
 export class StripeCheckoutController {
     constructor(private readonly stripeService: StripeCheckoutService) {}
 
-    @UseGuards(AuthGuard("jwt"))
-    @ApiBearerAuth()
     @Post("checkout-session")
     @ApiOkResponse({type: StripeCheckoutSessionResponseDto})
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

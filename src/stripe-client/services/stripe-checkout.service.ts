@@ -9,7 +9,13 @@ import {PaymentSessionService} from "../../payment-sessions/payment-session.serv
 import {OrganisationSubscriptionService} from "../../organisation-subscriptions";
 import {StripeCustomerPortalResponseDto} from "../models/StripeCustomerPortalResponseDto";
 import {StripeCustomerPortalRequestDto} from "../models/StripeCustomerPortalRequestDto";
+import {InjectRepository} from "@nestjs/typeorm";
+import {StripeCheckoutEvent} from "../entities/stripe-checkout-event.entity";
+import {Repository} from "typeorm";
 
+/**
+ * Is this doing too much? probably.
+ */
 @Injectable()
 export class StripeCheckoutService {
     private readonly logger = new Logger(StripeCheckoutService.name);
@@ -18,7 +24,9 @@ export class StripeCheckoutService {
         private readonly clientInstance: Stripe,
         private readonly stripeClientConfigurationService: StripeClientConfigurationService,
         private readonly paymentSessionService: PaymentSessionService,
-        private readonly organisationSubscriptionService: OrganisationSubscriptionService
+        private readonly organisationSubscriptionService: OrganisationSubscriptionService,
+        @InjectRepository(StripeCheckoutEvent)
+        private readonly stripeCheckoutEventRepository: Repository<StripeCheckoutEvent>
     ) {}
 
     // must set the org id to the customer id field so we can get this later
@@ -122,5 +130,18 @@ export class StripeCheckoutService {
         response.stripeSessionId = session.id;
 
         return response;
+    }
+
+    public async getLast(
+        take: number,
+        skip: number
+    ): Promise<StripeCheckoutEvent[]> {
+        return this.stripeCheckoutEventRepository.find({
+            take: take,
+            skip: skip,
+            order: {
+                createdDate: "DESC",
+            },
+        });
     }
 }

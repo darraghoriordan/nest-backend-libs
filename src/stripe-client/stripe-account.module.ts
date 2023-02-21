@@ -14,6 +14,7 @@ import {StripeWebhookController} from "./controllers/stripe-webhook-controller";
 import {StripeCustomerPortalController} from "./controllers/stripe-customer-portal-controller";
 import {OrganisationSubscriptionsModule} from "../organisation-subscriptions/organisation-subscriptions.module";
 import {PaymentSessionModule} from "../payment-sessions/payment-session.module";
+import {StripeEventsController} from "./controllers/stripe-events-controller";
 
 @Module({
     imports: [
@@ -39,6 +40,10 @@ import {PaymentSessionModule} from "../payment-sessions/payment-session.module";
         StripeWebhookHandler,
         StripeClientProvider,
     ],
-    controllers: [StripeWebhookController, StripeCustomerPortalController],
+    controllers: [
+        StripeWebhookController,
+        StripeCustomerPortalController,
+        StripeEventsController,
+    ],
 })
 export class StripeAccountModule {}

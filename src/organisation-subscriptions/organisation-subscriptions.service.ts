@@ -84,6 +84,10 @@ export class OrganisationSubscriptionService {
         return org.subscriptionRecords;
     }
 
+    async findAll(): Promise<OrganisationSubscriptionRecord[]> {
+        return this.orgSubRepository.find();
+    }
+
     // eslint-disable-next-line sonarjs/cognitive-complexity
     async save(
         subRecordDtoCollection: SaveOrganisationSubscriptionRecordDto[],

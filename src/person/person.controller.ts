@@ -12,13 +12,14 @@ import {
 import {PersonService} from "./person.service";
 import {UpdatePersonDto} from "./dto/update-person.dto";
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
-import {AuthGuard} from "@nestjs/passport";
 import {RequestWithUser} from "../authz/RequestWithUser";
 import {isUUID} from "class-validator";
 import {BooleanResult} from "../root-app/models/boolean-result";
 import {PersonDto} from "./dto/personResponseDto";
+import {DefaultAuthGuard, MandatoryUserClaims, SuperUserClaims} from "../authz";
+import {Person} from "./entities/person.entity";
 
-@UseGuards(AuthGuard("jwt"))
+@UseGuards(DefaultAuthGuard)
 @ApiBearerAuth()
 @Controller("person")
 @ApiTags("Persons")
@@ -35,7 +36,9 @@ export class PersonController {
             const result = await this.personService.findOne(request.user.id);
             return {
                 ...result,
-                isSuper: request.user.permissions.includes("modify:all"),
+                isSuper: request.user.permissions.includes(
+                    SuperUserClaims.MODIFY_ALL
+                ),
             };
         }
         if (!isUUID(uuid, "4")) {
@@ -49,8 +52,17 @@ export class PersonController {
         );
         return {
             ...result,
-            isSuper: request.user.permissions.includes("modify:all"),
+            isSuper: request.user.permissions.includes(
+                SuperUserClaims.MODIFY_ALL
+            ),
         };
+    }
+
+    @MandatoryUserClaims("read:all")
+    @Get()
+    @ApiOkResponse({type: PersonDto, isArray: true})
+    async findAll(): Promise<Person[]> {
+        return await this.personService.findAll();
     }
 
     @Patch(":uuid")
