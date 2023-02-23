@@ -17,9 +17,14 @@ import {isUUID} from "class-validator";
 import {BooleanResult} from "../root-app/models/boolean-result";
 import {PersonDto} from "./dto/personResponseDto";
 import {Person} from "./entities/person.entity";
-import {DefaultAuthGuard, SuperUserClaims} from "../authz";
+import {
+    ClaimsAuthorisationGuard,
+    DefaultAuthGuard,
+    MandatoryUserClaims,
+    SuperUserClaims,
+} from "../authz";
 
-@UseGuards(DefaultAuthGuard)
+@UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
 @ApiBearerAuth()
 @Controller("person")
 @ApiTags("Persons")
@@ -33,9 +38,8 @@ export class PersonController {
         @Param("uuid") uuid: string
     ): Promise<PersonDto> {
         if (uuid === "me") {
-            const result = await this.personService.findOne(request.user.id);
             return {
-                ...result,
+                ...request.user,
                 isSuper: request.user.permissions.includes(
                     SuperUserClaims.MODIFY_ALL
                 ),
@@ -59,7 +63,7 @@ export class PersonController {
     }
 
     @Get()
-    //@MandatoryUserClaims("read:all")
+    @MandatoryUserClaims("read:all")
     @ApiOkResponse({type: PersonDto, isArray: true})
     async findAll(): Promise<Person[]> {
         return await this.personService.findAll();

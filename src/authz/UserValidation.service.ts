@@ -8,7 +8,8 @@ import {OrganisationMembership} from "../organisation-memberships/entities/organ
 import {Roles} from "../organisation/dto/RolesEnum";
 import {MembershipRole} from "../organisation/entities/member-role.entity";
 import {Organisation} from "../organisation/entities/organisation.entity";
-import {Person} from "../person/entities/person.entity";
+import {Person} from "../person";
+//import {Person} from "../person/entities/person.entity";
 import {AccessToken} from "./AccessToken";
 
 @Injectable()

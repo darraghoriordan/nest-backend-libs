@@ -11,7 +11,7 @@ import {
 
 @UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
 @ApiBearerAuth()
-@Controller("organisation/subscriptions")
+@Controller("subscriptions")
 @ApiTags("Organisation Subscriptions")
 export class AllSubscriptionsController {
     constructor(private readonly osrService: OrganisationSubscriptionService) {}
