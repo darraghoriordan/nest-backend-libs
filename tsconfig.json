@@ -15,7 +15,7 @@
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
         "moduleResolution": "node",
-        "skipLibCheck": true,
+        //"skipLibCheck": true,
         "skipDefaultLibCheck": true,
         "resolveJsonModule": true,
         "esModuleInterop": true,

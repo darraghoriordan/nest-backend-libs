@@ -10,8 +10,6 @@ import {UserValidationService} from "./UserValidation.service";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    // private readonly _config: AuthConfigurationService;
     private readonly logger = new Logger(JwtStrategy.name);
     constructor(
         private readonly userValidationService: UserValidationService,
