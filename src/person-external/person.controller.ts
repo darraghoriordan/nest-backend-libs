@@ -18,13 +18,13 @@ import {BooleanResult} from "../root-app/models/boolean-result";
 import {PersonDto} from "../person-internal/dto/personResponseDto";
 import {Person} from "../person-internal/entities/person.entity";
 import {
-    //ClaimsAuthorisationGuard,
+    ClaimsAuthorisationGuard,
     DefaultAuthGuard,
-    //MandatoryUserClaims,
+    MandatoryUserClaims,
     SuperUserClaims,
 } from "../authz";
 
-@UseGuards(DefaultAuthGuard)
+@UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
 @ApiBearerAuth()
 @Controller("person")
 @ApiTags("Persons")
@@ -63,7 +63,7 @@ export class PersonController {
     }
 
     @Get()
-    //@MandatoryUserClaims("read:all")
+    @MandatoryUserClaims("read:all")
     @ApiOkResponse({type: PersonDto, isArray: true})
     async findAll(): Promise<Person[]> {
         return await this.personService.findAll();
