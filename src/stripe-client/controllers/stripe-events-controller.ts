@@ -2,7 +2,6 @@ import {UseGuards, Controller, Request, Get, Query} from "@nestjs/common";
 import {ApiBearerAuth, ApiTags, ApiOkResponse, ApiQuery} from "@nestjs/swagger";
 import {RequestWithUser} from "../../authz/RequestWithUser";
 import {StripeCheckoutService} from "../services/stripe-checkout.service";
-import {StripeCheckoutSessionResponseDto} from "../models/StripeCheckoutSessionResponseDto";
 import {
     ClaimsAuthorisationGuard,
     DefaultAuthGuard,
@@ -26,7 +25,7 @@ export class StripeEventsController {
     @Get()
     @ApiQuery({name: "take", required: true, type: Number})
     @ApiQuery({name: "skip", required: true, type: Number})
-    @ApiOkResponse({type: StripeCheckoutSessionResponseDto, isArray: true})
+    @ApiOkResponse({type: StripeCheckoutEvent, isArray: true})
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async getLastEvents(
         @Request() request: RequestWithUser,

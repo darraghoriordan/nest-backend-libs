@@ -1,4 +1,4 @@
-import {ApiProperty} from "@nestjs/swagger";
+import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
 import {
     Column,
     CreateDateColumn,
@@ -16,15 +16,19 @@ export class StripeCheckoutEvent {
     @ApiProperty()
     createdDate!: Date;
 
+    @ApiPropertyOptional()
     @Column({nullable: true})
     clientReferenceId?: string;
 
+    @ApiProperty()
     @Column()
     stripeSessionId!: string;
 
+    @ApiProperty()
     @Column()
     stripeObjectType!: string;
 
+    @ApiProperty({type: "object", additionalProperties: true})
     @Column("jsonb", {name: "stripeObject", nullable: false})
     stripeData: any;
 }

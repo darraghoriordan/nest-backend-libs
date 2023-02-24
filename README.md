@@ -48,3 +48,9 @@ stripe login
  stripe trigger checkout.session.completed
  stripe trigger payment_intent.succeeded
 ```
+
+## Testing with local nest-back-end-libs
+
+```bash
+pnpm add ../../../nest-backend-libs --force
+```
