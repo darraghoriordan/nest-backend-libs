@@ -19,7 +19,7 @@ import {
 } from "typeorm";
 import {MembershipRole} from "../../organisation/entities/member-role.entity";
 import {Organisation} from "../../organisation/entities/organisation.entity";
-import {Person} from "../../person/entities/person.entity";
+import {Person} from "../../person-internal/entities/person.entity";
 
 @Entity()
 export class OrganisationMembership {

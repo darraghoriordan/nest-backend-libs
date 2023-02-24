@@ -9,22 +9,22 @@ import {
     UseGuards,
     BadRequestException,
 } from "@nestjs/common";
-import {PersonService} from "./person.service";
-import {UpdatePersonDto} from "./dto/update-person.dto";
+import {PersonService} from "../person-internal/person.service";
+import {UpdatePersonDto} from "../person-internal/dto/update-person.dto";
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
 import {RequestWithUser} from "../authz/RequestWithUser";
 import {isUUID} from "class-validator";
 import {BooleanResult} from "../root-app/models/boolean-result";
-import {PersonDto} from "./dto/personResponseDto";
-import {Person} from "./entities/person.entity";
+import {PersonDto} from "../person-internal/dto/personResponseDto";
+import {Person} from "../person-internal/entities/person.entity";
 import {
-    ClaimsAuthorisationGuard,
+    //ClaimsAuthorisationGuard,
     DefaultAuthGuard,
-    MandatoryUserClaims,
+    //MandatoryUserClaims,
     SuperUserClaims,
 } from "../authz";
 
-@UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
+@UseGuards(DefaultAuthGuard)
 @ApiBearerAuth()
 @Controller("person")
 @ApiTags("Persons")
@@ -63,7 +63,7 @@ export class PersonController {
     }
 
     @Get()
-    @MandatoryUserClaims("read:all")
+    //@MandatoryUserClaims("read:all")
     @ApiOkResponse({type: PersonDto, isArray: true})
     async findAll(): Promise<Person[]> {
         return await this.personService.findAll();

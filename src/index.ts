@@ -41,4 +41,4 @@ export * from "./organisation-subscriptions/index";
 export * from "./organisation/index";
 export * from "./authz/index";
 export * from "./invitations/index";
-export * from "./person/index";
+export * from "./person-internal/index";

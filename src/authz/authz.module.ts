@@ -6,7 +6,7 @@ import configVariables from "./AuthConfigurationVariables";
 import {ConfigModule} from "@nestjs/config";
 import {UserValidationService} from "./UserValidation.service";
 import {TypeOrmModule} from "@nestjs/typeorm";
-import {Person} from "../person/entities/person.entity";
+import {Person} from "../person-internal/entities/person.entity";
 import {AuthzClientModule} from "../authzclient/authz-client.module";
 
 @Global()
