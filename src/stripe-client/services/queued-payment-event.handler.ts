@@ -240,7 +240,7 @@ export class StripeQueuedEventHandler {
         try {
             const eventToStore = this.stripeCheckoutEventRepository.create();
             eventToStore.stripeObjectType = eventType || "unknown";
-            eventToStore.clientReferenceId = "unknwon";
+            eventToStore.clientReferenceId = "not set";
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             eventToStore.stripeSessionId =

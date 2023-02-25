@@ -1,4 +1,5 @@
 import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
+import {Exclude, Expose} from "class-transformer";
 import {
     Column,
     CreateDateColumn,
@@ -28,7 +29,14 @@ export class StripeCheckoutEvent {
     @Column()
     stripeObjectType!: string;
 
-    @ApiProperty({type: "object", additionalProperties: true})
+    @Exclude()
     @Column("jsonb", {name: "stripeObject", nullable: false})
     stripeData: any;
+
+    // special case for returning the stripe data
+    @ApiProperty({type: String, name: "stripeDataAsString"})
+    @Expose({name: "stripeDataAsString"})
+    getStripeDataAsJsonString(): string {
+        return JSON.stringify(this.stripeData, undefined, 4);
+    }
 }
