@@ -20,15 +20,14 @@ export class PostgresTypeOrmConfigurationProvider {
 
         const appModulePath = path.join(
             // __dirname,
-            process.env.APP_MODULE_ENTITY_PATH ||
-                "../../../../../apps/backend/dist",
+            process.env.APP_MODULE_ENTITY_PATH || "dist",
             "**",
             "*.entity.{ts,js}"
         );
 
         const migrationsPath = path.join(
             // __dirname,
-            process.env.MIGRATIONS_PATH || "../../../../../apps/backend/dist",
+            process.env.MIGRATIONS_PATH || "dist",
             "**",
             "migrations",
             "*.{ts,js}"
