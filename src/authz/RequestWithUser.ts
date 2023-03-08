@@ -1,11 +1,8 @@
-import {Person} from "../person-internal/entities/person.entity";
+import {User} from "../user-internal/entities/user.entity";
 import {Request} from "express";
 export interface RequestWithUser extends Request {
-    user: RequestPerson;
+    user: RequestUser;
 }
-export type RequestPerson = Pick<
-    Person,
-    Exclude<keyof Person, "nullChecks">
-> & {
+export type RequestUser = Pick<User, Exclude<keyof User, "nullChecks">> & {
     permissions: string[];
 };

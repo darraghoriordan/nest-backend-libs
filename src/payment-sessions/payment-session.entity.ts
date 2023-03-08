@@ -31,5 +31,5 @@ export class PaymentSessionReference {
     organisationUuid?: string;
 
     @Column()
-    personUuid!: string;
+    userUuid!: string;
 }

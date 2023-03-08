@@ -2,7 +2,7 @@ import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
 import {Column} from "typeorm";
 import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity";
 
-export class PersonDto {
+export class UserDto {
     @ApiProperty()
     isSuper!: boolean;
 

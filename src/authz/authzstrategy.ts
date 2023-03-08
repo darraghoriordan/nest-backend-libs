@@ -5,7 +5,7 @@ import {passportJwtSecret} from "jwks-rsa";
 import {AccessToken} from "./AccessToken";
 import {Request} from "express";
 import {AuthConfigurationService} from "./AuthConfigurationService";
-import {RequestPerson} from "./RequestWithUser";
+import {RequestUser} from "./RequestWithUser";
 import {UserValidationService} from "./UserValidation.service";
 
 @Injectable()
@@ -34,7 +34,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     async validate(
         request: Request,
         payload: AccessToken
-    ): Promise<RequestPerson | undefined> {
+    ): Promise<RequestUser | undefined> {
         const rawAccessToken =
             ExtractJwt.fromAuthHeaderAsBearerToken()(request);
         if (rawAccessToken === undefined || rawAccessToken === null) {
@@ -42,14 +42,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             return;
         }
 
-        const personResult = await this.userValidationService.validateUser(
+        const userResult = await this.userValidationService.validateUser(
             payload,
             rawAccessToken
         );
 
         const withPermissions = {permissions: payload.permissions || []};
         // eslint-disable-next-line sonarjs/prefer-immediate-return
-        const rp = {...personResult, ...withPermissions} as RequestPerson;
+        const rp = {...userResult, ...withPermissions} as RequestUser;
         return rp;
     }
 }

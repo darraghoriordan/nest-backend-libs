@@ -9,14 +9,14 @@ import {
     UseGuards,
     BadRequestException,
 } from "@nestjs/common";
-import {PersonService} from "../person-internal/person.service";
-import {UpdatePersonDto} from "../person-internal/dto/update-person.dto";
+import {UserService} from "../user-internal/user.service";
+import {UpdateUserDto} from "../user-internal/dto/update-user.dto";
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
 import {RequestWithUser} from "../authz/RequestWithUser";
 import {isUUID} from "class-validator";
 import {BooleanResult} from "../root-app/models/boolean-result";
-import {PersonDto} from "../person-internal/dto/personResponseDto";
-import {Person} from "../person-internal/entities/person.entity";
+import {UserDto} from "../user-internal/dto/userResponseDto";
+import {User} from "../user-internal/entities/user.entity";
 import {
     ClaimsAuthorisationGuard,
     DefaultAuthGuard,
@@ -26,17 +26,17 @@ import {
 
 @UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
 @ApiBearerAuth()
-@Controller("person")
-@ApiTags("Persons")
-export class PersonController {
-    constructor(private readonly personService: PersonService) {}
+@Controller("user")
+@ApiTags("Users")
+export class UserController {
+    constructor(private readonly userService: UserService) {}
 
     @Get(":uuid")
-    @ApiOkResponse({type: PersonDto})
+    @ApiOkResponse({type: UserDto})
     async findOne(
         @Request() request: RequestWithUser,
         @Param("uuid") uuid: string
-    ): Promise<PersonDto> {
+    ): Promise<UserDto> {
         if (uuid === "me") {
             return {
                 ...request.user,
@@ -49,8 +49,8 @@ export class PersonController {
             throw new BadRequestException(uuid, "Invalid UUID");
         }
 
-        // find the person if they are in the same organisation as the user
-        const result = await this.personService.findOneIfSameOrganisation(
+        // find the user if they are in the same organisation as the user
+        const result = await this.userService.findOneIfSameOrganisation(
             uuid,
             request.user
         );
@@ -64,21 +64,21 @@ export class PersonController {
 
     @Get()
     @MandatoryUserClaims("read:all")
-    @ApiOkResponse({type: PersonDto, isArray: true})
-    async findAll(): Promise<Person[]> {
-        return await this.personService.findAll();
+    @ApiOkResponse({type: UserDto, isArray: true})
+    async findAll(): Promise<User[]> {
+        return await this.userService.findAll();
     }
 
     @Patch(":uuid")
     @ApiOkResponse({type: BooleanResult})
     async update(
         @Param("uuid") uuid: string,
-        @Body() updatePersonDto: UpdatePersonDto,
+        @Body() updateUserDto: UpdateUserDto,
         @Request() request: RequestWithUser
     ) {
-        const result = await this.personService.update(
+        const result = await this.userService.update(
             uuid,
-            updatePersonDto,
+            updateUserDto,
             request.user.uuid
         );
         return {result: result.affected && result.affected > 0};
@@ -90,7 +90,7 @@ export class PersonController {
         @Param("uuid") uuid: string,
         @Request() request: RequestWithUser
     ): Promise<BooleanResult> {
-        const deleteResult = await this.personService.remove(
+        const deleteResult = await this.userService.remove(
             uuid,
             request.user.uuid
         );

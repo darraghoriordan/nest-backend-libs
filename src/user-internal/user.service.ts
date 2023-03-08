@@ -1,24 +1,24 @@
 import {Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
-import {RequestPerson} from "../authz/RequestWithUser";
+import {RequestUser} from "../authz/RequestWithUser";
 import {Roles} from "../organisation/dto/RolesEnum";
-import {UpdatePersonDto} from "./dto/update-person.dto";
-import {Person} from "./entities/person.entity";
+import {UpdateUserDto} from "./dto/update-user.dto";
+import {User} from "./entities/user.entity";
 
 @Injectable()
-export class PersonService {
-    //private readonly logger = new Logger(PersonService.name);
+export class UserService {
+    //private readonly logger = new Logger(UserService.name);
     constructor(
-        @InjectRepository(Person)
-        private repository: Repository<Person>
+        @InjectRepository(User)
+        private repository: Repository<User>
     ) {}
 
     async findAll() {
         return this.repository.find();
     }
 
-    async findOneByAuth0Id(auth0Id: string): Promise<Person | undefined> {
+    async findOneByAuth0Id(auth0Id: string): Promise<User | undefined> {
         return this.repository.findOneOrFail({
             where: {
                 auth0UserId: auth0Id,
@@ -28,9 +28,9 @@ export class PersonService {
 
     async findOneIfSameOrganisation(
         uuid: string,
-        currentUser: RequestPerson
-    ): Promise<Person> {
-        const person = await this.repository.findOneOrFail({
+        currentUser: RequestUser
+    ): Promise<User> {
+        const user = await this.repository.findOneOrFail({
             where: {
                 uuid,
             },
@@ -41,18 +41,18 @@ export class PersonService {
             },
         });
         if (
-            person.memberships.some((m) =>
+            user.memberships.some((m) =>
                 currentUser.memberships.some(
                     (cu) => cu.organisationId === m.organisationId
                 )
             )
         ) {
-            return person;
+            return user;
         }
         throw new NotFoundException();
     }
 
-    async findAllPeopleInSystem(): Promise<Person[]> {
+    async findAllPeopleInSystem(): Promise<User[]> {
         return await this.repository.find();
     }
 
@@ -67,7 +67,7 @@ export class PersonService {
         });
     }
 
-    async findOneByUuid(uuid: string): Promise<Person> {
+    async findOneByUuid(uuid: string): Promise<User> {
         return this.repository.findOneOrFail({
             relations: {
                 memberships: {
@@ -80,15 +80,15 @@ export class PersonService {
 
     async update(
         uuid: string,
-        updatePersonDto: UpdatePersonDto,
+        updateUserDto: UpdateUserDto,
         currentUserUuid: string
     ) {
         this.isOwnerGuard(uuid, currentUserUuid, "update");
 
-        return this.repository.update({uuid}, updatePersonDto);
+        return this.repository.update({uuid}, updateUserDto);
     }
 
-    async remove(uuid: string, currentUserUuid: string): Promise<Person> {
+    async remove(uuid: string, currentUserUuid: string): Promise<User> {
         this.isOwnerGuard(uuid, currentUserUuid, "delete");
 
         const user = await this.repository.findOneOrFail({

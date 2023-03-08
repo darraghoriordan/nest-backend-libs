@@ -28,7 +28,7 @@ export class OrganisationSubscriptionService {
             where: {
                 id: orgId,
                 memberships: {
-                    personId: currentUserId,
+                    userId: currentUserId,
                     roles: {
                         name: Roles.owner,
                     },

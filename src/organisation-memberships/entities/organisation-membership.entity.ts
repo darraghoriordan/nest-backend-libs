@@ -19,7 +19,7 @@ import {
 } from "typeorm";
 import {MembershipRole} from "../../organisation/entities/member-role.entity";
 import {Organisation} from "../../organisation/entities/organisation.entity";
-import {Person} from "../../person-internal/entities/person.entity";
+import {User} from "../../user-internal/entities/user.entity";
 
 @Entity()
 export class OrganisationMembership {
@@ -36,16 +36,16 @@ export class OrganisationMembership {
     @Index()
     public uuid!: string;
 
-    @ManyToOne(() => Person, (person) => person.memberships, {
+    @ManyToOne(() => User, (user) => user.memberships, {
         eager: true,
         cascade: ["insert", "update"],
     })
-    person!: Person;
+    user!: User;
 
     @Column()
     @ApiProperty()
-    @RelationId((membership: OrganisationMembership) => membership.person)
-    public personId!: number;
+    @RelationId((membership: OrganisationMembership) => membership.user)
+    public userId!: number;
 
     @ManyToOne(() => Organisation, (org) => org.memberships, {
         eager: true,

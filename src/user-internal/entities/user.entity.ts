@@ -17,7 +17,7 @@ import {
 import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity";
 
 @Entity()
-export class Person {
+export class User {
     @PrimaryGeneratedColumn()
     @ApiProperty()
     id!: number;
@@ -70,7 +70,7 @@ export class Person {
 
     @ApiProperty({type: () => OrganisationMembership, isArray: true})
     @Type(() => OrganisationMembership)
-    @OneToMany(() => OrganisationMembership, (om) => om.person, {
+    @OneToMany(() => OrganisationMembership, (om) => om.user, {
         cascade: ["insert", "update"],
     })
     memberships!: OrganisationMembership[];

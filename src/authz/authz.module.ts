@@ -6,14 +6,14 @@ import configVariables from "./AuthConfigurationVariables";
 import {ConfigModule} from "@nestjs/config";
 import {UserValidationService} from "./UserValidation.service";
 import {TypeOrmModule} from "@nestjs/typeorm";
-import {Person} from "../person-internal/entities/person.entity";
+import {User} from "../user-internal/entities/user.entity";
 import {AuthzClientModule} from "../authzclient/authz-client.module";
 
 @Global()
 @Module({
     imports: [
         ConfigModule.forFeature(configVariables),
-        TypeOrmModule.forFeature([Person]),
+        TypeOrmModule.forFeature([User]),
         PassportModule.register({defaultStrategy: "jwt"}),
         AuthzClientModule,
     ],

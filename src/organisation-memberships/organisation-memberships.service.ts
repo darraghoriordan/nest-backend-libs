@@ -33,10 +33,8 @@ export class OrganisationMembershipsService {
             },
         });
 
-        // is the person a member of the organisation?
-        const isAMember = memberships.some(
-            (m) => m.person.id === currentUserId
-        );
+        // is the user a member of the organisation?
+        const isAMember = memberships.some((m) => m.user.id === currentUserId);
 
         if (!isAMember) {
             throw new Error("You are not a member of this organisation");
@@ -66,9 +64,9 @@ export class OrganisationMembershipsService {
         // check if the user is allowed to work with memberships
         this.currentUserIsOwnerGuard(org, currentUserId);
 
-        // existing membership for this person?
+        // existing membership for this user?
         const existingMembership = org.memberships.find(
-            (m) => m.person.id === createOmDto.personId
+            (m) => m.user.id === createOmDto.userId
         );
         if (existingMembership) {
             // add all roles to the existing membership
@@ -89,7 +87,7 @@ export class OrganisationMembershipsService {
         } else {
             // create a new membership
             const newMembership = new OrganisationMembership();
-            newMembership.personId = createOmDto.personId;
+            newMembership.userId = createOmDto.userId;
             for (const role of createOmDto.roles) {
                 const newRole = new MembershipRole();
                 newRole.name = role;
@@ -104,7 +102,7 @@ export class OrganisationMembershipsService {
     private currentUserIsOwnerGuard(org: Organisation, currentUserId: number) {
         const membership = org.memberships.find(
             (m) =>
-                m.person.id === currentUserId &&
+                m.user.id === currentUserId &&
                 m.roles.some((r) => r.name === Roles.owner)
         );
         if (!membership) {

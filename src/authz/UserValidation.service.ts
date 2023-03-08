@@ -8,15 +8,15 @@ import {OrganisationMembership} from "../organisation-memberships/entities/organ
 import {Roles} from "../organisation/dto/RolesEnum";
 import {MembershipRole} from "../organisation/entities/member-role.entity";
 import {Organisation} from "../organisation/entities/organisation.entity";
-import {Person} from "../person-internal";
-//import {Person} from "../person/entities/person.entity";
+import {User} from "../user-internal";
+//import {User} from "../user/entities/user.entity";
 import {AccessToken} from "./AccessToken";
 
 @Injectable()
 export class UserValidationService {
     constructor(
-        @InjectRepository(Person)
-        private repository: Repository<Person>,
+        @InjectRepository(User)
+        private repository: Repository<User>,
         private authzClient: AuthZClientService
     ) {}
 
@@ -30,25 +30,25 @@ export class UserValidationService {
     async validateUser(
         payload: AccessToken,
         rawAccessToken: string
-    ): Promise<Person | undefined> {
-        // try to find the person and their memberships
-        const foundPerson = await this.repository.findOne({
+    ): Promise<User | undefined> {
+        // try to find the user and their memberships
+        const foundUser = await this.repository.findOne({
             where: {auth0UserId: payload.sub},
             relations: {
                 memberships: true,
             },
         });
 
-        // if person already configured then get out of here
+        // if user already configured then get out of here
         if (
-            foundPerson !== undefined &&
-            foundPerson !== null &&
-            foundPerson.memberships.length > 0
+            foundUser !== undefined &&
+            foundUser !== null &&
+            foundUser.memberships.length > 0
         ) {
-            return foundPerson;
+            return foundUser;
         }
 
-        // if no person is found locally then get the user's profile details from auth0
+        // if no user is found locally then get the user's profile details from auth0
         const auth0User = await this.getAuth0User(payload, rawAccessToken);
         if (auth0User === undefined) {
             return;
@@ -69,31 +69,31 @@ export class UserValidationService {
         membership.organisation = unsavedOrganisation;
         membership.roles = [ownerRole];
 
-        if (foundPerson !== undefined && foundPerson !== null) {
-            // if person already exists then add the membership to the existing person
-            foundPerson.memberships = [membership];
-            return this.repository.save(foundPerson);
+        if (foundUser !== undefined && foundUser !== null) {
+            // if user already exists then add the membership to the existing user
+            foundUser.memberships = [membership];
+            return this.repository.save(foundUser);
         }
 
-        const person = this.repository.create();
-        person.memberships = [membership];
+        const user = this.repository.create();
+        user.memberships = [membership];
         // eslint-disable-next-line sonarjs/prefer-immediate-return
-        const updatedPerson = this.updatePersonFromAuth0(person, auth0User);
-        return updatedPerson;
+        const updatedUser = this.updateUserFromAuth0(user, auth0User);
+        return updatedUser;
     }
 
-    async updatePersonFromAuth0(person: Person, auth0User: UserProfile) {
-        person.auth0UserId = auth0User.sub;
-        person.blocked = false;
-        person.email = auth0User.email;
-        person.emailVerified = auth0User.email_verified;
-        person.familyName = auth0User.family_name;
-        person.givenName = auth0User.given_name;
-        person.name = auth0User.name;
-        person.picture = auth0User.picture;
-        person.username = auth0User.preferred_username;
+    async updateUserFromAuth0(user: User, auth0User: UserProfile) {
+        user.auth0UserId = auth0User.sub;
+        user.blocked = false;
+        user.email = auth0User.email;
+        user.emailVerified = auth0User.email_verified;
+        user.familyName = auth0User.family_name;
+        user.givenName = auth0User.given_name;
+        user.name = auth0User.name;
+        user.picture = auth0User.picture;
+        user.username = auth0User.preferred_username;
 
-        // save person
-        return this.repository.save(person);
+        // save user
+        return this.repository.save(user);
     }
 }

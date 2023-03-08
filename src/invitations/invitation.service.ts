@@ -7,7 +7,7 @@ import {Invitation} from "./entities/invitation.entity";
 import {SmtpEmailClient} from "../smtp-email-client/email-client.service";
 import {Organisation} from "../organisation/entities/organisation.entity";
 import {InvitationsConfigurationService} from "./InvitationConfigurationService";
-import {RequestPerson} from "../authz/RequestWithUser";
+import {RequestUser} from "../authz/RequestWithUser";
 
 @Injectable()
 export class InvitationService {
@@ -22,7 +22,7 @@ export class InvitationService {
 
     async create(
         createDto: CreateInvitationDto,
-        createdBy: RequestPerson
+        createdBy: RequestUser
     ): Promise<Invitation> {
         const existingInvitations = await this.invitationRepository.find({
             where: {
@@ -87,7 +87,7 @@ export class InvitationService {
                 uuid,
                 organisation: {
                     memberships: {
-                        person: {
+                        user: {
                             id: currentUserId,
                         },
                         roles: {

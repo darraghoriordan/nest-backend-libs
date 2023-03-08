@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {Inject, Injectable, Logger} from "@nestjs/common";
 import Stripe from "stripe";
-import {RequestPerson} from "../../authz/RequestWithUser";
+import {RequestUser} from "../../authz/RequestWithUser";
 import {StripeCheckoutSessionRequestDto} from "../models/StripeCheckoutSessionRequestDto";
 import {StripeCheckoutSessionResponseDto} from "../models/StripeCheckoutSessionResponseDto";
 import {StripeClientConfigurationService} from "../StripeClientConfigurationService";
@@ -32,7 +32,7 @@ export class StripeCheckoutService {
     // must set the org id to the customer id field so we can get this later
     public async createCustomerPortalSession(
         parameters: StripeCustomerPortalRequestDto,
-        user: RequestPerson
+        user: RequestUser
     ): Promise<StripeCustomerPortalResponseDto> {
         // is the user a member of the organisation with the subscription record
         const subscriptionRecord =
@@ -63,13 +63,13 @@ export class StripeCheckoutService {
 
     public async createAuthenticatedCheckoutSession(
         parameters: StripeCheckoutSessionRequestDto,
-        user: RequestPerson
+        user: RequestUser
     ): Promise<StripeCheckoutSessionResponseDto> {
         // create a new session in the database
         const paymentReference = await this.paymentSessionService.createSession(
             {
                 organisationUuid: parameters.organisationId,
-                personUuid: user.uuid,
+                userUuid: user.uuid,
             }
         );
 

@@ -32,11 +32,11 @@ export class PaymentSessionService {
     }
     async createSession(parameters: {
         organisationUuid?: string;
-        personUuid?: string;
+        userUuid?: string;
     }): Promise<PaymentSessionReference> {
         const paymentReference = this.paymentReferenceRepository.create({
             organisationUuid: parameters.organisationUuid,
-            personUuid: parameters.personUuid,
+            userUuid: parameters.userUuid,
         });
 
         return await this.paymentReferenceRepository.save(paymentReference);

@@ -26,7 +26,7 @@ export class OrganisationService {
 
         // add the owner
         const ownerMembership = new OrganisationMembership();
-        ownerMembership.person = createOrganisationDto.owner;
+        ownerMembership.user = createOrganisationDto.owner;
         const ownerRole = new MembershipRole();
         ownerRole.name = Roles.owner;
         ownerMembership.roles.push(ownerRole);
@@ -37,7 +37,7 @@ export class OrganisationService {
         const normalMemberships = createOrganisationDto.members.map(
             (member) => {
                 const membership = new OrganisationMembership();
-                membership.person = member;
+                membership.user = member;
                 const memberRole = new MembershipRole();
                 memberRole.name = Roles.member;
                 membership.roles.push(memberRole);
@@ -53,7 +53,7 @@ export class OrganisationService {
         return this.repository.find({
             where: {
                 memberships: {
-                    person: {
+                    user: {
                         id: currentUserId,
                     },
                 },
@@ -66,7 +66,7 @@ export class OrganisationService {
             where: {
                 uuid,
                 memberships: {
-                    person: {
+                    user: {
                         id: currentUserId,
                     },
                 },
@@ -89,7 +89,7 @@ export class OrganisationService {
             where: {
                 uuid,
                 memberships: {
-                    person: {
+                    user: {
                         id: currentUserId,
                     },
                     roles: {
@@ -108,7 +108,7 @@ export class OrganisationService {
             where: {
                 uuid,
                 memberships: {
-                    person: {
+                    user: {
                         id: currentUserId,
                     },
                     roles: {

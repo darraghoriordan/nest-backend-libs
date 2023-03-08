@@ -1,12 +1,12 @@
 import {ApiProperty} from "@nestjs/swagger";
-import {Person} from "../../person-internal/entities/person.entity";
+import {User} from "../../user-internal/entities/user.entity";
 
 export class CreateOrganisationDto {
-    @ApiProperty({type: Person, isArray: true})
-    members!: Person[];
+    @ApiProperty({type: User, isArray: true})
+    members!: User[];
 
-    @ApiProperty({type: Person})
-    owner!: Person;
+    @ApiProperty({type: User})
+    owner!: User;
 
     @ApiProperty()
     name!: string;
