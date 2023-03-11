@@ -42,9 +42,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             return;
         }
 
+        const invitationId = request.query.invitationId as string;
+
         const userResult = await this.userValidationService.validateUser(
             payload,
-            rawAccessToken
+            rawAccessToken,
+            invitationId
         );
 
         const withPermissions = {permissions: payload.permissions || []};

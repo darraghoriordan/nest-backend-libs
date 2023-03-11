@@ -8,12 +8,13 @@ import {OrganisationModule} from "../organisation/organisation.module";
 import {ConfigModule} from "@nestjs/config";
 import configVariables from "./InvitationConfigurationVariables";
 import {InvitationsConfigurationService} from "./InvitationConfigurationService";
-import {Organisation} from "../organisation/entities/organisation.entity";
+import {OrganisationMembership} from "../organisation-memberships/entities/organisation-membership.entity";
+import {User} from "../user-internal";
 
 @Module({
     imports: [
         ConfigModule.forFeature(configVariables),
-        TypeOrmModule.forFeature([Invitation, Organisation]),
+        TypeOrmModule.forFeature([Invitation, OrganisationMembership, User]),
         SmtpEmailClientModule,
         OrganisationModule,
     ],

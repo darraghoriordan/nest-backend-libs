@@ -31,11 +31,11 @@ export class UserDto {
     @ApiPropertyOptional()
     givenName?: string;
 
-    @ApiProperty()
-    picture!: string;
+    @ApiPropertyOptional()
+    picture?: string;
 
-    @ApiProperty()
-    auth0UserId!: string;
+    @ApiPropertyOptional()
+    auth0UserId?: string;
 
     @ApiPropertyOptional()
     username?: string;

@@ -1,4 +1,5 @@
 import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
+import {Type} from "class-transformer";
 
 import {
     Column,
@@ -6,12 +7,12 @@ import {
     DeleteDateColumn,
     Entity,
     Generated,
-    ManyToOne,
+    OneToOne,
     PrimaryGeneratedColumn,
     RelationId,
     UpdateDateColumn,
 } from "typeorm";
-import {Organisation} from "../../organisation/entities/organisation.entity";
+import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity";
 
 @Entity()
 export class Invitation {
@@ -48,12 +49,13 @@ export class Invitation {
     acceptedOn?: Date;
 
     @ApiProperty()
-    @ManyToOne(() => Organisation, {})
-    organisation!: Organisation;
+    @Type(() => OrganisationMembership)
+    @OneToOne(() => OrganisationMembership, {eager: true})
+    organisationMembership!: OrganisationMembership;
 
     @ApiProperty()
-    @RelationId((invitation: Invitation) => invitation.organisation)
-    organisationId!: Organisation;
+    @RelationId((invitation: Invitation) => invitation.organisationMembership)
+    organisationMembershipId!: number;
 
     @CreateDateColumn()
     @ApiProperty()

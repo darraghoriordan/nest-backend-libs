@@ -5,3 +5,6 @@ export {RequestWithUser} from "./RequestWithUser";
 export {ClaimsAuthorisationGuard} from "./ClaimsAuthorisationGuard";
 export {MandatoryUserClaims} from "./MandatoryUserClaims.decorator";
 export {SuperUserClaims} from "./SuperUserClaims";
+export {isOwnerOrThrow} from "./isOwnerOrThrow";
+export {ApiKeyAuthGuard} from "./ApiKeyAuthGuard";
+export {ApiKeyStrategy} from "./apikeystrategy";

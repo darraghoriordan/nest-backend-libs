@@ -8,6 +8,8 @@ import {UserValidationService} from "./UserValidation.service";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {User} from "../user-internal/entities/user.entity";
 import {AuthzClientModule} from "../authzclient/authz-client.module";
+import {ApiKeyStrategy} from "./apikeystrategy";
+import {InvitationModule} from "../invitations";
 
 @Global()
 @Module({
@@ -16,8 +18,15 @@ import {AuthzClientModule} from "../authzclient/authz-client.module";
         TypeOrmModule.forFeature([User]),
         PassportModule.register({defaultStrategy: "jwt"}),
         AuthzClientModule,
+        InvitationModule,
     ],
-    providers: [JwtStrategy, AuthConfigurationService, UserValidationService],
+    providers: [
+        ApiKeyStrategy,
+        JwtStrategy,
+        AuthConfigurationService,
+        UserValidationService,
+        ApiKeyStrategy,
+    ],
     exports: [PassportModule, AuthConfigurationService],
 })
 export class AuthzModule {}

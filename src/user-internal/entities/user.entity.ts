@@ -15,6 +15,7 @@ import {
     UpdateDateColumn,
 } from "typeorm";
 import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity";
+import {UserApiKey} from "../../user-api-key/userApiKey.entity";
 
 @Entity()
 export class User {
@@ -55,14 +56,14 @@ export class User {
     @Column({nullable: true})
     givenName?: string;
 
-    @ApiProperty()
-    @Column()
-    picture!: string;
+    @ApiPropertyOptional()
+    @Column({nullable: true})
+    picture?: string;
 
-    @ApiProperty()
-    @Column()
+    @ApiPropertyOptional()
+    @Column({nullable: true})
     @Index({unique: true})
-    auth0UserId!: string;
+    auth0UserId?: string;
 
     @ApiPropertyOptional()
     @Column({nullable: true})
@@ -74,6 +75,11 @@ export class User {
         cascade: ["insert", "update"],
     })
     memberships!: OrganisationMembership[];
+
+    @ApiProperty({type: () => UserApiKey, isArray: true})
+    @Type(() => UserApiKey)
+    @OneToMany(() => UserApiKey, (om) => om.user, {})
+    apiKeys!: UserApiKey[];
 
     @CreateDateColumn()
     @ApiProperty()

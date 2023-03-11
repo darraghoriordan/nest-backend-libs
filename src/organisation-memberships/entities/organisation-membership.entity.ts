@@ -11,12 +11,15 @@ import {
     Entity,
     Generated,
     Index,
+    JoinColumn,
     ManyToOne,
     OneToMany,
+    OneToOne,
     PrimaryGeneratedColumn,
     RelationId,
     UpdateDateColumn,
 } from "typeorm";
+import {Invitation} from "../../invitations";
 import {MembershipRole} from "../../organisation/entities/member-role.entity";
 import {Organisation} from "../../organisation/entities/organisation.entity";
 import {User} from "../../user-internal/entities/user.entity";
@@ -52,6 +55,14 @@ export class OrganisationMembership {
         cascade: ["insert", "update"],
     })
     organisation!: Organisation;
+
+    @OneToOne(() => Invitation, (inv) => inv.organisationMembership, {
+        eager: true,
+        nullable: true,
+        cascade: ["insert", "update"],
+    })
+    @JoinColumn()
+    invitation?: Invitation;
 
     @Column()
     @ApiProperty()

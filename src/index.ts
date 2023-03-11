@@ -43,3 +43,4 @@ export * from "./authz/index";
 export * from "./invitations/index";
 export * from "./user-internal/index";
 export * from "./user-external/index";
+export * from "./user-api-key/index";
