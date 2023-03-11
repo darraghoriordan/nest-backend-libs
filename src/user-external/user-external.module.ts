@@ -5,7 +5,5 @@ import {UserInternalModule} from "../user-internal/user-internal.module";
 @Module({
     imports: [UserInternalModule],
     controllers: [UserController],
-    providers: [],
-    exports: [],
 })
 export class UserExternalModule {}
