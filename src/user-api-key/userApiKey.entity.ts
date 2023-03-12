@@ -38,6 +38,7 @@ export class UserApiKey {
     @ManyToOne(() => User)
     user!: Relation<User>;
 
+    @ApiProperty()
     @RelationId((userApiKey: UserApiKey) => userApiKey.user)
     userId!: number;
 

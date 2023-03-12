@@ -11,7 +11,6 @@ import {
     OneToOne,
     PrimaryGeneratedColumn,
     Relation,
-    RelationId,
     UpdateDateColumn,
 } from "typeorm";
 
@@ -53,10 +52,6 @@ export class Invitation {
     @Type(() => OrganisationMembership)
     @OneToOne(() => OrganisationMembership)
     organisationMembership!: Relation<OrganisationMembership>;
-
-    @ApiProperty()
-    @RelationId((invitation: Invitation) => invitation.organisationMembership)
-    organisationMembershipId!: number;
 
     @CreateDateColumn()
     @ApiProperty()

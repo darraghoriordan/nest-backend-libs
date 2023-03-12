@@ -101,5 +101,8 @@ export class User {
         if (!this.memberships) {
             this.memberships = [];
         }
+        if (!this.apiKeys) {
+            this.apiKeys = [];
+        }
     }
 }

@@ -56,6 +56,11 @@ export class OrganisationMembership {
     })
     organisation!: Organisation;
 
+    @Column()
+    @ApiProperty()
+    @RelationId((membership: OrganisationMembership) => membership.organisation)
+    public organisationId!: number;
+
     @OneToOne(() => Invitation, (inv) => inv.organisationMembership, {
         eager: true,
         nullable: true,
@@ -66,8 +71,8 @@ export class OrganisationMembership {
 
     @Column()
     @ApiProperty()
-    @RelationId((membership: OrganisationMembership) => membership.organisation)
-    public organisationId!: number;
+    @RelationId((membership: OrganisationMembership) => membership.invitation)
+    public invitationId!: number;
 
     @ApiProperty({type: () => MembershipRole, isArray: true})
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
