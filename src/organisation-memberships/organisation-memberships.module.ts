@@ -1,10 +1,10 @@
 import {Module} from "@nestjs/common";
 import {TypeOrmModule} from "@nestjs/typeorm";
-import {OrganisationMembership} from "./entities/organisation-membership.entity";
-import {OrganisationMembershipsController} from "./organisation-memberships.controller";
-import {OrganisationMembershipsService} from "./organisation-memberships.service";
-import {Organisation} from "../organisation/entities/organisation.entity";
-import {MembershipRole} from "../organisation/entities/member-role.entity";
+import {OrganisationMembership} from "./entities/organisation-membership.entity.js";
+import {OrganisationMembershipsController} from "./organisation-memberships.controller.js";
+import {OrganisationMembershipsService} from "./organisation-memberships.service.js";
+import {Organisation} from "../organisation/entities/organisation.entity.js";
+import {MembershipRole} from "../organisation/entities/member-role.entity.js";
 
 @Module({
     imports: [

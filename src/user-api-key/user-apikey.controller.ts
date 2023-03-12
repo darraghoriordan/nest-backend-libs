@@ -10,12 +10,13 @@ import {
     Get,
 } from "@nestjs/common";
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
-import {RequestWithUser} from "../authz/RequestWithUser";
-import {BooleanResult} from "../root-app/models/boolean-result";
-import {ClaimsAuthorisationGuard, DefaultAuthGuard} from "../authz";
-import {UserApiKey} from "./userApiKey.entity";
-import {UserApiKeyService} from "./user-apikey.service";
-import CreateApiKeyDto from "./CreateApiKeyDto";
+import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
+import {BooleanResult} from "../root-app/models/boolean-result.js";
+import {UserApiKey} from "./userApiKey.entity.js";
+import {UserApiKeyService} from "./user-apikey.service.js";
+import CreateApiKeyDto from "./CreateApiKeyDto.js";
+import {ClaimsAuthorisationGuard} from "../authorization/guards/ClaimsAuthorisationGuard.js";
+import {DefaultAuthGuard} from "../authorization/guards/DefaultAuthGuard.js";
 
 @UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
 @ApiBearerAuth()

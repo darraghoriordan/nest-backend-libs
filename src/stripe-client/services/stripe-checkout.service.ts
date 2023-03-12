@@ -1,17 +1,18 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {Inject, Injectable, Logger} from "@nestjs/common";
 import Stripe from "stripe";
-import {RequestUser} from "../../authz/RequestWithUser";
-import {StripeCheckoutSessionRequestDto} from "../models/StripeCheckoutSessionRequestDto";
-import {StripeCheckoutSessionResponseDto} from "../models/StripeCheckoutSessionResponseDto";
-import {StripeClientConfigurationService} from "../StripeClientConfigurationService";
-import {PaymentSessionService} from "../../payment-sessions/payment-session.service";
-import {OrganisationSubscriptionService} from "../../organisation-subscriptions";
-import {StripeCustomerPortalResponseDto} from "../models/StripeCustomerPortalResponseDto";
-import {StripeCustomerPortalRequestDto} from "../models/StripeCustomerPortalRequestDto";
+import {RequestUser} from "../../authorization/models/RequestWithUser.js";
+import {StripeCheckoutSessionRequestDto} from "../models/StripeCheckoutSessionRequestDto.js";
+import {StripeCheckoutSessionResponseDto} from "../models/StripeCheckoutSessionResponseDto.js";
+import {StripeClientConfigurationService} from "../StripeClientConfigurationService.js";
+import {PaymentSessionService} from "../../payment-sessions/payment-session.service.js";
+
+import {StripeCustomerPortalResponseDto} from "../models/StripeCustomerPortalResponseDto.js";
+import {StripeCustomerPortalRequestDto} from "../models/StripeCustomerPortalRequestDto.js";
 import {InjectRepository} from "@nestjs/typeorm";
-import {StripeCheckoutEvent} from "../entities/stripe-checkout-event.entity";
+import {StripeCheckoutEvent} from "../entities/stripe-checkout-event.entity.js";
 import {Repository} from "typeorm";
+import {OrganisationSubscriptionService} from "../../organisation-subscriptions/organisation-subscriptions.service.js";
 
 /**
  * Is this doing too much? probably.

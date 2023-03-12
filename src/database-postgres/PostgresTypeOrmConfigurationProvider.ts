@@ -1,8 +1,8 @@
 /* eslint-disable sonarjs/no-duplicate-string */
-/* eslint-disable unicorn/prefer-module */
 import {TypeOrmModuleOptions} from "@nestjs/typeorm";
 import path from "path";
 import {DataSourceOptions} from "typeorm";
+import url from "url";
 
 export class PostgresTypeOrmConfigurationProvider {
     /**
@@ -34,7 +34,9 @@ export class PostgresTypeOrmConfigurationProvider {
         );
         console.log("Using database configuration paths", {
             appModulePath,
-            moduleLocalDirName: __dirname,
+            moduleLocalDirName: path.dirname(
+                url.fileURLToPath(import.meta.url)
+            ),
             migrationsPath,
             nodeModuleCorePath,
             pwd: process.cwd(),

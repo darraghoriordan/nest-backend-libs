@@ -1,6 +1,6 @@
 import {Inject, Injectable, Logger} from "@nestjs/common";
-import {AuthenticationClient} from "auth0";
-import {UserProfile} from "./UserProfile.dto";
+import type {AuthenticationClient} from "auth0";
+import {UserProfile} from "./UserProfile.dto.js";
 @Injectable()
 export class AuthZClientService {
     private readonly logger = new Logger(AuthZClientService.name);

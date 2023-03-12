@@ -1,3 +1,4 @@
+import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity.js";
 import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
 import {Type} from "class-transformer";
 
@@ -9,10 +10,10 @@ import {
     Generated,
     OneToOne,
     PrimaryGeneratedColumn,
+    Relation,
     RelationId,
     UpdateDateColumn,
 } from "typeorm";
-import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity";
 
 @Entity()
 export class Invitation {
@@ -50,8 +51,8 @@ export class Invitation {
 
     @ApiProperty()
     @Type(() => OrganisationMembership)
-    @OneToOne(() => OrganisationMembership, {eager: true})
-    organisationMembership!: OrganisationMembership;
+    @OneToOne(() => OrganisationMembership)
+    organisationMembership!: Relation<OrganisationMembership>;
 
     @ApiProperty()
     @RelationId((invitation: Invitation) => invitation.organisationMembership)

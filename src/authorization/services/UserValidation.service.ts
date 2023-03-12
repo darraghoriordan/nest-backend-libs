@@ -1,24 +1,26 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {Injectable, NotFoundException} from "@nestjs/common";
+import {
+    Injectable,
+    // NotFoundException
+} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
-import {AuthZClientService} from "../authzclient/authz.service";
-import {UserProfile} from "../authzclient/UserProfile.dto";
-import {InvitationService} from "../invitations";
-import {OrganisationMembership} from "../organisation-memberships/entities/organisation-membership.entity";
-import {Roles} from "../organisation/dto/RolesEnum";
-import {MembershipRole} from "../organisation/entities/member-role.entity";
-import {Organisation} from "../organisation/entities/organisation.entity";
-import {User} from "../user-internal";
-import {AccessToken} from "./AccessToken";
+import {AuthZClientService} from "../../authzclient/authz.service.js";
+import {UserProfile} from "../../authzclient/UserProfile.dto.js";
+//import {InvitationService} from "../../invitations.js";
+import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity.js";
+import {Roles} from "../../organisation/dto/RolesEnum.js";
+import {MembershipRole} from "../../organisation/entities/member-role.entity.js";
+import {Organisation} from "../../organisation/entities/organisation.entity.js";
+import {User} from "../../user-internal/entities/user.entity.js";
+import {AccessToken} from "../models/AccessToken.js";
 
 @Injectable()
 export class UserValidationService {
     constructor(
         @InjectRepository(User)
         private userRepository: Repository<User>,
-        private authzClient: AuthZClientService,
-        private invitationService: InvitationService
+        private authzClient: AuthZClientService //   private invitationService: InvitationService
     ) {}
 
     async getAuth0User(
@@ -71,45 +73,52 @@ export class UserValidationService {
         return this.handleNewIndependentUser(foundUser, rawAccessToken);
     }
 
+    // eslint-disable-next-line @typescript-eslint/require-await
     async handleInvitation(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         rawAccessToken: string,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         invitationCode: string
     ): Promise<User> {
-        const invitation = await this.invitationService.getOneActiveInvitation(
-            invitationCode
-        );
-        if (!invitation) {
-            throw new NotFoundException("Valid invitation not found");
-        }
+        return new User();
+        // const invitation = await this.invitationService.getOneActiveInvitation(
+        //     invitationCode
+        // );
+        // if (!invitation) {
+        //     throw new NotFoundException("Valid invitation not found");
+        // }
 
-        // get the user's profile details from auth0
-        const auth0User = await this.getAuth0User(rawAccessToken);
-        if (auth0User === undefined) {
-            throw new Error("Error getting user profile from Auth0");
-        }
+        // // get the user's profile details from auth0
+        // const auth0User = await this.getAuth0User(rawAccessToken);
+        // if (auth0User === undefined) {
+        //     throw new Error("Error getting user profile from Auth0");
+        // }
 
-        if (auth0User.email_verified === false) {
-            throw new Error("Email not verified");
-        }
+        // if (auth0User.email_verified === false) {
+        //     throw new Error("Email not verified");
+        // }
 
-        // the user's verified email address should match the invitation email address
-        if (
-            auth0User.email.toLowerCase() !==
-            invitation.emailAddress.toLowerCase()
-        ) {
-            throw new Error(
-                "Verified email address does not match invitation email address"
-            );
-        }
+        // // the user's verified email address should match the invitation email address
+        // if (
+        //     auth0User.email.toLowerCase() !==
+        //     invitation.emailAddress.toLowerCase()
+        // ) {
+        //     throw new Error(
+        //         "Verified email address does not match invitation email address"
+        //     );
+        // }
 
-        await this.invitationService.acceptInvitation(invitation.id);
+        // await this.invitationService.acceptInvitation(invitation.id);
 
-        // eslint-disable-next-line sonarjs/prefer-immediate-return
-        const savedUser = await this.updateUserFromAuth0(
-            invitation.organisationMembership.user,
-            auth0User
-        );
-        return savedUser;
+        // this.mapAuthZUserToEntity(
+        //     invitation.organisationMembership.user,
+        //     auth0User
+        // );
+        // // eslint-disable-next-line sonarjs/prefer-immediate-return
+        // const updatedUser = this.userRepository.save(
+        //     invitation.organisationMembership.user
+        // );
+        // return updatedUser;
     }
 
     async handleNewIndependentUser(
@@ -146,12 +155,14 @@ export class UserValidationService {
 
         // assign the membership
         user.memberships = [membership];
+
+        this.mapAuthZUserToEntity(user, auth0User);
         // eslint-disable-next-line sonarjs/prefer-immediate-return
-        const updatedUser = this.updateUserFromAuth0(user, auth0User);
+        const updatedUser = this.userRepository.save(user);
         return updatedUser;
     }
 
-    async updateUserFromAuth0(user: User, auth0User: UserProfile) {
+    mapAuthZUserToEntity(user: User, auth0User: UserProfile) {
         user.auth0UserId = auth0User.sub;
         user.blocked = false;
         user.email = auth0User.email;
@@ -161,8 +172,5 @@ export class UserValidationService {
         user.name = auth0User.name;
         user.picture = auth0User.picture;
         user.username = auth0User.preferred_username;
-
-        // save user
-        return this.userRepository.save(user);
     }
 }

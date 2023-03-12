@@ -2,7 +2,7 @@
 import {Injectable} from "@nestjs/common";
 import {ConfigService} from "@nestjs/config";
 import {IsDefined, IsString} from "class-validator";
-import {ValidatedConfigurationService} from "../configuration/ValidatedConfigurationService";
+import {ValidatedConfigurationService} from "../configuration/ValidatedConfigurationService.js";
 
 @Injectable()
 export class TwitterClientConfigurationService extends ValidatedConfigurationService {

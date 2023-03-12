@@ -1,11 +1,11 @@
 import {Injectable, Logger, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
-import {Roles} from "../organisation/dto/RolesEnum";
-import {Organisation} from "../organisation/entities/organisation.entity";
-import {PaymentSessionService} from "../payment-sessions/payment-session.service";
-import {OrganisationSubscriptionRecord} from "./entities/organisation-subscription.entity";
-import {SaveOrganisationSubscriptionRecordDto} from "./models/fulfillSubscriptionDto";
+import {Roles} from "../organisation/dto/RolesEnum.js";
+import {Organisation} from "../organisation/entities/organisation.entity.js";
+import {PaymentSessionService} from "../payment-sessions/payment-session.service.js";
+import {OrganisationSubscriptionRecord} from "./entities/organisation-subscription.entity.js";
+import {SaveOrganisationSubscriptionRecordDto} from "./models/fulfillSubscriptionDto.js";
 
 @Injectable()
 export class OrganisationSubscriptionService {

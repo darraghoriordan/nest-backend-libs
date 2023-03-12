@@ -1,5 +1,5 @@
 import {DataSource} from "typeorm";
-import {SqliteTypeOrmConfigurationProvider} from "./SqliteTypeOrmConfigurationProvider";
+import {SqliteTypeOrmConfigurationProvider} from "./SqliteTypeOrmConfigurationProvider.js";
 import dotenv from "dotenv";
 dotenv.config();
 

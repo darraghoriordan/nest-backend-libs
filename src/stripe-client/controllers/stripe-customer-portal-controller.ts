@@ -1,10 +1,10 @@
 import {UseGuards, Controller, Post, Request, Body} from "@nestjs/common";
 import {AuthGuard} from "@nestjs/passport";
 import {ApiBearerAuth, ApiTags, ApiOkResponse} from "@nestjs/swagger";
-import {RequestWithUser} from "../../authz/RequestWithUser";
-import {StripeCheckoutService} from "./../services/stripe-checkout.service";
-import {StripeCustomerPortalResponseDto} from "../models/StripeCustomerPortalResponseDto";
-import {StripeCustomerPortalRequestDto} from "../models/StripeCustomerPortalRequestDto";
+import {RequestWithUser} from "../../authorization/models/RequestWithUser.js";
+import {StripeCheckoutService} from "./../services/stripe-checkout.service.js";
+import {StripeCustomerPortalResponseDto} from "../models/StripeCustomerPortalResponseDto.js";
+import {StripeCustomerPortalRequestDto} from "../models/StripeCustomerPortalRequestDto.js";
 
 @Controller("payments/stripe")
 @ApiTags("Payments")

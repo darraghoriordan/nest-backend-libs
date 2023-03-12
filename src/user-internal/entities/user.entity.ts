@@ -14,8 +14,8 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
-import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity";
-import {UserApiKey} from "../../user-api-key/userApiKey.entity";
+import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity.js";
+import {UserApiKey} from "../../user-api-key/userApiKey.entity.js";
 
 @Entity()
 export class User {

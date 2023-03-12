@@ -1,13 +1,12 @@
 import {UseGuards, Controller, Request, Get, Query} from "@nestjs/common";
 import {ApiBearerAuth, ApiTags, ApiOkResponse, ApiQuery} from "@nestjs/swagger";
-import {RequestWithUser} from "../../authz/RequestWithUser";
-import {StripeCheckoutService} from "../services/stripe-checkout.service";
-import {
-    ClaimsAuthorisationGuard,
-    DefaultAuthGuard,
-    MandatoryUserClaims,
-} from "../../authz";
-import {StripeCheckoutEvent} from "../entities/stripe-checkout-event.entity";
+import {RequestWithUser} from "../../authorization/models/RequestWithUser.js";
+import {StripeCheckoutService} from "../services/stripe-checkout.service.js";
+
+import {StripeCheckoutEvent} from "../entities/stripe-checkout-event.entity.js";
+import {ClaimsAuthorisationGuard} from "../../authorization/guards/ClaimsAuthorisationGuard.js";
+import {DefaultAuthGuard} from "../../authorization/guards/DefaultAuthGuard.js";
+import {MandatoryUserClaims} from "../../authorization/guards/MandatoryUserClaims.decorator.js";
 
 export type EventQuery = {
     take: number;

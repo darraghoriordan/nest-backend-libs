@@ -2,13 +2,13 @@ import {BullModule} from "@nestjs/bull";
 import {Module} from "@nestjs/common";
 import {ConfigModule} from "@nestjs/config";
 import {TypeOrmModule} from "@nestjs/typeorm";
-import {SmtpEmailClient} from "./email-client.service";
-import {EmailClientController} from "./email.controller";
-import {Email} from "./email.entity";
-import {EmailTransporterProvider} from "./EmailTransporterProvider";
-import {EmailConfigurationService} from "./EmailConfigurationService";
-import configVariables from "./EmailConfigurationVariables";
-import {SmtpEmailHandler} from "./smtp-email-handler";
+import {SmtpEmailClient} from "./email-client.service.js";
+import {EmailClientController} from "./email.controller.js";
+import {Email} from "./email.entity.js";
+import {EmailTransporterProvider} from "./EmailTransporterProvider.js";
+import {EmailConfigurationService} from "./EmailConfigurationService.js";
+import configVariables from "./EmailConfigurationVariables.js";
+import {SmtpEmailHandler} from "./smtp-email-handler.js";
 
 @Module({
     imports: [

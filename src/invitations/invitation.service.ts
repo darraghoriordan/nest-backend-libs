@@ -1,15 +1,15 @@
 import {Injectable, Logger, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {IsNull, LessThan, Repository} from "typeorm";
-import {Roles} from "../organisation/dto/RolesEnum";
-import {CreateInvitationDto} from "./dto/create-invitation.dto";
-import {Invitation} from "./entities/invitation.entity";
-import {SmtpEmailClient} from "../smtp-email-client/email-client.service";
-import {InvitationsConfigurationService} from "./InvitationConfigurationService";
-import {RequestUser} from "../authz/RequestWithUser";
-import {OrganisationMembership} from "../organisation-memberships/entities/organisation-membership.entity";
-import {MembershipRole} from "../organisation/entities/member-role.entity";
-import {User} from "../user-internal";
+import {Roles} from "../organisation/dto/RolesEnum.js";
+import {CreateInvitationDto} from "./dto/create-invitation.dto.js";
+import {Invitation} from "./entities/invitation.entity.js";
+import {SmtpEmailClient} from "../smtp-email-client/email-client.service.js";
+import {InvitationsConfigurationService} from "./InvitationConfigurationService.js";
+import {RequestUser} from "../authorization/models/RequestWithUser.js";
+import {OrganisationMembership} from "../organisation-memberships/entities/organisation-membership.entity.js";
+import {MembershipRole} from "../organisation/entities/member-role.entity.js";
+import {User} from "../user-internal/entities/user.entity.js";
 
 @Injectable()
 export class InvitationService {

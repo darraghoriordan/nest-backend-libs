@@ -1,7 +1,7 @@
 import {Module} from "@nestjs/common";
 import {ConfigModule} from "@nestjs/config";
-import {CoreConfigurationService} from "./CoreConfigurationService";
-import configVariables from "./CoreConfigurationVariables";
+import {CoreConfigurationService} from "./CoreConfigurationService.js";
+import configVariables from "./CoreConfigurationVariables.js";
 
 @Module({
     imports: [ConfigModule.forFeature(configVariables)],

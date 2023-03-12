@@ -8,13 +8,13 @@ import {
     Delete,
     UseGuards,
 } from "@nestjs/common";
-import {OrganisationService} from "./organisation.service";
-import {UpdateOrganisationDto} from "./dto/update-organisation.dto";
+import {OrganisationService} from "./organisation.service.js";
+import {UpdateOrganisationDto} from "./dto/update-organisation.dto.js";
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
-import {Organisation} from "./entities/organisation.entity";
+import {Organisation} from "./entities/organisation.entity.js";
 import {AuthGuard} from "@nestjs/passport";
-import {RequestWithUser} from "../authz/RequestWithUser";
-import {BooleanResult} from "../root-app/models/boolean-result";
+import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
+import {BooleanResult} from "../root-app/models/boolean-result.js";
 
 @UseGuards(AuthGuard("jwt"))
 @ApiBearerAuth()

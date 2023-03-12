@@ -15,13 +15,11 @@ import {
 } from "@nestjs/swagger";
 import {Queue} from "bull";
 import {Request as ExpressRequest} from "express";
-import {
-    ClaimsAuthorisationGuard,
-    DefaultAuthGuard,
-    MandatoryUserClaims,
-} from "../../authz";
-import {StripeWebhookHandler} from "./../services/stripe-webhook-handler.service";
-import {QueueItemDto} from "../../root-app/models/QueueItemDto";
+import {StripeWebhookHandler} from "./../services/stripe-webhook-handler.service.js";
+import {QueueItemDto} from "../../root-app/models/QueueItemDto.js";
+import {ClaimsAuthorisationGuard} from "../../authorization/guards/ClaimsAuthorisationGuard.js";
+import {DefaultAuthGuard} from "../../authorization/guards/DefaultAuthGuard.js";
+import {MandatoryUserClaims} from "../../authorization/guards/MandatoryUserClaims.decorator.js";
 
 /*
  * This is a controller that is used to receive webhooks from Stripe.

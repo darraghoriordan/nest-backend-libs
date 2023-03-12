@@ -1,7 +1,7 @@
 import {Global, Module} from "@nestjs/common";
 import {TypeOrmModule} from "@nestjs/typeorm";
-import {DatabaseConfigurationService} from "./PostgresDatabaseConfigurationService";
-import {PostgresTypeOrmConfigurationProvider} from "./PostgresTypeOrmConfigurationProvider";
+import {DatabaseConfigurationService} from "./PostgresDatabaseConfigurationService.js";
+import {PostgresTypeOrmConfigurationProvider} from "./PostgresTypeOrmConfigurationProvider.js";
 
 @Global()
 @Module({

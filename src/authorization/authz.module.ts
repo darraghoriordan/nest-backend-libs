@@ -1,24 +1,22 @@
-import {Global, Module} from "@nestjs/common";
+import {Module} from "@nestjs/common";
 import {PassportModule} from "@nestjs/passport";
-import {AuthConfigurationService} from "./AuthConfigurationService";
-import {JwtStrategy} from "./authzstrategy";
-import configVariables from "./AuthConfigurationVariables";
+import {AuthConfigurationService} from "./config/AuthConfigurationService.js";
+import {JwtStrategy} from "./strategies/authzstrategy.js";
+import configVariables from "./config/AuthConfigurationVariables.js";
 import {ConfigModule} from "@nestjs/config";
-import {UserValidationService} from "./UserValidation.service";
+import {UserValidationService} from "./services/UserValidation.service.js";
 import {TypeOrmModule} from "@nestjs/typeorm";
-import {User} from "../user-internal/entities/user.entity";
-import {AuthzClientModule} from "../authzclient/authz-client.module";
-import {ApiKeyStrategy} from "./apikeystrategy";
-import {InvitationModule} from "../invitations";
+import {User} from "../user-internal/entities/user.entity.js";
+import {AuthzClientModule} from "../authzclient/authz-client.module.js";
+import {ApiKeyStrategy} from "./strategies/apikeystrategy.js";
 
-@Global()
 @Module({
     imports: [
         ConfigModule.forFeature(configVariables),
         TypeOrmModule.forFeature([User]),
         PassportModule.register({defaultStrategy: "jwt"}),
         AuthzClientModule,
-        InvitationModule,
+        // InvitationModule,
     ],
     providers: [
         ApiKeyStrategy,

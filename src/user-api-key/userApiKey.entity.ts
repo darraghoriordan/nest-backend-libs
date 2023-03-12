@@ -8,10 +8,11 @@ import {
     Index,
     ManyToOne,
     PrimaryGeneratedColumn,
+    Relation,
     RelationId,
     UpdateDateColumn,
 } from "typeorm";
-import {User} from "../user-internal";
+import {User} from "../user-internal/entities/user.entity.js";
 
 @Entity()
 export class UserApiKey {
@@ -35,7 +36,7 @@ export class UserApiKey {
     description!: string;
 
     @ManyToOne(() => User)
-    user!: User;
+    user!: Relation<User>;
 
     @RelationId((userApiKey: UserApiKey) => userApiKey.user)
     userId!: number;

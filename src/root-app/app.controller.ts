@@ -1,8 +1,8 @@
 import {Controller, Get, UseGuards, Request, Logger} from "@nestjs/common";
 import {AuthGuard} from "@nestjs/passport";
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
-import {RequestWithUser} from "../authz/RequestWithUser";
-import {AppService} from "./app.service";
+import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
+import {AppService} from "./app.service.js";
 
 @Controller()
 @ApiTags("Application Support")

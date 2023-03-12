@@ -9,7 +9,7 @@ import {
 import {Queue} from "bull";
 import {Request} from "express";
 import Stripe from "stripe";
-import {StripeClientConfigurationService} from "../StripeClientConfigurationService";
+import {StripeClientConfigurationService} from "../StripeClientConfigurationService.js";
 
 @Injectable()
 export class StripeWebhookHandler {

@@ -11,10 +11,10 @@ import {
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
 
 import {AuthGuard} from "@nestjs/passport";
-import {RequestWithUser} from "../authz/RequestWithUser";
-import {Invitation} from "./entities/invitation.entity";
-import {InvitationService} from "./invitation.service";
-import {CreateInvitationDto} from "./dto/create-invitation.dto";
+import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
+import {Invitation} from "./entities/invitation.entity.js";
+import {InvitationService} from "./invitation.service.js";
+import {CreateInvitationDto} from "./dto/create-invitation.dto.js";
 
 @UseGuards(AuthGuard("jwt"))
 @ApiBearerAuth()

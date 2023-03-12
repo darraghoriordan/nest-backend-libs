@@ -1,6 +1,8 @@
-import {AuthenticationClient, AuthenticationClientOptions} from "auth0";
-import {AuthClientConfigurationService} from "./AuthClientConfigurationService";
+import pkg from "auth0";
+const {AuthenticationClient} = pkg;
 
+import {AuthClientConfigurationService} from "./AuthClientConfigurationService.js";
+import type {AuthenticationClientOptions} from "auth0";
 export const AuthzClientProvider = {
     provide: "AuthzClient",
     useFactory: (config: AuthClientConfigurationService) => {

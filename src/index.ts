@@ -1,20 +1,63 @@
+// The "barrels" issue means these must all be imported individually, which is a pain.
+
 /* eslint-disable unicorn/prefer-export-from */
-import {RunningCommandLineModule} from "./runningCommandLine/RunningCommandLine.module";
-import {TwitterAccountModule} from "./twitter-client/twitter-account.module";
-import {SmtpEmailClientModule} from "./smtp-email-client/smtp-email-client.module";
+import {RunningCommandLineModule} from "./runningCommandLine/RunningCommandLine.module.js";
+import {TwitterAccountModule} from "./twitter-client/twitter-account.module.js";
+import {SmtpEmailClientModule} from "./smtp-email-client/smtp-email-client.module.js";
 import {EUploadMimeType} from "twitter-api-v2";
-import {ValidatedConfigurationService} from "./configuration/ValidatedConfigurationService";
-import {CoreConfigurationService} from "./core-config/CoreConfigurationService";
-import {PostgresDatabaseModule} from "./database-postgres/PostgresDatabase.module";
-import {PostgresTypeOrmConfigurationProvider} from "./database-postgres/PostgresTypeOrmConfigurationProvider";
-import {SqliteDatabaseModule} from "./database-sqlite/SqliteDatabase.module";
-import {SqliteDatabaseConfigurationService} from "./database-sqlite/SqliteDatabaseConfigurationService";
-import {SmtpEmailClient} from "./smtp-email-client/email-client.service";
-import {CoreModule} from "./root-app/core-app.module";
-import {SwaggerGen} from "./root-app/SwaggerGen";
-import {TwitterClientService} from "./twitter-client/services/twitter-client.service";
-import {CoreConfigModule} from "./core-config/CoreConfig.module";
-import {CliCommandService} from "./runningCommandLine/CliCommandService";
+import {ValidatedConfigurationService} from "./configuration/ValidatedConfigurationService.js";
+import {CoreConfigurationService} from "./core-config/CoreConfigurationService.js";
+import {PostgresDatabaseModule} from "./database-postgres/PostgresDatabase.module.js";
+import {PostgresTypeOrmConfigurationProvider} from "./database-postgres/PostgresTypeOrmConfigurationProvider.js";
+import {SqliteDatabaseModule} from "./database-sqlite/SqliteDatabase.module.js";
+import {SqliteDatabaseConfigurationService} from "./database-sqlite/SqliteDatabaseConfigurationService.js";
+import {SmtpEmailClient} from "./smtp-email-client/email-client.service.js";
+import {CoreModule} from "./root-app/core-app.module.js";
+import {SwaggerGen} from "./root-app/SwaggerGen.js";
+import {TwitterClientService} from "./twitter-client/services/twitter-client.service.js";
+import {CoreConfigModule} from "./core-config/CoreConfig.module.js";
+import {CliCommandService} from "./runningCommandLine/CliCommandService.js";
+export {OrganisationModule} from "./organisation/organisation.module.js";
+
+// org subscriptions
+export {OrganisationMembershipsService} from "./organisation-memberships/organisation-memberships.service.js";
+export {OrganisationMembershipsModule} from "./organisation-memberships/organisation-memberships.module.js";
+export {OrganisationSubscriptionsModule} from "./organisation-subscriptions/organisation-subscriptions.module.js";
+export {OrganisationSubscriptionService} from "./organisation-subscriptions/organisation-subscriptions.service.js";
+export {OrganisationSubscriptionRecord} from "./organisation-subscriptions/entities/organisation-subscription.entity.js";
+
+// stripe
+export {StripeCheckoutController} from "./stripe-client/controllers/stripe-checkout-controller.js";
+export {StripeUnauthenticatedCheckoutController} from "./stripe-client/controllers/stripe-unauthenticated-checkout-controller.js";
+export {StripeCheckoutSessionRequestDto} from "./stripe-client/models/StripeCheckoutSessionRequestDto.js";
+export {StripeCheckoutSessionResponseDto} from "./stripe-client/models/StripeCheckoutSessionResponseDto.js";
+export {StripeCheckoutLineItem} from "./stripe-client/models/StripeCheckoutLineItem.js";
+export {StripeAccountModule} from "./stripe-client/stripe-account.module.js";
+export {StripeQueuedEventHandler} from "./stripe-client/services/queued-payment-event.handler.js";
+
+// authorization module
+export {AuthzModule} from "./authorization/authz.module.js";
+export {JwtStrategy} from "./authorization/strategies/authzstrategy.js";
+export {DefaultAuthGuard} from "./authorization/guards/DefaultAuthGuard.js";
+export {RequestWithUser} from "./authorization/models/RequestWithUser.js";
+export {ClaimsAuthorisationGuard} from "./authorization/guards/ClaimsAuthorisationGuard.js";
+export {MandatoryUserClaims} from "./authorization/guards/MandatoryUserClaims.decorator.js";
+export {SuperUserClaims} from "./authorization/models/SuperUserClaims.js";
+export {isOwnerOrThrow} from "./authorization/isOwnerOrThrow.js";
+export {ApiKeyAuthGuard} from "./authorization/guards/ApiKeyAuthGuard.js";
+export {ApiKeyStrategy} from "./authorization/strategies/apikeystrategy.js";
+
+// invitations
+export {InvitationModule} from "./invitations/invitation.module.js";
+export {InvitationService} from "./invitations/invitation.service.js";
+export {Invitation} from "./invitations/entities/invitation.entity.js";
+export {CreateInvitationDto} from "./invitations/dto/create-invitation.dto.js";
+export {UserInternalModule} from "./user-internal/user-internal.module.js";
+export {UserApiKeyService} from "./user-api-key/user-apikey.service.js";
+export {UserApiKeyController} from "./user-api-key/user-apikey.controller.js";
+export {UserApiKeyModule} from "./user-api-key/user-apikey.module.js";
+export {User} from "./user-internal/entities/user.entity.js";
+export {UserService} from "./user-internal/user.service.js";
 
 export {
     CoreConfigurationService,
@@ -34,13 +77,3 @@ export {
     RunningCommandLineModule,
     CliCommandService,
 };
-
-export * from "./stripe-client/index";
-export * from "./organisation-memberships/index";
-export * from "./organisation-subscriptions/index";
-export * from "./organisation/index";
-export * from "./authz/index";
-export * from "./invitations/index";
-export * from "./user-internal/index";
-export * from "./user-external/index";
-export * from "./user-api-key/index";

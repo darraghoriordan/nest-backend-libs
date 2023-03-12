@@ -2,14 +2,12 @@ import {InjectQueue} from "@nestjs/bull";
 import {Controller, Get, UseGuards} from "@nestjs/common";
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
 import {Queue} from "bull";
-import {
-    DefaultAuthGuard,
-    ClaimsAuthorisationGuard,
-    MandatoryUserClaims,
-} from "../authz";
-import {BooleanResult} from "../root-app/models/boolean-result";
-import {QueueItemDto} from "../root-app/models/QueueItemDto";
-import {SmtpEmailClient} from "./email-client.service";
+import {ClaimsAuthorisationGuard} from "../authorization/guards/ClaimsAuthorisationGuard.js";
+import {DefaultAuthGuard} from "../authorization/guards/DefaultAuthGuard.js";
+import {MandatoryUserClaims} from "../authorization/guards/MandatoryUserClaims.decorator.js";
+import {BooleanResult} from "../root-app/models/boolean-result.js";
+import {QueueItemDto} from "../root-app/models/QueueItemDto.js";
+import {SmtpEmailClient} from "./email-client.service.js";
 
 @UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
 @ApiBearerAuth()

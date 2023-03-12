@@ -19,10 +19,10 @@ import {
     RelationId,
     UpdateDateColumn,
 } from "typeorm";
-import {Invitation} from "../../invitations";
-import {MembershipRole} from "../../organisation/entities/member-role.entity";
-import {Organisation} from "../../organisation/entities/organisation.entity";
-import {User} from "../../user-internal/entities/user.entity";
+import {Invitation} from "../../invitations/entities/invitation.entity.js";
+import {MembershipRole} from "../../organisation/entities/member-role.entity.js";
+import {Organisation} from "../../organisation/entities/organisation.entity.js";
+import {User} from "../../user-internal/entities/user.entity.js";
 
 @Entity()
 export class OrganisationMembership {

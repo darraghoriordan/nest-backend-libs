@@ -12,19 +12,19 @@ import {
     ValidationPipe,
 } from "@nestjs/common";
 import {Logger, LoggerModule} from "nestjs-pino";
-import {AppController} from "./app.controller";
-import {AppService} from "./app.service";
-import {SwaggerGen} from "./SwaggerGen";
+import {AppController} from "./app.controller.js";
+import {AppService} from "./app.service.js";
+import {SwaggerGen} from "./SwaggerGen.js";
 import {NestFactory, Reflector} from "@nestjs/core";
-import {CoreConfigurationService} from "../core-config/CoreConfigurationService";
-import {CoreConfigModule} from "../core-config/CoreConfig.module";
+import {CoreConfigurationService} from "../core-config/CoreConfigurationService.js";
+import {CoreConfigModule} from "../core-config/CoreConfig.module.js";
 import {ConfigModule} from "@nestjs/config";
 import {BullModule} from "@nestjs/bull";
-import {HealthModule} from "../health/Health.module";
-import {LoggerModule as LoggingConfigModule} from "../logger/logger.module";
-import {LoggingConfigurationService} from "../logger/LoggingConfigurationService";
-import {AuthzModule} from "../authz";
-
+import {HealthModule} from "../health/Health.module.js";
+import {LoggerModule as LoggingConfigModule} from "../logger/logger.module.js";
+import {LoggingConfigurationService} from "../logger/LoggingConfigurationService.js";
+import {AuthzModule} from "../authorization/authz.module.js";
+import {DevtoolsModule} from "@nestjs/devtools-integration";
 @Global()
 @Module({
     imports: [
@@ -45,6 +45,19 @@ import {AuthzModule} from "../authz";
             },
         }),
         CoreConfigModule,
+        DevtoolsModule.registerAsync({
+            imports: [CoreConfigModule],
+            inject: [CoreConfigurationService],
+            useFactory: async (
+                configService: CoreConfigurationService
+
+                // eslint-disable-next-line @typescript-eslint/require-await
+            ) => {
+                return {
+                    http: configService.shouldUseDevtools,
+                };
+            },
+        }),
         BullModule.forRootAsync({
             imports: [CoreConfigModule],
 
@@ -73,7 +86,7 @@ import {AuthzModule} from "../authz";
     ],
     controllers: [AppController],
     providers: [AppService, SwaggerGen],
-    exports: [SwaggerGen, BullModule, LoggerModule],
+    exports: [SwaggerGen, BullModule, LoggerModule, AuthzModule],
 })
 export class CoreModule {
     public static initApplication(

@@ -2,11 +2,11 @@ import {Injectable, Logger} from "@nestjs/common";
 import {PassportStrategy} from "@nestjs/passport";
 import {ExtractJwt, Strategy} from "passport-jwt";
 import {passportJwtSecret} from "jwks-rsa";
-import {AccessToken} from "./AccessToken";
+import {AccessToken} from "../models/AccessToken.js";
 import {Request} from "express";
-import {AuthConfigurationService} from "./AuthConfigurationService";
-import {RequestUser} from "./RequestWithUser";
-import {UserValidationService} from "./UserValidation.service";
+import {AuthConfigurationService} from "../config/AuthConfigurationService.js";
+import {RequestUser} from "../models/RequestWithUser.js";
+import {UserValidationService} from "../services/UserValidation.service.js";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

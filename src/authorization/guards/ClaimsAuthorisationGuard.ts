@@ -6,7 +6,7 @@ import {
 } from "@nestjs/common";
 import {Observable} from "rxjs";
 import {Reflector} from "@nestjs/core";
-import {RequestWithUser} from "./RequestWithUser";
+import {RequestWithUser} from "../models/RequestWithUser.js";
 
 @Injectable()
 export class ClaimsAuthorisationGuard implements CanActivate {

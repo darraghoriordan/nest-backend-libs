@@ -1,5 +1,5 @@
 import {createTransport, Transporter} from "nodemailer";
-import {EmailConfigurationService} from "./EmailConfigurationService";
+import {EmailConfigurationService} from "./EmailConfigurationService.js";
 
 export const EmailTransporterProvider = {
     provide: "SmtpEmailTransporter",

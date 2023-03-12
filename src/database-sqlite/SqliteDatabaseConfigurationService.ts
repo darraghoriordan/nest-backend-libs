@@ -1,6 +1,6 @@
 import {Injectable} from "@nestjs/common";
 import {TypeOrmModuleOptions} from "@nestjs/typeorm";
-import {SqliteTypeOrmConfigurationProvider} from "./SqliteTypeOrmConfigurationProvider";
+import {SqliteTypeOrmConfigurationProvider} from "./SqliteTypeOrmConfigurationProvider.js";
 
 @Injectable()
 export class SqliteDatabaseConfigurationService {

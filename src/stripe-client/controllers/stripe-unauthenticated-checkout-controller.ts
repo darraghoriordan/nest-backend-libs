@@ -1,8 +1,8 @@
 import {Controller, Post, Body} from "@nestjs/common";
 import {ApiTags, ApiOkResponse} from "@nestjs/swagger";
-import {StripeCheckoutSessionRequestDto} from "./../models/StripeCheckoutSessionRequestDto";
-import {StripeCheckoutService} from "./../services/stripe-checkout.service";
-import {StripeCheckoutSessionResponseDto} from "./../models/StripeCheckoutSessionResponseDto";
+import {StripeCheckoutSessionRequestDto} from "./../models/StripeCheckoutSessionRequestDto.js";
+import {StripeCheckoutService} from "./../services/stripe-checkout.service.js";
+import {StripeCheckoutSessionResponseDto} from "./../models/StripeCheckoutSessionResponseDto.js";
 
 /**
  * This controller creates checkout sessions for Stripe.

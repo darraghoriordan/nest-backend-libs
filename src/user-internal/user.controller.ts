@@ -9,20 +9,18 @@ import {
     UseGuards,
     BadRequestException,
 } from "@nestjs/common";
-import {UserService} from "../user-internal/user.service";
-import {UpdateUserDto} from "../user-internal/dto/update-user.dto";
+import {UserService} from "./user.service.js";
+import {UpdateUserDto} from "./dto/update-user.dto.js";
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
-import {RequestWithUser} from "../authz/RequestWithUser";
+import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
 import {isUUID} from "class-validator";
-import {BooleanResult} from "../root-app/models/boolean-result";
-import {UserDto} from "../user-internal/dto/userResponseDto";
-import {User} from "../user-internal/entities/user.entity";
-import {
-    ClaimsAuthorisationGuard,
-    DefaultAuthGuard,
-    MandatoryUserClaims,
-    SuperUserClaims,
-} from "../authz";
+import {BooleanResult} from "../root-app/models/boolean-result.js";
+import {UserDto} from "./dto/userResponseDto.js";
+import {User} from "./entities/user.entity.js";
+import {DefaultAuthGuard} from "../authorization/guards/DefaultAuthGuard.js";
+import {ClaimsAuthorisationGuard} from "../authorization/guards/ClaimsAuthorisationGuard.js";
+import {SuperUserClaims} from "../authorization/models/SuperUserClaims.js";
+import {MandatoryUserClaims} from "../authorization/guards/MandatoryUserClaims.decorator.js";
 
 @UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
 @ApiBearerAuth()

@@ -2,7 +2,7 @@
 import {Injectable} from "@nestjs/common";
 import {ConfigService} from "@nestjs/config";
 import {IsBoolean, IsDefined, IsInt, IsString} from "class-validator";
-import {ValidatedConfigurationService} from "../configuration/ValidatedConfigurationService";
+import {ValidatedConfigurationService} from "../configuration/ValidatedConfigurationService.js";
 
 @Injectable()
 export class CoreConfigurationService extends ValidatedConfigurationService {
@@ -34,6 +34,14 @@ export class CoreConfigurationService extends ValidatedConfigurationService {
     get shouldUseNestCors(): boolean {
         return (
             this.configService.get<string>("core.shouldUseNestCors") === "true"
+        );
+    }
+
+    @IsDefined()
+    @IsBoolean()
+    get shouldUseDevtools(): boolean {
+        return (
+            this.configService.get<string>("core.shouldUseDevtools") === "true"
         );
     }
 

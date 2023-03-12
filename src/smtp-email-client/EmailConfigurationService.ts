@@ -2,7 +2,7 @@
 import {Injectable} from "@nestjs/common";
 import {ConfigService} from "@nestjs/config";
 import {IsBoolean, IsDefined, IsInt, IsString} from "class-validator";
-import {ValidatedConfigurationService} from "../configuration/ValidatedConfigurationService";
+import {ValidatedConfigurationService} from "../configuration/ValidatedConfigurationService.js";
 
 @Injectable()
 export class EmailConfigurationService extends ValidatedConfigurationService {

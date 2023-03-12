@@ -11,11 +11,11 @@ import {
 } from "@nestjs/bull";
 import {Job} from "bull";
 import Stripe from "stripe";
-import {OrganisationSubscriptionService} from "../../organisation-subscriptions";
-import {SaveOrganisationSubscriptionRecordDto} from "../../organisation-subscriptions/models/fulfillSubscriptionDto";
+import {SaveOrganisationSubscriptionRecordDto} from "../../organisation-subscriptions/models/fulfillSubscriptionDto.js";
 import {InjectRepository} from "@nestjs/typeorm";
-import {StripeCheckoutEvent} from "../entities/stripe-checkout-event.entity";
+import {StripeCheckoutEvent} from "../entities/stripe-checkout-event.entity.js";
 import {Repository} from "typeorm";
+import {OrganisationSubscriptionService} from "../../organisation-subscriptions/organisation-subscriptions.service.js";
 
 @Injectable()
 @Processor("stripe-events")

@@ -2,7 +2,7 @@
 import {Injectable} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
-import {PaymentSessionReference} from "./payment-session.entity";
+import {PaymentSessionReference} from "./payment-session.entity.js";
 
 @Injectable()
 export class PaymentSessionService {

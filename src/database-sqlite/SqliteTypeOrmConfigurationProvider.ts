@@ -1,8 +1,7 @@
-/* eslint-disable unicorn/prefer-module */
-
 import {TypeOrmModuleOptions} from "@nestjs/typeorm";
 import path from "path";
 import {DataSourceOptions} from "typeorm";
+import url from "url";
 
 export class SqliteTypeOrmConfigurationProvider {
     /**
@@ -11,15 +10,14 @@ export class SqliteTypeOrmConfigurationProvider {
      * @returns
      */
     public static getTypeOrmConfig(): DataSourceOptions {
+        const directoryName = path.dirname(url.fileURLToPath(import.meta.url));
         const nodeModuleCorePath = path.join(
-            __dirname,
             process.env.CORE_MODULE_ENTITY_PATH || "..",
             "**",
             "*.entity.{ts,js}"
         );
 
         const appModulePath = path.join(
-            __dirname,
             process.env.APP_MODULE_ENTITY_PATH ||
                 "../../../../../apps/backend/dist",
             "**",
@@ -27,7 +25,6 @@ export class SqliteTypeOrmConfigurationProvider {
         );
 
         const migrationsPath = path.join(
-            __dirname,
             process.env.MIGRATIONS_PATH || "../../../../../apps/backend/dist",
             "**",
             "migrations",
@@ -35,7 +32,7 @@ export class SqliteTypeOrmConfigurationProvider {
         );
         console.log("Using database configuration paths", {
             appModulePath,
-            moduleLocalPath: __dirname,
+            moduleLocalPath: directoryName,
             migrationsPath,
             nodeModuleCorePath,
             pwd: process.cwd(),

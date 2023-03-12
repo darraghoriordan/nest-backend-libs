@@ -2,7 +2,7 @@ import {INestApplication, Injectable, Logger} from "@nestjs/common";
 import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger";
 import fs from "fs";
 import {spawn} from "child_process";
-import {CoreConfigurationService} from "../core-config/CoreConfigurationService";
+import {CoreConfigurationService} from "../core-config/CoreConfigurationService.js";
 
 /* istanbul ignore next */
 @Injectable()

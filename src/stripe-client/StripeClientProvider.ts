@@ -1,5 +1,5 @@
 import Stripe from "stripe";
-import {StripeClientConfigurationService} from "./StripeClientConfigurationService";
+import {StripeClientConfigurationService} from "./StripeClientConfigurationService.js";
 
 export const StripeClientProvider = {
     provide: "StripeClient",

@@ -10,7 +10,7 @@ import {
     IsString,
     ValidateNested,
 } from "class-validator";
-import {StripeCheckoutLineItem} from "./StripeCheckoutLineItem";
+import {StripeCheckoutLineItem} from "./StripeCheckoutLineItem.js";
 
 export class StripeCheckoutSessionRequestDto {
     @ApiPropertyOptional()

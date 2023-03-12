@@ -1,10 +1,10 @@
 import {Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
-import {RequestUser} from "../authz/RequestWithUser";
-import {Roles} from "../organisation/dto/RolesEnum";
-import {UpdateUserDto} from "./dto/update-user.dto";
-import {User} from "./entities/user.entity";
+import {RequestUser} from "../authorization/models/RequestWithUser.js";
+import {Roles} from "../organisation/dto/RolesEnum.js";
+import {UpdateUserDto} from "./dto/update-user.dto.js";
+import {User} from "./entities/user.entity.js";
 
 @Injectable()
 export class UserService {

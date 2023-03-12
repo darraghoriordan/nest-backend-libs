@@ -10,12 +10,12 @@ import {
 } from "@nestjs/common";
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
 import {AuthGuard} from "@nestjs/passport";
-import {RequestWithUser} from "../authz/RequestWithUser";
-import {OrganisationMembershipsService} from "./organisation-memberships.service";
-import {Organisation} from "../organisation/entities/organisation.entity";
-import {CreateUpdateMembershipDto} from "./dtos/create-membership-dto";
-import {OrganisationMembership} from "./entities/organisation-membership.entity";
-import {BooleanResult} from "../root-app/models/boolean-result";
+import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
+import {OrganisationMembershipsService} from "./organisation-memberships.service.js";
+import {Organisation} from "../organisation/entities/organisation.entity.js";
+import {CreateUpdateMembershipDto} from "./dtos/create-membership-dto.js";
+import {OrganisationMembership} from "./entities/organisation-membership.entity.js";
+import {BooleanResult} from "../root-app/models/boolean-result.js";
 
 @UseGuards(AuthGuard("jwt"))
 @ApiBearerAuth()

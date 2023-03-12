@@ -1,6 +1,6 @@
-import {TwitterApi, TwitterApiReadWrite} from "twitter-api-v2";
-import {TwitterClientConfigurationService} from "./TwitterClientConfigurationService";
-
+import {TwitterClientConfigurationService} from "./TwitterClientConfigurationService.js";
+import {TwitterApi} from "twitter-api-v2";
+import type {TwitterApiReadWrite} from "twitter-api-v2";
 export const TwitterClientProvider = {
     provide: "TwitterClient",
     useFactory: (

@@ -1,11 +1,11 @@
 import {Module} from "@nestjs/common";
 import {TypeOrmModule} from "@nestjs/typeorm";
-import {OrganisationSubscriptionService} from "./organisation-subscriptions.service";
-import {Organisation} from "../organisation/entities/organisation.entity";
-import {OrganisationSubscriptionsController} from "./organisation-subscriptions.controller";
-import {OrganisationSubscriptionRecord} from "./entities/organisation-subscription.entity";
-import {PaymentSessionModule} from "../payment-sessions/payment-session.module";
-import {AllSubscriptionsController} from "./all-subscriptions.controller";
+import {OrganisationSubscriptionService} from "./organisation-subscriptions.service.js";
+import {Organisation} from "../organisation/entities/organisation.entity.js";
+import {OrganisationSubscriptionsController} from "./organisation-subscriptions.controller.js";
+import {OrganisationSubscriptionRecord} from "./entities/organisation-subscription.entity.js";
+import {PaymentSessionModule} from "../payment-sessions/payment-session.module.js";
+import {AllSubscriptionsController} from "./all-subscriptions.controller.js";
 
 @Module({
     imports: [

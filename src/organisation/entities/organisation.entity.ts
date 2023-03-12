@@ -15,8 +15,8 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
-import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity";
-import {OrganisationSubscriptionRecord} from "../../organisation-subscriptions/entities/organisation-subscription.entity";
+import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity.js";
+import {OrganisationSubscriptionRecord} from "../../organisation-subscriptions/entities/organisation-subscription.entity.js";
 
 @Entity()
 export class Organisation {

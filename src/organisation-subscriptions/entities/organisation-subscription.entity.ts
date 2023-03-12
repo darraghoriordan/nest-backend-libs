@@ -10,10 +10,11 @@ import {
     Index,
     ManyToOne,
     PrimaryGeneratedColumn,
+    Relation,
     RelationId,
     UpdateDateColumn,
 } from "typeorm";
-import {Organisation} from "../../organisation/entities/organisation.entity";
+import {Organisation} from "../../organisation/entities/organisation.entity.js";
 
 @Entity()
 export class OrganisationSubscriptionRecord {
@@ -64,7 +65,7 @@ export class OrganisationSubscriptionRecord {
     validUntil!: Date;
 
     @ManyToOne(() => Organisation, (org) => org.subscriptionRecords, {})
-    organisation!: Organisation;
+    organisation!: Relation<Organisation>;
 
     @ApiProperty()
     @Column()

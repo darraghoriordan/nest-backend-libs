@@ -1,8 +1,8 @@
 import {HeaderAPIKeyStrategy} from "passport-headerapikey";
 import {PassportStrategy} from "@nestjs/passport";
-import {UserValidationService} from "./UserValidation.service";
+import {UserValidationService} from "../services/UserValidation.service.js";
 import {Injectable} from "@nestjs/common";
-import {User} from "../user-internal";
+import {User} from "../../user-internal/entities/user.entity.js";
 
 @Injectable()
 export class ApiKeyStrategy extends PassportStrategy(HeaderAPIKeyStrategy) {

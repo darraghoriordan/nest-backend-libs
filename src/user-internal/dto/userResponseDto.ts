@@ -1,6 +1,6 @@
 import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
 import {Column} from "typeorm";
-import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity";
+import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity.js";
 
 export class UserDto {
     @ApiProperty()

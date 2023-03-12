@@ -1,11 +1,11 @@
 import {Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {DeleteResult, Repository} from "typeorm";
-import {Roles} from "../organisation/dto/RolesEnum";
-import {MembershipRole} from "../organisation/entities/member-role.entity";
-import {Organisation} from "../organisation/entities/organisation.entity";
-import {CreateUpdateMembershipDto} from "./dtos/create-membership-dto";
-import {OrganisationMembership} from "./entities/organisation-membership.entity";
+import {Roles} from "../organisation/dto/RolesEnum.js";
+import {MembershipRole} from "../organisation/entities/member-role.entity.js";
+import {Organisation} from "../organisation/entities/organisation.entity.js";
+import {CreateUpdateMembershipDto} from "./dtos/create-membership-dto.js";
+import {OrganisationMembership} from "./entities/organisation-membership.entity.js";
 
 @Injectable()
 export class OrganisationMembershipsService {

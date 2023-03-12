@@ -1,6 +1,6 @@
 import {Module} from "@nestjs/common";
 import "reflect-metadata";
-import {CliCommandService} from "./CliCommandService";
+import {CliCommandService} from "./CliCommandService.js";
 
 @Module({
     imports: [],

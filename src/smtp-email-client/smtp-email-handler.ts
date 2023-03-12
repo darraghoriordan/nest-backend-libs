@@ -11,8 +11,8 @@ import {Job} from "bull";
 import {Transporter} from "nodemailer";
 import Mail from "nodemailer/lib/mailer";
 import {Repository} from "typeorm";
-import {Email} from "./email.entity";
-import {EmailConfigurationService} from "./EmailConfigurationService";
+import {Email} from "./email.entity.js";
+import {EmailConfigurationService} from "./EmailConfigurationService.js";
 
 @Injectable()
 @Processor("smtp-emails")

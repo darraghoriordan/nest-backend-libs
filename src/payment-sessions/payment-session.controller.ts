@@ -1,14 +1,12 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import {Controller, Request, UseGuards, Get} from "@nestjs/common";
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
-import {RequestWithUser} from "../authz/RequestWithUser";
-import {
-    ClaimsAuthorisationGuard,
-    DefaultAuthGuard,
-    MandatoryUserClaims,
-} from "../authz";
-import {PaymentSessionService} from "./payment-session.service";
-import {PaymentSessionReference} from "./payment-session.entity";
+import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
+import {PaymentSessionService} from "./payment-session.service.js";
+import {PaymentSessionReference} from "./payment-session.entity.js";
+import {ClaimsAuthorisationGuard} from "../authorization/guards/ClaimsAuthorisationGuard.js";
+import {DefaultAuthGuard} from "../authorization/guards/DefaultAuthGuard.js";
+import {MandatoryUserClaims} from "../authorization/guards/MandatoryUserClaims.decorator.js";
 
 @UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
 @ApiBearerAuth()

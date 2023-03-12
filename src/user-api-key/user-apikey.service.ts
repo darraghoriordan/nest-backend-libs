@@ -2,7 +2,7 @@ import {Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {nanoid} from "nanoid";
 import {Repository} from "typeorm";
-import {UserApiKey} from "./userApiKey.entity";
+import {UserApiKey} from "./userApiKey.entity.js";
 
 @Injectable()
 export class UserApiKeyService {

@@ -7,10 +7,11 @@ import {
     Entity,
     ManyToOne,
     PrimaryGeneratedColumn,
+    Relation,
     RelationId,
     UpdateDateColumn,
 } from "typeorm";
-import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity";
+import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity.js";
 
 @Entity()
 export class MembershipRole {
@@ -20,7 +21,7 @@ export class MembershipRole {
 
     // we don't expose this because the roles are exposed on the membership
     @ManyToOne(() => OrganisationMembership, (membership) => membership.roles)
-    membership!: OrganisationMembership;
+    membership!: Relation<OrganisationMembership>;
 
     @ApiProperty()
     @Column()
