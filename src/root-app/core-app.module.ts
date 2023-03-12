@@ -5,7 +5,6 @@ import "reflect-metadata";
 import helmet from "helmet";
 import {
     ClassSerializerInterceptor,
-    Global,
     INestApplication,
     Module,
     NestApplicationOptions,
@@ -24,8 +23,7 @@ import {HealthModule} from "../health/Health.module.js";
 import {LoggerModule as LoggingConfigModule} from "../logger/logger.module.js";
 import {LoggingConfigurationService} from "../logger/LoggingConfigurationService.js";
 import {AuthzModule} from "../authorization/authz.module.js";
-import {DevtoolsModule} from "@nestjs/devtools-integration";
-@Global()
+
 @Module({
     imports: [
         ConfigModule.forRoot({cache: true}),
@@ -45,19 +43,6 @@ import {DevtoolsModule} from "@nestjs/devtools-integration";
             },
         }),
         CoreConfigModule,
-        DevtoolsModule.registerAsync({
-            imports: [CoreConfigModule],
-            inject: [CoreConfigurationService],
-            useFactory: async (
-                configService: CoreConfigurationService
-
-                // eslint-disable-next-line @typescript-eslint/require-await
-            ) => {
-                return {
-                    http: configService.shouldUseDevtools,
-                };
-            },
-        }),
         BullModule.forRootAsync({
             imports: [CoreConfigModule],
 
@@ -102,6 +87,7 @@ export class CoreModule {
                     bodyParser: true,
                     rawBody: true,
                     bufferLogs: true,
+                    snapshot: true,
                 });
                 const loggerService = app.get(Logger);
                 const configService = app.get(CoreConfigurationService);

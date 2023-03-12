@@ -1,9 +1,8 @@
-import {Global, Module} from "@nestjs/common";
+import {Module} from "@nestjs/common";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {DatabaseConfigurationService} from "./PostgresDatabaseConfigurationService.js";
 import {PostgresTypeOrmConfigurationProvider} from "./PostgresTypeOrmConfigurationProvider.js";
 
-@Global()
 @Module({
     imports: [
         TypeOrmModule.forRootAsync({

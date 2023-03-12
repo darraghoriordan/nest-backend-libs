@@ -6,9 +6,9 @@ export default registerAs("core", () => ({
     webPort: process.env.WEB_PORT,
     nodeEnv: process.env.NODE_ENV,
     frontEndAppUrl: process.env.FRONTEND_APP_URL,
+    marketingAppUrl: process.env.MARKETING_APP_URL,
     shouldUseNestCors: process.env.ENABLE_NEST_CORS,
     shouldAutomaticallyInstallApiModels: process.env.AUTO_INSTALL_API_MODELS,
     appTitle: process.env.APP_TITLE,
     bullQueueHost: process.env.REDIS_URL,
-    shouldUseDevtools: process.env.ENABLE_DEVTOOLS,
 }));

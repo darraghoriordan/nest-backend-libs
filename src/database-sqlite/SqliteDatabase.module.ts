@@ -1,9 +1,8 @@
-import {Global, Module} from "@nestjs/common";
+import {Module} from "@nestjs/common";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {SqliteDatabaseConfigurationService} from "./SqliteDatabaseConfigurationService.js";
 import {SqliteTypeOrmConfigurationProvider} from "./SqliteTypeOrmConfigurationProvider.js";
 
-@Global()
 @Module({
     imports: [
         TypeOrmModule.forRootAsync({

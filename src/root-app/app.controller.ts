@@ -1,7 +1,10 @@
+/* eslint-disable sonarjs/no-identical-functions */
 import {Controller, Get, UseGuards, Request, Logger} from "@nestjs/common";
-import {AuthGuard} from "@nestjs/passport";
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
+import {ClaimsAuthorisationGuard} from "../authorization/guards/ClaimsAuthorisationGuard.js";
+import {DefaultAuthGuard} from "../authorization/guards/DefaultAuthGuard.js";
 import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
+import {MandatoryUserClaims} from "../index.js";
 import {AppService} from "./app.service.js";
 
 @Controller()
@@ -16,11 +19,23 @@ export class AppController {
         return this.appService.getHello();
     }
 
-    @UseGuards(AuthGuard("jwt"))
+    @UseGuards(DefaultAuthGuard)
     @ApiBearerAuth()
-    @Get("authorise")
+    @Get("is-authorised")
     @ApiOkResponse({type: String})
     getHelloAuthorized(@Request() request: RequestWithUser): string {
+        const testString = this.appService.getHello();
+        const stringifyUser = JSON.stringify(request.user);
+        this.logger.log("request user", stringifyUser);
+        return testString;
+    }
+
+    @UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
+    @ApiBearerAuth()
+    @MandatoryUserClaims("read:all")
+    @Get("is-super-admin")
+    @ApiOkResponse({type: String})
+    getHelloSuperAdmin(@Request() request: RequestWithUser): string {
         const testString = this.appService.getHello();
         const stringifyUser = JSON.stringify(request.user);
         this.logger.log("request user", stringifyUser);

@@ -38,14 +38,6 @@ export class CoreConfigurationService extends ValidatedConfigurationService {
     }
 
     @IsDefined()
-    @IsBoolean()
-    get shouldUseDevtools(): boolean {
-        return (
-            this.configService.get<string>("core.shouldUseDevtools") === "true"
-        );
-    }
-
-    @IsDefined()
     @IsInt()
     get webPort(): number {
         return Number.parseInt(
@@ -64,6 +56,11 @@ export class CoreConfigurationService extends ValidatedConfigurationService {
     @IsString()
     get frontEndAppUrl(): string {
         return this.configService.get<string>("core.frontEndAppUrl")!;
+    }
+    @IsDefined()
+    @IsString()
+    get marketingAppUrl(): string {
+        return this.configService.get<string>("core.marketingAppUrl")!;
     }
 
     @IsDefined()

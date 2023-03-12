@@ -4,7 +4,7 @@ import {exec} from "child_process";
 // eslint-disable-next-line unicorn/import-style
 import util from "util";
 import path from "path";
-
+import url from "url";
 /**
  * Generates a new migration file with sql needs to be executed to update schema.
  */
@@ -67,8 +67,7 @@ export class WriteApiClientCommand
         // const __dirname = dirname(fileURLToPath(import.meta.url));
 
         const scriptPath = path.join(
-            // eslint-disable-next-line  unicorn/prefer-module
-            __dirname,
+            path.dirname(url.fileURLToPath(import.meta.url)),
             "../../open-api-generation/generate.sh"
         );
         const result = await execPromise(
