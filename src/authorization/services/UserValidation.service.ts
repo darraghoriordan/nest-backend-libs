@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
+    BadRequestException,
     Injectable,
-    // NotFoundException
+    Logger,
+    NotFoundException,
 } from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import {Repository} from "typeorm";
+import {IsNull, MoreThan, Repository} from "typeorm";
 import {AuthZClientService} from "../../authzclient/authz.service.js";
 import {UserProfile} from "../../authzclient/UserProfile.dto.js";
-//import {InvitationService} from "../../invitations.js";
+import {Invitation} from "../../invitations/entities/invitation.entity.js";
 import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity.js";
 import {Roles} from "../../organisation/dto/RolesEnum.js";
 import {MembershipRole} from "../../organisation/entities/member-role.entity.js";
@@ -17,17 +19,31 @@ import {AccessToken} from "../models/AccessToken.js";
 
 @Injectable()
 export class UserValidationService {
+    private readonly logger = new Logger(UserValidationService.name);
     constructor(
         @InjectRepository(User)
         private userRepository: Repository<User>,
-        private authzClient: AuthZClientService //   private invitationService: InvitationService
+        private authzClient: AuthZClientService,
+        @InjectRepository(Invitation)
+        private readonly invitationRepository: Repository<Invitation>
     ) {}
 
-    async getAuth0User(
-        rawAccessToken: string
-    ): Promise<UserProfile | undefined> {
-        return await this.authzClient.getUser(rawAccessToken);
+    async getAuth0User(rawAccessToken: string): Promise<UserProfile> {
+        const result = await this.authzClient.getUser(rawAccessToken);
+
+        if (result === undefined) {
+            throw new Error("Error getting user profile from Auth0");
+        }
+
+        if (result.email_verified === false) {
+            throw new BadRequestException(
+                "Email not verified. You must verify your email address to continue."
+            );
+        }
+
+        return result;
     }
+
     async validateUserApiKey(apiKey: string): Promise<User | undefined> {
         const result = await this.userRepository.findOne({
             where: {apiKeys: {apiKey: apiKey}},
@@ -47,25 +63,22 @@ export class UserValidationService {
     ): Promise<User | undefined> {
         if (invitationId) {
             // even though there is commonality here it's easier to treat the invitation path as completely separate
-            return this.handleInvitation(rawAccessToken, invitationId);
+            return this.handleInvitedUser(rawAccessToken, invitationId);
         }
+
         // try to find the user and their memberships
-        const foundUser = await this.userRepository.findOne({
-            where: {auth0UserId: payload.sub},
-            relations: {
-                memberships: true,
-            },
-        });
+        const foundUser = await this.findUserForRequest(payload.sub);
 
         // if user is
         // - found
         // - already configured
-        // - not trying to join an organisation
         // then just return the user
         if (
             foundUser !== undefined &&
             foundUser !== null &&
-            foundUser.memberships.length > 0
+            foundUser?.memberships !== undefined &&
+            foundUser?.memberships !== null &&
+            foundUser?.memberships?.length > 0
         ) {
             return foundUser;
         }
@@ -73,52 +86,91 @@ export class UserValidationService {
         return this.handleNewIndependentUser(foundUser, rawAccessToken);
     }
 
+    private async findUserForRequest(auth0UserId: string) {
+        return await this.userRepository.findOne({
+            where: {auth0UserId: auth0UserId},
+            relations: {
+                memberships: true,
+            },
+        });
+    }
+
     // eslint-disable-next-line @typescript-eslint/require-await
-    async handleInvitation(
+    async handleInvitedUser(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         rawAccessToken: string,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         invitationCode: string
     ): Promise<User> {
-        return new User();
-        // const invitation = await this.invitationService.getOneActiveInvitation(
-        //     invitationCode
-        // );
-        // if (!invitation) {
-        //     throw new NotFoundException("Valid invitation not found");
-        // }
+        const now = new Date();
+        const invitation = await this.invitationRepository.findOne({
+            where: {
+                uuid: invitationCode,
+                acceptedOn: IsNull(),
+                expiresOn: MoreThan(now),
+            },
+            relations: {
+                organisationMembership: {
+                    user: true,
+                    organisation: true,
+                },
+            },
+        });
+        if (!invitation) {
+            this.logger.log(
+                {
+                    invitationCode,
+                    now,
+                },
+                "invitation not found"
+            );
+            throw new NotFoundException(
+                "Valid invitation not found with provided code"
+            );
+        }
 
-        // // get the user's profile details from auth0
-        // const auth0User = await this.getAuth0User(rawAccessToken);
-        // if (auth0User === undefined) {
-        //     throw new Error("Error getting user profile from Auth0");
-        // }
+        // get the user's profile details from auth0
+        const auth0User = await this.getAuth0User(rawAccessToken);
 
-        // if (auth0User.email_verified === false) {
-        //     throw new Error("Email not verified");
-        // }
+        // set the invitation to accepted
+        invitation.acceptedOn = new Date();
+        // set the user's membership to member
+        const memberRole = invitation.organisationMembership.roles?.find(
+            (r) => r.name === Roles.invited
+        );
+        if (!memberRole) {
+            throw new Error("Invited role not found for member");
+        }
+        memberRole.name = Roles.member;
 
-        // // the user's verified email address should match the invitation email address
-        // if (
-        //     auth0User.email.toLowerCase() !==
-        //     invitation.emailAddress.toLowerCase()
-        // ) {
-        //     throw new Error(
-        //         "Verified email address does not match invitation email address"
-        //     );
-        // }
+        this.mapAuthZUserToEntity(
+            invitation.organisationMembership.user,
+            auth0User
+        );
 
-        // await this.invitationService.acceptInvitation(invitation.id);
+        try {
+            await this.invitationRepository.save(invitation);
+        } catch (error) {
+            if (
+                (error as {message?: string}).message?.includes("duplicate key")
+            ) {
+                throw new BadRequestException(
+                    "User is already a member of this organisation"
+                );
+            }
+            throw error;
+        }
 
-        // this.mapAuthZUserToEntity(
-        //     invitation.organisationMembership.user,
-        //     auth0User
-        // );
-        // // eslint-disable-next-line sonarjs/prefer-immediate-return
-        // const updatedUser = this.userRepository.save(
-        //     invitation.organisationMembership.user
-        // );
-        // return updatedUser;
+        const userForRequest = await this.userRepository.findOne({
+            where: {id: invitation.organisationMembership.user.id},
+            relations: {
+                memberships: true,
+            },
+        });
+        if (!userForRequest) {
+            throw new Error("User not found");
+        }
+        return userForRequest;
     }
 
     async handleNewIndependentUser(
@@ -127,13 +179,6 @@ export class UserValidationService {
     ) {
         // get the user's profile details from auth0
         const auth0User = await this.getAuth0User(rawAccessToken);
-        if (auth0User === undefined) {
-            throw new Error("Error getting user profile from Auth0");
-        }
-
-        if (auth0User.email_verified === false) {
-            throw new Error("Email not verified");
-        }
 
         // create role
         const newRole = new MembershipRole();
@@ -157,9 +202,18 @@ export class UserValidationService {
         user.memberships = [membership];
 
         this.mapAuthZUserToEntity(user, auth0User);
-        // eslint-disable-next-line sonarjs/prefer-immediate-return
-        const updatedUser = this.userRepository.save(user);
-        return updatedUser;
+
+        const savedUser = await this.userRepository.save(user);
+        const userForRequest = await this.userRepository.findOne({
+            where: {id: savedUser.id},
+            relations: {
+                memberships: true,
+            },
+        });
+        if (!userForRequest) {
+            throw new Error("User not found");
+        }
+        return userForRequest;
     }
 
     mapAuthZUserToEntity(user: User, auth0User: UserProfile) {

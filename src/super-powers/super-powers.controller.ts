@@ -15,7 +15,7 @@ export class SuperPowersController {
     @Post("reset-database")
     @ApiOkResponse()
     @MandatoryUserClaims("modify:all")
-    async findOne() {
+    async resetDatabase(): Promise<boolean> {
         return this.spService.resetDatabase();
     }
 }

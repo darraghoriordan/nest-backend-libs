@@ -18,13 +18,13 @@ export class Email {
     id!: number;
 
     @ApiProperty()
-    @Column({nullable: false})
+    @Column()
     @Index()
     @Exclude()
     ownerId!: string;
 
     @ApiProperty()
-    @Column({nullable: false})
+    @Column()
     @Generated("uuid")
     uuid!: string;
 
@@ -36,11 +36,11 @@ export class Email {
     @ApiProperty({type: String})
     bccTo!: string;
 
-    @Column()
+    @Column({nullable: true})
     @ApiPropertyOptional()
     textBody?: string;
 
-    @Column()
+    @Column({nullable: true})
     @ApiPropertyOptional()
     htmlBody?: string;
 

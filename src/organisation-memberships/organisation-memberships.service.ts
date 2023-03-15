@@ -65,23 +65,23 @@ export class OrganisationMembershipsService {
         this.currentUserIsOwnerGuard(org, currentUserId);
 
         // existing membership for this user?
-        const existingMembership = org.memberships.find(
+        const existingMembership = org.memberships?.find(
             (m) => m.user.id === createOmDto.userId
         );
         if (existingMembership) {
             // add all roles to the existing membership
             for (const role of createOmDto.roles) {
-                const existingRole = existingMembership.roles.find(
+                const existingRole = existingMembership.roles?.find(
                     (r) => r.name === role
                 );
                 if (!existingRole) {
                     const newRole = new MembershipRole();
                     newRole.name = role;
-                    existingMembership.roles.push(newRole);
+                    existingMembership.roles?.push(newRole);
                 }
             }
             // remove all roles that are not in the DTO
-            existingMembership.roles = existingMembership.roles.filter((r) =>
+            existingMembership.roles = existingMembership.roles?.filter((r) =>
                 createOmDto.roles.includes(r.name)
             );
         } else {
@@ -91,19 +91,19 @@ export class OrganisationMembershipsService {
             for (const role of createOmDto.roles) {
                 const newRole = new MembershipRole();
                 newRole.name = role;
-                newMembership.roles.push(newRole);
+                newMembership.roles?.push(newRole);
             }
-            org.memberships.push(newMembership);
+            org.memberships?.push(newMembership);
         }
 
         return await this.orgRepo.save(org);
     }
 
     private currentUserIsOwnerGuard(org: Organisation, currentUserId: number) {
-        const membership = org.memberships.find(
+        const membership = org.memberships?.find(
             (m) =>
                 m.user.id === currentUserId &&
-                m.roles.some((r) => r.name === Roles.owner)
+                m.roles?.some((r) => r.name === Roles.owner)
         );
         if (!membership) {
             throw new NotFoundException(
@@ -135,7 +135,7 @@ export class OrganisationMembershipsService {
         this.currentUserIsOwnerGuard(org, currentUserId);
 
         // remove the membership
-        const membership = org.memberships.find(
+        const membership = org.memberships?.find(
             (m) => m.uuid === membershipUuid
         );
         if (!membership) {

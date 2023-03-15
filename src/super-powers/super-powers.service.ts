@@ -18,11 +18,11 @@ export class SuperPowersService {
 
     async resetDatabase() {
         await this.entityManager.query(
-            ` -- orgs
+            `-- orgs
             TRUNCATE TABLE "membership_role", "organisation_membership","organisation_subscription_record","organisation" RESTART IDENTITY CASCADE;
 
             -- users
-            TRUNCATE TABLE "user_api_key", "email", "user", RESTART IDENTITY CASCADE;
+            TRUNCATE TABLE "user_api_key", "email", "user", "invitation" RESTART IDENTITY CASCADE;
 
             -- payments
             TRUNCATE TABLE "payment_session_reference", "stripe_checkout_event" RESTART IDENTITY CASCADE;`

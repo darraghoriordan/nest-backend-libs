@@ -1,9 +1,8 @@
-import {ApiProperty} from "@nestjs/swagger";
+import {ApiExtraModels, ApiProperty} from "@nestjs/swagger";
 
 import {
     Column,
     CreateDateColumn,
-    DeleteDateColumn,
     Entity,
     ManyToOne,
     PrimaryGeneratedColumn,
@@ -12,6 +11,7 @@ import {
     UpdateDateColumn,
 } from "typeorm";
 import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity.js";
+import {Roles} from "../dto/RolesEnum.js";
 
 @Entity()
 export class MembershipRole {
@@ -30,6 +30,7 @@ export class MembershipRole {
 
     @ApiProperty()
     @Column()
+    @ApiExtraModels(() => Roles)
     name!: string;
 
     @CreateDateColumn()
@@ -39,8 +40,4 @@ export class MembershipRole {
     @UpdateDateColumn()
     @ApiProperty()
     updateDate!: Date;
-
-    @DeleteDateColumn()
-    @ApiProperty()
-    deletedDate!: Date;
 }

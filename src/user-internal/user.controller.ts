@@ -38,6 +38,8 @@ export class UserController {
         if (uuid === "me") {
             return {
                 ...request.user,
+                memberships: request.user.memberships ?? [],
+                apiKeys: request.user.apiKeys ?? [],
                 isSuper: request.user.permissions.includes(
                     SuperUserClaims.MODIFY_ALL
                 ),
@@ -54,6 +56,8 @@ export class UserController {
         );
         return {
             ...result,
+            memberships: request.user.memberships ?? [],
+            apiKeys: request.user.apiKeys ?? [],
             isSuper: request.user.permissions.includes(
                 SuperUserClaims.MODIFY_ALL
             ),

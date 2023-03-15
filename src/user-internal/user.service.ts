@@ -41,8 +41,8 @@ export class UserService {
             },
         });
         if (
-            user.memberships.some((m) =>
-                currentUser.memberships.some(
+            user.memberships?.some((m) =>
+                currentUser.memberships?.some(
                     (cu) => cu.organisationId === m.organisationId
                 )
             )
@@ -102,8 +102,8 @@ export class UserService {
             },
         });
         if (
-            user.memberships.some((m) =>
-                m.roles.some((r) => r.name === Roles.owner)
+            user.memberships?.some((m) =>
+                m.roles?.some((r) => r.name === Roles.owner)
             )
         ) {
             throw new Error(

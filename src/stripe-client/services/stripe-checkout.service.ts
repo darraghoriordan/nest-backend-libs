@@ -41,6 +41,7 @@ export class StripeCheckoutService {
                 parameters.subscriptionRecordUuid
             );
         if (
+            !user.memberships ||
             !user.memberships
                 .map((m) => m.organisation.uuid)
                 .includes(subscriptionRecord.organisation.uuid)

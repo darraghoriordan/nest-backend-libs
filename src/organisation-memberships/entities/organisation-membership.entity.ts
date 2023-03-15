@@ -1,10 +1,7 @@
-import {ApiProperty} from "@nestjs/swagger";
+import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
 import {Type} from "class-transformer";
 
 import {
-    AfterInsert,
-    AfterLoad,
-    AfterUpdate,
     Column,
     CreateDateColumn,
     DeleteDateColumn,
@@ -14,8 +11,8 @@ import {
     JoinColumn,
     ManyToOne,
     OneToMany,
-    OneToOne,
     PrimaryGeneratedColumn,
+    Relation,
     RelationId,
     UpdateDateColumn,
 } from "typeorm";
@@ -61,27 +58,23 @@ export class OrganisationMembership {
     @RelationId((membership: OrganisationMembership) => membership.organisation)
     public organisationId!: number;
 
-    @OneToOne(() => Invitation, (inv) => inv.organisationMembership, {
+    @OneToMany(() => Invitation, (inv) => inv.organisationMembership, {
         eager: true,
         nullable: true,
         cascade: ["insert", "update"],
     })
     @JoinColumn()
-    invitation?: Invitation;
+    invitations?: Relation<Invitation>[];
 
-    @Column()
-    @ApiProperty()
-    @RelationId((membership: OrganisationMembership) => membership.invitation)
-    public invitationId!: number;
-
-    @ApiProperty({type: () => MembershipRole, isArray: true})
+    @ApiPropertyOptional({type: () => MembershipRole, isArray: true})
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     @OneToMany(() => MembershipRole, (role) => role.membership, {
         eager: true,
-        cascade: true,
+        cascade: ["insert", "update"],
+        orphanedRowAction: "delete",
     })
     @Type(() => MembershipRole)
-    roles!: MembershipRole[];
+    roles?: MembershipRole[];
 
     @CreateDateColumn()
     @ApiProperty()
@@ -94,14 +87,4 @@ export class OrganisationMembership {
     @DeleteDateColumn()
     @ApiProperty()
     deletedDate!: Date;
-
-    // eslint-disable-next-line @typescript-eslint/require-await
-    @AfterLoad()
-    @AfterInsert()
-    @AfterUpdate()
-    async nullChecks() {
-        if (!this.roles) {
-            this.roles = [];
-        }
-    }
 }

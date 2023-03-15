@@ -6,6 +6,8 @@ import {
     Delete,
     UseGuards,
     Post,
+    Query,
+    Get,
 } from "@nestjs/common";
 
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
@@ -18,10 +20,38 @@ import {CreateInvitationDto} from "./dto/create-invitation.dto.js";
 
 @UseGuards(AuthGuard("jwt"))
 @ApiBearerAuth()
-@Controller("organisations/invitations")
-@ApiTags("Organisations")
+@Controller("invitations")
+@ApiTags("Invitations")
 export class InvitationController {
     constructor(private readonly invitationService: InvitationService) {}
+
+    // The following method exists to expose the query string param
+    // but invitation work is kicked off by the auth strategy as it
+    // tries to resolve the correct user there in the middleware
+    // before the request reaches the controller
+    // eslint-disable-next-line @typescript-eslint/require-await
+    @Post("accept")
+    @ApiOkResponse()
+    async accept(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        @Query("invitationId") invitationId: string,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        @Request() request: RequestWithUser
+    ): Promise<boolean> {
+        return true;
+    }
+
+    // this id here feels a bit backwards
+    @Get(":orgId")
+    @ApiOkResponse({type: [Invitation]})
+    async getAllForOrg(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        @Param("orgId") orgId: string,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        @Request() request: RequestWithUser
+    ): Promise<Invitation[]> {
+        return this.invitationService.getAllForOrg(orgId, request.user);
+    }
 
     @Post()
     @ApiOkResponse({type: Invitation})
@@ -40,7 +70,7 @@ export class InvitationController {
     ): Promise<boolean> {
         const deleteResult = await this.invitationService.remove(
             uuid,
-            request.user.id
+            request.user
         );
 
         return deleteResult.deletedDate !== undefined;

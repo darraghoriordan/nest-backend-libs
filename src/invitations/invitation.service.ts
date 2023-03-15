@@ -1,6 +1,12 @@
-import {Injectable, Logger, NotFoundException} from "@nestjs/common";
+import {
+    BadRequestException,
+    ForbiddenException,
+    Injectable,
+    Logger,
+    NotFoundException,
+} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import {IsNull, LessThan, Repository} from "typeorm";
+import {IsNull, MoreThan, Repository} from "typeorm";
 import {Roles} from "../organisation/dto/RolesEnum.js";
 import {CreateInvitationDto} from "./dto/create-invitation.dto.js";
 import {Invitation} from "./entities/invitation.entity.js";
@@ -30,7 +36,7 @@ export class InvitationService {
             where: {
                 uuid: invitationCode,
                 acceptedOn: IsNull(),
-                expiresOn: LessThan(new Date()),
+                expiresOn: MoreThan(new Date()),
             },
             relations: {
                 organisationMembership: {
@@ -41,47 +47,33 @@ export class InvitationService {
         });
     }
 
-    async acceptInvitation(invitationId: number): Promise<void> {
-        await this.invitationRepository.manager.transaction(
-            async (transactionalEntityManager) => {
-                // get the invitation again to ensure we have the latest version
-                const latestInvitation =
-                    await transactionalEntityManager.findOne(Invitation, {
-                        where: {id: invitationId},
-                        relations: {
-                            organisationMembership: true,
-                        },
-                    });
-
-                if (!latestInvitation) {
-                    throw new NotFoundException(
-                        `Invitation with id ${invitationId} not found`
-                    );
-                }
-                // set the invitation to accepted
-                latestInvitation.acceptedOn = new Date();
-                await transactionalEntityManager.save(latestInvitation);
-
-                // set the user's membership to member and remove the invitation role
-                const memberRole = new MembershipRole();
-                memberRole.name = Roles.member;
-                latestInvitation.organisationMembership.roles = [memberRole];
-
-                await transactionalEntityManager.save(
-                    latestInvitation.organisationMembership
-                );
-            }
-        );
+    async getAllForOrg(
+        orgId: string,
+        requestUser: RequestUser
+    ): Promise<Invitation[]> {
+        await this.canManageInvitationsForThisOrg({
+            orgUuid: orgId,
+            user: requestUser,
+        });
+        return this.invitationRepository.find({
+            where: {
+                organisationMembership: {
+                    organisation: {
+                        uuid: orgId,
+                    },
+                },
+            },
+        });
     }
 
     async create(
         createDto: CreateInvitationDto,
         createdBy: RequestUser
     ): Promise<Invitation> {
-        await this.canManageInvitationsForThisOrg(
-            createDto.organisationId,
-            createdBy.id
-        );
+        await this.canManageInvitationsForThisOrg({
+            orgId: createDto.organisationId,
+            user: createdBy,
+        });
 
         const existingMemberships = await this.orgMembershipRepository.find({
             where: {
@@ -93,14 +85,14 @@ export class InvitationService {
                 },
             },
             relations: {
-                invitation: true,
+                invitations: true,
                 roles: true,
             },
         });
 
         if (
             existingMemberships.some((m) =>
-                m.roles.some(
+                m.roles?.some(
                     (r) => r.name === Roles.member || r.name === Roles.owner
                 )
             )
@@ -114,15 +106,17 @@ export class InvitationService {
         if (
             existingMemberships.some(
                 (m) =>
-                    m.invitation &&
-                    m.invitation.acceptedOn === null &&
-                    m.invitation.expiresOn > new Date()
+                    m.invitations &&
+                    m.invitations.some(
+                        (mi) =>
+                            mi.acceptedOn === null && mi.expiresOn > new Date()
+                    )
             )
         ) {
             const message =
                 "An valid invitation with this email already exists for this organisation";
             this.logger.error(message, {createDto, createdBy});
-            throw new Error(message);
+            throw new BadRequestException(message);
         }
 
         // new empty user
@@ -144,10 +138,12 @@ export class InvitationService {
         unsavedInvitation.givenName = createDto.givenName;
 
         // create a new membership
-        const membership = this.orgMembershipRepository.create();
+        const membership = this.orgMembershipRepository.create({
+            invitations: [],
+        });
         membership.organisationId = createDto.organisationId;
         membership.userId = savedUser.id;
-        membership.invitation = unsavedInvitation;
+        membership.invitations?.push(unsavedInvitation);
         membership.roles = [role];
 
         const savedMembership = await this.orgMembershipRepository.save(
@@ -156,17 +152,32 @@ export class InvitationService {
         const retrievedMembership = await this.orgMembershipRepository.findOne({
             where: {id: savedMembership.id},
             relations: {
-                invitation: true,
+                invitations: true,
                 organisation: true,
             },
         });
-        if (!retrievedMembership || !retrievedMembership.invitation) {
-            this.logger.error("Newly saved membership not found", {
+
+        if (!retrievedMembership) {
+            this.logger.error("New membership did not save correctly", {
                 createDto,
                 createdBy,
                 createdMembershipId: savedMembership?.id,
             });
-            throw new Error("Newly saved membership not found");
+            throw new Error("New membership did not save correctly");
+        }
+
+        const validInvitation = retrievedMembership.invitations?.find(
+            (invitation) =>
+                invitation.expiresOn > new Date() && !invitation.acceptedOn
+        );
+
+        if (!validInvitation) {
+            this.logger.error("New invitation did not save correctly", {
+                createDto,
+                createdBy,
+                createdMembershipId: savedMembership?.id,
+            });
+            throw new Error("New invitation did not save correctly");
         }
 
         // try to email the invitation
@@ -182,28 +193,59 @@ export class InvitationService {
             }. Please click the link below to accept the invitation.
 
             ${this.configService.baseUrl}/accept-invitation/${
-                retrievedMembership.invitation.uuid
+                validInvitation.uuid
             }`
         );
 
         // if it gets to here we have a queued invitation
-        retrievedMembership.invitation.notificationSent = new Date();
+        validInvitation.notificationSent = new Date();
 
-        return this.invitationRepository.save(retrievedMembership.invitation);
+        const savedInvitation = await this.invitationRepository.save(
+            validInvitation
+        );
+        // we need to return the membership with the invitation
+        // torm doesn't like if we just assign and return so get it again
+        const fullInvitation = await this.invitationRepository.findOne({
+            where: {
+                id: savedInvitation.id,
+            },
+            relations: {
+                organisationMembership: {
+                    user: true,
+                    roles: true,
+                },
+            },
+        });
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return fullInvitation!;
     }
 
-    private async canManageInvitationsForThisOrg(
-        orgId: number,
-        userId: number
-    ) {
+    private async canManageInvitationsForThisOrg(parameters: {
+        orgId?: number;
+        orgUuid?: string;
+        user: RequestUser;
+    }): Promise<void> {
+        const {orgId, orgUuid, user} = parameters;
+        if (orgId === undefined && orgUuid === undefined) {
+            throw new BadRequestException(
+                "Either orgId or orgUuid must be provided"
+            );
+        }
+
+        // super admin can do anything
+        if (user.permissions.includes("modify:all")) {
+            return;
+        }
+
         const requesterMembership =
             await this.orgMembershipRepository.findOneOrFail({
                 where: {
                     organisation: {
                         id: orgId,
+                        uuid: orgUuid,
                     },
                     user: {
-                        id: userId,
+                        id: user.id,
                     },
                 },
                 relations: {
@@ -211,15 +253,17 @@ export class InvitationService {
                 },
             });
         if (
-            requesterMembership.roles.some((role) => role.name === Roles.owner)
+            requesterMembership.roles?.some((role) => role.name === Roles.owner)
         ) {
-            throw new Error(
-                "You must be an admin to invite users to an organisation"
-            );
+            return;
         }
+
+        throw new ForbiddenException(
+            "You don't have permission to work with invitations"
+        );
     }
 
-    async remove(uuid: string, currentUserId: number): Promise<Invitation> {
+    async remove(uuid: string, currentUser: RequestUser): Promise<Invitation> {
         const invitation = await this.invitationRepository.findOneOrFail({
             where: {
                 uuid,
@@ -232,10 +276,10 @@ export class InvitationService {
         if (!invitation) {
             throw new NotFoundException();
         }
-        await this.canManageInvitationsForThisOrg(
-            invitation.organisationMembership.organisation.id,
-            currentUserId
-        );
+        await this.canManageInvitationsForThisOrg({
+            orgId: invitation.organisationMembership.organisation.id,
+            user: currentUser,
+        });
         return this.invitationRepository.remove(invitation);
     }
 }

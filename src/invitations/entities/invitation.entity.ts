@@ -8,7 +8,7 @@ import {
     DeleteDateColumn,
     Entity,
     Generated,
-    OneToOne,
+    ManyToOne,
     PrimaryGeneratedColumn,
     Relation,
     UpdateDateColumn,
@@ -36,21 +36,23 @@ export class Invitation {
     @ApiProperty()
     emailAddress!: string;
 
-    @Column()
-    @ApiProperty()
-    notificationSent!: Date;
+    @Column({nullable: true})
+    @ApiPropertyOptional()
+    notificationSent?: Date;
 
     @Column()
     @ApiProperty()
     expiresOn!: Date;
 
-    @Column()
+    @Column({nullable: true})
     @ApiPropertyOptional()
     acceptedOn?: Date;
 
-    @ApiProperty()
+    @ApiProperty({type: () => OrganisationMembership})
     @Type(() => OrganisationMembership)
-    @OneToOne(() => OrganisationMembership)
+    @ManyToOne(() => OrganisationMembership, (om) => om.invitations, {
+        cascade: ["insert", "update"],
+    })
     organisationMembership!: Relation<OrganisationMembership>;
 
     @CreateDateColumn()

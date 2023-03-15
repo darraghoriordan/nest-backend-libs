@@ -29,6 +29,7 @@ export class OrganisationService {
         ownerMembership.user = createOrganisationDto.owner;
         const ownerRole = new MembershipRole();
         ownerRole.name = Roles.owner;
+        if (!ownerMembership.roles) ownerMembership.roles = [];
         ownerMembership.roles.push(ownerRole);
 
         unsavedOrganisation.memberships.push(ownerMembership);
@@ -40,6 +41,7 @@ export class OrganisationService {
                 membership.user = member;
                 const memberRole = new MembershipRole();
                 memberRole.name = Roles.member;
+                if (!membership.roles) membership.roles = [];
                 membership.roles.push(memberRole);
                 return membership;
             }

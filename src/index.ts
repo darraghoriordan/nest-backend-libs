@@ -17,6 +17,26 @@ import {SwaggerGen} from "./root-app/SwaggerGen.js";
 import {TwitterClientService} from "./twitter-client/services/twitter-client.service.js";
 import {CoreConfigModule} from "./core-config/CoreConfig.module.js";
 import {CliCommandService} from "./runningCommandLine/CliCommandService.js";
+export {
+    CoreConfigurationService,
+    SmtpEmailClientModule,
+    CoreModule,
+    CoreConfigModule,
+    SwaggerGen,
+    PostgresDatabaseModule as DatabaseModule,
+    PostgresTypeOrmConfigurationProvider as TypeOrmConfigurationProvider,
+    SmtpEmailClient,
+    ValidatedConfigurationService,
+    SqliteDatabaseModule,
+    SqliteDatabaseConfigurationService,
+    TwitterClientService,
+    TwitterAccountModule,
+    EUploadMimeType,
+    RunningCommandLineModule,
+    CliCommandService,
+};
+
+export {SuperPowersModule} from "./super-powers/super-powers.module.js";
 export {OrganisationModule} from "./organisation/organisation.module.js";
 
 // org subscriptions
@@ -58,22 +78,3 @@ export {UserApiKeyController} from "./user-api-key/user-apikey.controller.js";
 export {UserApiKeyModule} from "./user-api-key/user-apikey.module.js";
 export {User} from "./user-internal/entities/user.entity.js";
 export {UserService} from "./user-internal/user.service.js";
-
-export {
-    CoreConfigurationService,
-    SmtpEmailClientModule,
-    CoreModule,
-    CoreConfigModule,
-    SwaggerGen,
-    PostgresDatabaseModule as DatabaseModule,
-    PostgresTypeOrmConfigurationProvider as TypeOrmConfigurationProvider,
-    SmtpEmailClient,
-    ValidatedConfigurationService,
-    SqliteDatabaseModule,
-    SqliteDatabaseConfigurationService,
-    TwitterClientService,
-    TwitterAccountModule,
-    EUploadMimeType,
-    RunningCommandLineModule,
-    CliCommandService,
-};

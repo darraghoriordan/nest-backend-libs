@@ -1,5 +1,4 @@
 import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
-import {Column} from "typeorm";
 import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity.js";
 import {UserApiKey} from "../../user-api-key/userApiKey.entity.js";
 
@@ -20,7 +19,6 @@ export class UserDto {
     emailVerified!: boolean;
 
     @ApiProperty()
-    @Column({default: false})
     blocked!: boolean;
 
     @ApiPropertyOptional()

@@ -2,9 +2,6 @@ import {ApiProperty} from "@nestjs/swagger";
 import {Type} from "class-transformer";
 
 import {
-    AfterInsert,
-    AfterLoad,
-    AfterUpdate,
     Column,
     CreateDateColumn,
     DeleteDateColumn,
@@ -37,7 +34,7 @@ export class Organisation {
         cascade: ["insert", "update"],
     })
     @Type(() => OrganisationMembership)
-    memberships!: OrganisationMembership[];
+    memberships?: OrganisationMembership[];
 
     @OneToMany(
         () => OrganisationSubscriptionRecord,
@@ -47,7 +44,7 @@ export class Organisation {
         }
     )
     @Type(() => OrganisationSubscriptionRecord)
-    subscriptionRecords!: OrganisationSubscriptionRecord[];
+    subscriptionRecords?: OrganisationSubscriptionRecord[];
 
     @Column()
     @ApiProperty()
@@ -64,14 +61,4 @@ export class Organisation {
     @DeleteDateColumn()
     @ApiProperty()
     deletedDate!: Date;
-
-    // eslint-disable-next-line @typescript-eslint/require-await
-    @AfterLoad()
-    @AfterInsert()
-    @AfterUpdate()
-    async nullChecks() {
-        if (!this.memberships) {
-            this.memberships = [];
-        }
-    }
 }

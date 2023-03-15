@@ -42,7 +42,7 @@ export class OrganisationSubscriptionService {
             throw new NotFoundException(this.notFoundMessage);
         }
 
-        return org.subscriptionRecords;
+        return org.subscriptionRecords ?? [];
     }
 
     async findOne(
@@ -81,7 +81,7 @@ export class OrganisationSubscriptionService {
             throw new NotFoundException(this.notFoundMessage);
         }
 
-        return org.subscriptionRecords;
+        return org.subscriptionRecords ?? [];
     }
 
     async findAll(): Promise<OrganisationSubscriptionRecord[]> {

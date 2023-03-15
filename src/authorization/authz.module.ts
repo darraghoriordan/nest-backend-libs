@@ -9,14 +9,14 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {User} from "../user-internal/entities/user.entity.js";
 import {AuthzClientModule} from "../authzclient/authz-client.module.js";
 import {ApiKeyStrategy} from "./strategies/apikeystrategy.js";
+import {Invitation} from "../invitations/entities/invitation.entity.js";
 
 @Module({
     imports: [
         ConfigModule.forFeature(configVariables),
-        TypeOrmModule.forFeature([User]),
+        TypeOrmModule.forFeature([User, Invitation]),
         PassportModule.register({defaultStrategy: "jwt"}),
         AuthzClientModule,
-        // InvitationModule,
     ],
     providers: [
         ApiKeyStrategy,
