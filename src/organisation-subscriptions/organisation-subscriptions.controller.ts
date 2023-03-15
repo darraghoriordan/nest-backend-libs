@@ -7,17 +7,20 @@ import {
     Post,
     Body,
     Delete,
+    UseGuards,
 } from "@nestjs/common";
 import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
 import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
 import {OrganisationSubscriptionRecord} from "./entities/organisation-subscription.entity.js";
 import {OrganisationSubscriptionService} from "./organisation-subscriptions.service.js";
-
 import {SaveOrganisationSubscriptionRecordDto} from "./models/fulfillSubscriptionDto.js";
 import {BooleanResult} from "../root-app/models/boolean-result.js";
 import {MandatoryUserClaims} from "../authorization/guards/MandatoryUserClaims.decorator.js";
+import {DefaultAuthGuard} from "../authorization/guards/DefaultAuthGuard.js";
+import {ClaimsAuthorisationGuard} from "../authorization/guards/ClaimsAuthorisationGuard.js";
 
 @ApiBearerAuth()
+@UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
 @Controller("organisation/:orgId/subscriptions")
 @ApiTags("Organisation Subscriptions")
 export class OrganisationSubscriptionsController {

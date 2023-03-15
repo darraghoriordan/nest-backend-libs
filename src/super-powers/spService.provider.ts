@@ -1,4 +1,4 @@
-import {DisabledSuperPowersService} from "./dosabled-super-powers.service.js";
+import {DisabledSuperPowersService} from "./disabled-super-powers.service.js";
 import {SuperPowersService} from "./super-powers.service.js";
 
 // not going to use config service just for this

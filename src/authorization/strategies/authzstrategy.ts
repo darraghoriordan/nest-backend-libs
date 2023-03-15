@@ -49,6 +49,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             rawAccessToken,
             invitationId
         );
+        if (!userResult?.id) {
+            throw new Error(
+                "Unable to authenticate and register a valid user with this auth0 user"
+            );
+        }
 
         const withPermissions = {permissions: payload.permissions || []};
         // eslint-disable-next-line sonarjs/prefer-immediate-return

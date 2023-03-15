@@ -17,6 +17,7 @@ import {UserApiKeyService} from "./user-apikey.service.js";
 import CreateApiKeyDto from "./CreateApiKeyDto.js";
 import {ClaimsAuthorisationGuard} from "../authorization/guards/ClaimsAuthorisationGuard.js";
 import {DefaultAuthGuard} from "../authorization/guards/DefaultAuthGuard.js";
+import {MandatoryUserClaims} from "../authorization/guards/MandatoryUserClaims.decorator.js";
 
 @UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
 @ApiBearerAuth()
@@ -26,6 +27,7 @@ export class UserApiKeyController {
     constructor(private readonly apiKeyService: UserApiKeyService) {}
 
     @Get()
+    @MandatoryUserClaims("read:all")
     @ApiOkResponse({type: UserApiKey, isArray: true})
     async getAllForUser(
         @Request() request: RequestWithUser
@@ -34,6 +36,8 @@ export class UserApiKeyController {
     }
 
     @Put(":uuid")
+    // eslint-disable-next-line sonarjs/no-duplicate-string
+    @MandatoryUserClaims("modify:all")
     @ApiOkResponse({type: UserApiKey})
     async generateNewKey(
         @Param("uuid") uuid: string,
@@ -46,6 +50,7 @@ export class UserApiKeyController {
     }
 
     @Post()
+    @MandatoryUserClaims("modify:all")
     @ApiOkResponse({type: UserApiKey})
     async update(
         @Body() createKeyDto: CreateApiKeyDto,
@@ -58,6 +63,7 @@ export class UserApiKeyController {
     }
 
     @Delete(":uuid")
+    @MandatoryUserClaims("modify:all")
     @ApiOkResponse({type: BooleanResult})
     async remove(
         @Param("uuid") uuid: string,
