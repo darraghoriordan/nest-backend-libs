@@ -87,7 +87,6 @@ export class CoreModule {
                     bodyParser: true,
                     rawBody: true,
                     bufferLogs: true,
-                    snapshot: true,
                 });
                 const loggerService = app.get(Logger);
                 const configService = app.get(CoreConfigurationService);
@@ -95,7 +94,12 @@ export class CoreModule {
                 app.flushLogs();
 
                 app.use(helmet());
-                app.enableCors({origin: configService.frontEndAppUrl});
+                app.enableCors({
+                    origin: [
+                        configService.frontEndAppUrl,
+                        configService.marketingAppUrl,
+                    ],
+                });
                 app.useGlobalPipes(
                     new ValidationPipe({
                         transform: true,
