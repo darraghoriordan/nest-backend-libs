@@ -60,7 +60,7 @@ export class Email {
     @UpdateDateColumn()
     updatedDate!: Date;
 
-    @ApiProperty()
     @DeleteDateColumn()
-    deletedDate!: Date;
+    @ApiPropertyOptional()
+    deletedDate?: Date;
 }

@@ -51,6 +51,6 @@ export class UserDto {
     @ApiProperty()
     updateDate!: Date;
 
-    @ApiProperty()
-    deletedDate!: Date;
+    @ApiPropertyOptional()
+    deletedDate?: Date;
 }

@@ -87,6 +87,6 @@ export class User {
     updateDate!: Date;
 
     @DeleteDateColumn()
-    @ApiProperty()
-    deletedDate!: Date;
+    @ApiPropertyOptional()
+    deletedDate?: Date;
 }

@@ -1,4 +1,4 @@
-import {ApiProperty} from "@nestjs/swagger";
+import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
 import {Type} from "class-transformer";
 
 import {
@@ -81,6 +81,6 @@ export class OrganisationSubscriptionRecord {
     updatedDate!: Date;
 
     @DeleteDateColumn()
-    @ApiProperty()
-    deletedDate!: Date;
+    @ApiPropertyOptional()
+    deletedDate?: Date;
 }

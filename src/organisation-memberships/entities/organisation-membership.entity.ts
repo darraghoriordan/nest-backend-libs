@@ -85,6 +85,6 @@ export class OrganisationMembership {
     updateDate!: Date;
 
     @DeleteDateColumn()
-    @ApiProperty()
-    deletedDate!: Date;
+    @ApiPropertyOptional()
+    deletedDate?: Date;
 }

@@ -1,4 +1,4 @@
-import {ApiProperty} from "@nestjs/swagger";
+import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
 import {
     Column,
     CreateDateColumn,
@@ -51,6 +51,6 @@ export class UserApiKey {
     updateDate!: Date;
 
     @DeleteDateColumn()
-    @ApiProperty()
-    deletedDate!: Date;
+    @ApiPropertyOptional()
+    deletedDate?: Date;
 }
