@@ -95,10 +95,7 @@ export class CoreModule {
 
                 app.use(helmet());
                 app.enableCors({
-                    origin: [
-                        configService.frontEndAppUrl,
-                        configService.marketingAppUrl,
-                    ],
+                    origin: [configService.frontEndAppUrl],
                 });
                 app.useGlobalPipes(
                     new ValidationPipe({

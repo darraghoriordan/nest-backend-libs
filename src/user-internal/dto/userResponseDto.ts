@@ -3,8 +3,11 @@ import {OrganisationMembership} from "../../organisation-memberships/entities/or
 import {UserApiKey} from "../../user-api-key/userApiKey.entity.js";
 
 export class UserDto {
-    @ApiProperty()
-    isSuper!: boolean;
+    @ApiPropertyOptional({
+        description:
+            "Is the user a super user. Only set if the user is the current user. Will not be set for list responses.",
+    })
+    isSuper?: boolean;
 
     @ApiProperty()
     id!: number;

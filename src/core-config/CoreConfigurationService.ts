@@ -57,11 +57,6 @@ export class CoreConfigurationService extends ValidatedConfigurationService {
     get frontEndAppUrl(): string {
         return this.configService.get<string>("core.frontEndAppUrl")!;
     }
-    @IsDefined()
-    @IsString()
-    get marketingAppUrl(): string {
-        return this.configService.get<string>("core.marketingAppUrl")!;
-    }
 
     @IsDefined()
     @IsString()

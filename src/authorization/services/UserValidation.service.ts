@@ -15,7 +15,9 @@ import {Roles} from "../../organisation/dto/RolesEnum.js";
 import {MembershipRole} from "../../organisation/entities/member-role.entity.js";
 import {Organisation} from "../../organisation/entities/organisation.entity.js";
 import {User} from "../../user-internal/entities/user.entity.js";
+import {AuthConfigurationService} from "../config/AuthConfigurationService.js";
 import {AccessToken} from "../models/AccessToken.js";
+import {RequestUser} from "../models/RequestWithUser.js";
 
 @Injectable()
 export class UserValidationService {
@@ -25,7 +27,8 @@ export class UserValidationService {
         private userRepository: Repository<User>,
         private authzClient: AuthZClientService,
         @InjectRepository(Invitation)
-        private readonly invitationRepository: Repository<Invitation>
+        private readonly invitationRepository: Repository<Invitation>,
+        private readonly config: AuthConfigurationService
     ) {}
 
     async getAuth0User(rawAccessToken: string): Promise<UserProfile> {
@@ -56,14 +59,42 @@ export class UserValidationService {
 
         return result;
     }
+
+    addPermissionsToUser(
+        user: User,
+        authProviderPermissions: string[] | undefined
+    ): RequestUser {
+        console.debug({list: this.config.superUserIds}, "super user ids");
+        if (!user?.id) {
+            throw new Error(
+                "Unable to authenticate and register a valid user with this auth0 user"
+            );
+        }
+        const permissionsSet = new Set<string>(authProviderPermissions || []);
+
+        if (
+            user.auth0UserId &&
+            this.config.superUserIds.includes(user.auth0UserId)
+        ) {
+            permissionsSet.add("read:all");
+            permissionsSet.add("modify:all");
+        }
+
+        // eslint-disable-next-line sonarjs/prefer-immediate-return
+        return {...user, permissions: [...permissionsSet]} as RequestUser;
+    }
+
     async validateUser(
         payload: AccessToken,
         rawAccessToken: string,
         invitationId?: string
-    ): Promise<User | undefined> {
+    ): Promise<RequestUser> {
         if (invitationId) {
             // even though there is commonality here it's easier to treat the invitation path as completely separate
-            return this.handleInvitedUser(rawAccessToken, invitationId);
+            return this.addPermissionsToUser(
+                await this.handleInvitedUser(rawAccessToken, invitationId),
+                payload.permissions
+            );
         }
 
         // try to find the user and their memberships
@@ -80,10 +111,14 @@ export class UserValidationService {
             foundUser?.memberships !== null &&
             foundUser?.memberships?.length > 0
         ) {
-            return foundUser;
+            return this.addPermissionsToUser(foundUser, payload.permissions);
         }
         // otherwise we need to add a membership to a user
-        return this.handleNewIndependentUser(foundUser, rawAccessToken);
+        const userResult = await this.handleNewIndependentUser(
+            foundUser,
+            rawAccessToken
+        );
+        return this.addPermissionsToUser(userResult, payload.permissions);
     }
 
     private async findUserForRequest(auth0UserId: string) {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {Injectable} from "@nestjs/common";
 import {ConfigService} from "@nestjs/config";
-import {IsDefined, IsString} from "class-validator";
+import {IsArray, IsDefined, IsString} from "class-validator";
 import {ValidatedConfigurationService} from "../../configuration/ValidatedConfigurationService.js";
 
 @Injectable()
@@ -20,5 +20,18 @@ export class AuthConfigurationService extends ValidatedConfigurationService {
     @IsString()
     get auth0Domain(): string {
         return this.configService.get<string>("auth.auth0Domain")!;
+    }
+
+    @IsDefined()
+    @IsArray()
+    get superUserIds(): string[] {
+        const ids = this.configService.get<string>("auth.superUserIds")!;
+        if (ids === undefined) {
+            return [];
+        }
+        return ids
+            .split(",")
+            .map((id) => id.trim())
+            .filter((id) => id !== "");
     }
 }

@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException} from "@nestjs/common";
+import {Injectable, Logger, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
 import {RequestUser} from "../authorization/models/RequestWithUser.js";
@@ -8,14 +8,21 @@ import {User} from "./entities/user.entity.js";
 
 @Injectable()
 export class UserService {
-    //private readonly logger = new Logger(UserService.name);
+    private readonly logger = new Logger(UserService.name);
     constructor(
         @InjectRepository(User)
         private repository: Repository<User>
     ) {}
 
-    async findAll() {
-        return this.repository.find();
+    async findAll(): Promise<User[]> {
+        const allUsers = await this.repository.find({
+            relations: {
+                memberships: true,
+                apiKeys: true,
+            },
+        });
+        this.logger.debug({allUsers}, "Found all users");
+        return allUsers;
     }
 
     async findOneByAuth0Id(auth0Id: string): Promise<User | undefined> {

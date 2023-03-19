@@ -11,7 +11,12 @@ import {
 } from "@nestjs/common";
 import {UserService} from "./user.service.js";
 import {UpdateUserDto} from "./dto/update-user.dto.js";
-import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
+import {
+    ApiBearerAuth,
+    ApiOkResponse,
+    ApiOperation,
+    ApiTags,
+} from "@nestjs/swagger";
 import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
 import {isUUID} from "class-validator";
 import {BooleanResult} from "../root-app/models/boolean-result.js";
@@ -50,6 +55,7 @@ export class UserController {
         }
 
         // find the user if they are in the same organisation as the user
+        // being searched for
         const result = await this.userService.findOneIfSameOrganisation(
             uuid,
             request.user
@@ -58,17 +64,18 @@ export class UserController {
             ...result,
             memberships: request.user.memberships ?? [],
             apiKeys: request.user.apiKeys ?? [],
-            isSuper: request.user.permissions.includes(
-                SuperUserClaims.MODIFY_ALL
-            ),
         };
     }
 
     @Get()
+    @ApiOperation({
+        summary: "Get all users in the system. Limited to Super Admin role.",
+        tags: ["SuperPower"],
+    })
     @MandatoryUserClaims("read:all")
-    @ApiOkResponse({type: UserDto, isArray: true})
+    @ApiOkResponse({type: User, isArray: true})
     async findAll(): Promise<User[]> {
-        return await this.userService.findAll();
+        return this.userService.findAll();
     }
 
     @Patch(":uuid")
