@@ -1,6 +1,11 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import {Controller, Request, UseGuards, Get} from "@nestjs/common";
-import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
+import {
+    ApiBearerAuth,
+    ApiOkResponse,
+    ApiOperation,
+    ApiTags,
+} from "@nestjs/swagger";
 import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
 import {PaymentSessionService} from "./payment-session.service.js";
 import {PaymentSessionReference} from "./payment-session.entity.js";
@@ -18,6 +23,7 @@ export class PaymentSessionReferenceController {
     ) {}
 
     @MandatoryUserClaims("read:all")
+    @ApiOperation({tags: ["SuperPower"]})
     @Get()
     @ApiOkResponse({type: [PaymentSessionReference]})
     async findAll(

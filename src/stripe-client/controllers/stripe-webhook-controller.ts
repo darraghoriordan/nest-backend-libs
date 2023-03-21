@@ -12,6 +12,7 @@ import {
     ApiOkResponse,
     ApiBadRequestResponse,
     ApiBearerAuth,
+    ApiOperation,
 } from "@nestjs/swagger";
 import {Queue} from "bull";
 import {Request as ExpressRequest} from "express";
@@ -46,6 +47,7 @@ export class StripeWebhookController {
 
     @UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
     @ApiBearerAuth()
+    @ApiOperation({tags: ["SuperPower"]})
     @MandatoryUserClaims("read:all")
     @Get("peekalljobs")
     @ApiOkResponse({type: [QueueItemDto]})
@@ -74,6 +76,7 @@ export class StripeWebhookController {
 
     @UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
     @ApiBearerAuth()
+    @ApiOperation({tags: ["SuperPower"]})
     @MandatoryUserClaims("read:all")
     @Get("peekfailedjobs")
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

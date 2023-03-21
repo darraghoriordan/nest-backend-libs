@@ -1,5 +1,11 @@
 import {UseGuards, Controller, Request, Get, Query} from "@nestjs/common";
-import {ApiBearerAuth, ApiTags, ApiOkResponse, ApiQuery} from "@nestjs/swagger";
+import {
+    ApiBearerAuth,
+    ApiTags,
+    ApiOkResponse,
+    ApiQuery,
+    ApiOperation,
+} from "@nestjs/swagger";
 import {RequestWithUser} from "../../authorization/models/RequestWithUser.js";
 import {StripeCheckoutService} from "../services/stripe-checkout.service.js";
 
@@ -21,6 +27,7 @@ export class StripeEventsController {
     constructor(private readonly stripeService: StripeCheckoutService) {}
 
     @MandatoryUserClaims("read:all")
+    @ApiOperation({tags: ["SuperPower"]})
     @Get()
     @ApiQuery({name: "take", required: true, type: Number})
     @ApiQuery({name: "skip", required: true, type: Number})

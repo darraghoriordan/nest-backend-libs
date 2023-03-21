@@ -15,6 +15,7 @@ import {StripeCustomerPortalController} from "./controllers/stripe-customer-port
 import {OrganisationSubscriptionsModule} from "../organisation-subscriptions/organisation-subscriptions.module.js";
 import {PaymentSessionModule} from "../payment-sessions/payment-session.module.js";
 import {StripeEventsController} from "./controllers/stripe-events-controller.js";
+import {AuthenticatedStripeCheckoutService} from "./services/auth-stripe-checkout.service.js";
 
 @Module({
     imports: [
@@ -31,11 +32,13 @@ import {StripeEventsController} from "./controllers/stripe-events-controller.js"
         StripeClientProvider,
         StripeClientConfigurationService,
         StripeCheckoutService,
+        AuthenticatedStripeCheckoutService,
         StripeWebhookHandler,
     ],
     exports: [
         TypeOrmModule,
         StripeCheckoutService,
+        AuthenticatedStripeCheckoutService,
         BullModule,
         StripeWebhookHandler,
         StripeClientProvider,

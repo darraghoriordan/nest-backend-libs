@@ -15,7 +15,7 @@ import {StripeCheckoutLineItem} from "./StripeCheckoutLineItem.js";
 export class StripeCheckoutSessionRequestDto {
     @ApiPropertyOptional()
     @IsOptional()
-    organisationId?: string;
+    organisationUuid?: string;
 
     @ApiProperty({isArray: true, type: StripeCheckoutLineItem})
     @IsArray()
@@ -30,14 +30,14 @@ export class StripeCheckoutSessionRequestDto {
 
     @ApiProperty({
         description:
-            "The URL to which Stripe should redirect the customer after payment. This is appended to the host configured in the StripeClientConfigurationService",
+            "The path on frontend to which Stripe should redirect the customer after payment. This is appended to the host configured in the StripeClientConfigurationService",
     })
     @IsString()
     successFrontendPath!: string;
 
     @ApiPropertyOptional({
         description:
-            "The URL to which Stripe should redirect the customer after payment cancellation. This is appended to the host configured in the StripeClientConfigurationService",
+            "The path on frontend to which Stripe should redirect the customer after payment cancellation. This is appended to the host configured in the StripeClientConfigurationService",
     })
     @IsOptional()
     cancelFrontendPath?: string;

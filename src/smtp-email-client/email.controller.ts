@@ -1,6 +1,11 @@
 import {InjectQueue} from "@nestjs/bull";
 import {Controller, Get, UseGuards} from "@nestjs/common";
-import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
+import {
+    ApiBearerAuth,
+    ApiOkResponse,
+    ApiOperation,
+    ApiTags,
+} from "@nestjs/swagger";
 import {Queue} from "bull";
 import {ClaimsAuthorisationGuard} from "../authorization/guards/ClaimsAuthorisationGuard.js";
 import {DefaultAuthGuard} from "../authorization/guards/DefaultAuthGuard.js";
@@ -28,6 +33,7 @@ export class EmailClientController {
     }
 
     @MandatoryUserClaims("read:all")
+    @ApiOperation({tags: ["SuperPower"]})
     @Get("peekalljobs")
     @ApiOkResponse({type: [QueueItemDto]})
     async peekQueueJobs(): Promise<QueueItemDto[]> {
@@ -54,6 +60,7 @@ export class EmailClientController {
     }
 
     @MandatoryUserClaims("read:all")
+    @ApiOperation({tags: ["SuperPower"]})
     @Get("peekfailedjobs")
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     @ApiOkResponse({type: [QueueItemDto]})

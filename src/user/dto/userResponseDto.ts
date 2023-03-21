@@ -1,6 +1,5 @@
 import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
 import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity.js";
-import {UserApiKey} from "../../user-api-key/userApiKey.entity.js";
 
 export class UserDto {
     @ApiPropertyOptional({
@@ -44,9 +43,6 @@ export class UserDto {
 
     @ApiProperty({type: () => OrganisationMembership, isArray: true})
     memberships!: OrganisationMembership[];
-
-    @ApiProperty({type: () => UserApiKey, isArray: true})
-    apiKeys!: UserApiKey[];
 
     @ApiProperty()
     createdDate!: Date;

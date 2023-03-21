@@ -1,4 +1,4 @@
-import {User} from "../../user-internal/entities/user.entity.js";
+import {User} from "../../user/entities/user.entity.js";
 import {Request} from "express";
 export interface RequestWithUser extends Request {
     user: RequestUser;

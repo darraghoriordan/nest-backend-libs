@@ -1,6 +1,11 @@
 /* eslint-disable sonarjs/no-identical-functions */
 import {Controller, Get, UseGuards, Request, Logger} from "@nestjs/common";
-import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
+import {
+    ApiBearerAuth,
+    ApiOkResponse,
+    ApiOperation,
+    ApiTags,
+} from "@nestjs/swagger";
 import {ClaimsAuthorisationGuard} from "../authorization/guards/ClaimsAuthorisationGuard.js";
 import {DefaultAuthGuard} from "../authorization/guards/DefaultAuthGuard.js";
 import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
@@ -33,6 +38,7 @@ export class AppController {
     @UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
     @ApiBearerAuth()
     @MandatoryUserClaims("read:all")
+    @ApiOperation({tags: ["SuperPower"]})
     @Get("is-super-admin")
     @ApiOkResponse({type: String})
     getHelloSuperAdmin(@Request() request: RequestWithUser): string {

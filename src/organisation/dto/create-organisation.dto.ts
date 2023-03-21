@@ -7,7 +7,7 @@ import {
     MinLength,
     ValidateNested,
 } from "class-validator";
-import {User} from "../../user-internal/entities/user.entity.js";
+import {User} from "../../user/entities/user.entity.js";
 
 export class CreateOrganisationDto {
     @Type(() => User)

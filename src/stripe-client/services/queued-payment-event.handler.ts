@@ -19,8 +19,12 @@ import {OrganisationSubscriptionService} from "../../organisation-subscriptions/
 
 @Injectable()
 @Processor("stripe-events")
-// This is just an example with notes. You should create your own handler
-//
+// This is just a looong example with notes. You should create your own handler
+// with this as a reference
+// You likely only need to handle the "checkout.session.completed" event for purchases
+// and the "customer.subscription.updated" event for subscription updates
+// https://stripe.com/docs/billing/subscriptions/webhooks
+
 // eslint-disable-next-line @darraghor/nestjs-typed/injectable-should-be-provided
 export class StripeQueuedEventHandler {
     private readonly logger = new Logger(StripeQueuedEventHandler.name);
@@ -61,7 +65,7 @@ export class StripeQueuedEventHandler {
         const subs = [];
 
         for (const lineItem of fullSession.line_items!.data) {
-            const subscriptionFulfilmentDto = this.stripeFulfillmentDtoFactory(
+            const subscriptionFulfilmentDto = this.createFulfilmentDto(
                 lineItem.price?.product,
                 fullSession.customer,
                 fullSession.customer_email,
@@ -92,7 +96,7 @@ export class StripeQueuedEventHandler {
         }
         return subs;
     }
-    private stripeFulfillmentDtoFactory(
+    private createFulfilmentDto(
         product?: unknown,
         customer?: unknown,
         altEmail?: string | null,
@@ -130,7 +134,7 @@ export class StripeQueuedEventHandler {
 
         const subs = [];
         for (const lineItem of fullInvoice.lines.data) {
-            const subscriptionFulfilmentDto = this.stripeFulfillmentDtoFactory(
+            const subscriptionFulfilmentDto = this.createFulfilmentDto(
                 lineItem.price?.product,
                 fullInvoice.customer,
                 fullInvoice.customer_email
@@ -158,6 +162,7 @@ export class StripeQueuedEventHandler {
         }
         return subs;
     }
+
     private mapPaymentType(
         type?: string,
         sessionMode?: string
@@ -210,7 +215,7 @@ export class StripeQueuedEventHandler {
         // for one-off products use today + 100 years
         const subs = [];
         for (const lineItem of fullSubscription.items.data) {
-            const subscriptionFulfilmentDto = this.stripeFulfillmentDtoFactory(
+            const subscriptionFulfilmentDto = this.createFulfilmentDto(
                 lineItem.price?.product,
                 fullSubscription.customer
             );

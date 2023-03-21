@@ -1,6 +1,11 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import {Controller, UseGuards, Get} from "@nestjs/common";
-import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
+import {
+    ApiBearerAuth,
+    ApiOkResponse,
+    ApiOperation,
+    ApiTags,
+} from "@nestjs/swagger";
 import {ClaimsAuthorisationGuard} from "../authorization/guards/ClaimsAuthorisationGuard.js";
 import {DefaultAuthGuard} from "../authorization/guards/DefaultAuthGuard.js";
 import {MandatoryUserClaims} from "../authorization/guards/MandatoryUserClaims.decorator.js";
@@ -15,6 +20,7 @@ export class AllSubscriptionsController {
     constructor(private readonly osrService: OrganisationSubscriptionService) {}
 
     @MandatoryUserClaims("read:all")
+    @ApiOperation({tags: ["SuperPower"]})
     @Get()
     @ApiOkResponse({type: [OrganisationSubscriptionRecord]})
     async findAll(): Promise<OrganisationSubscriptionRecord[]> {

@@ -15,7 +15,7 @@ import {InvitationsConfigurationService} from "./InvitationConfigurationService.
 import {RequestUser} from "../authorization/models/RequestWithUser.js";
 import {OrganisationMembership} from "../organisation-memberships/entities/organisation-membership.entity.js";
 import {MembershipRole} from "../organisation/entities/member-role.entity.js";
-import {User} from "../user-internal/entities/user.entity.js";
+import {User} from "../user/entities/user.entity.js";
 
 @Injectable()
 export class InvitationService {

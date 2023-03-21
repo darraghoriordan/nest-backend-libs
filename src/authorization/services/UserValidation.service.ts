@@ -14,7 +14,7 @@ import {OrganisationMembership} from "../../organisation-memberships/entities/or
 import {Roles} from "../../organisation/dto/RolesEnum.js";
 import {MembershipRole} from "../../organisation/entities/member-role.entity.js";
 import {Organisation} from "../../organisation/entities/organisation.entity.js";
-import {User} from "../../user-internal/entities/user.entity.js";
+import {User} from "../../user/entities/user.entity.js";
 import {AuthConfigurationService} from "../config/AuthConfigurationService.js";
 import {AccessToken} from "../models/AccessToken.js";
 import {RequestUser} from "../models/RequestWithUser.js";
@@ -40,22 +40,9 @@ export class UserValidationService {
 
         if (result.email_verified === false) {
             throw new BadRequestException(
-                "Email not verified. You must verify your email address to continue."
+                "Email not verified. You must verify your email address to use this service."
             );
         }
-
-        return result;
-    }
-
-    async validateUserApiKey(apiKey: string): Promise<User | undefined> {
-        const result = await this.userRepository.findOne({
-            where: {apiKeys: {apiKey: apiKey}},
-            relations: {
-                memberships: true,
-            },
-        });
-        // convert from null
-        if (!result) return undefined;
 
         return result;
     }
@@ -98,7 +85,7 @@ export class UserValidationService {
         }
 
         // try to find the user and their memberships
-        const foundUser = await this.findUserForRequest(payload.sub);
+        const foundUser = await this.findUserByAuth0Id(payload.sub);
 
         // if user is
         // - found
@@ -113,6 +100,7 @@ export class UserValidationService {
         ) {
             return this.addPermissionsToUser(foundUser, payload.permissions);
         }
+
         // otherwise we need to add a membership to a user
         const userResult = await this.handleNewIndependentUser(
             foundUser,
@@ -121,11 +109,40 @@ export class UserValidationService {
         return this.addPermissionsToUser(userResult, payload.permissions);
     }
 
-    private async findUserForRequest(auth0UserId: string) {
+    async findUserByApiKey(apiKey: string): Promise<User | null> {
+        return this.userRepository.findOne({
+            where: {apiKeys: {apiKey: apiKey}},
+            relations: {
+                memberships: {
+                    roles: true,
+                    user: false,
+                    organisation: {subscriptionRecords: true},
+                },
+            },
+        });
+    }
+
+    private async findUserById(id: number): Promise<User | null> {
+        return this.userRepository.findOne({
+            where: {id},
+            relations: {
+                memberships: {
+                    roles: true,
+                    user: false,
+                    organisation: {subscriptionRecords: true},
+                },
+            },
+        });
+    }
+    private async findUserByAuth0Id(auth0UserId: string) {
         return await this.userRepository.findOne({
             where: {auth0UserId: auth0UserId},
             relations: {
-                memberships: true,
+                memberships: {
+                    roles: true,
+                    user: false,
+                    organisation: {subscriptionRecords: true},
+                },
             },
         });
     }
@@ -196,12 +213,9 @@ export class UserValidationService {
             throw error;
         }
 
-        const userForRequest = await this.userRepository.findOne({
-            where: {id: invitation.organisationMembership.user.id},
-            relations: {
-                memberships: true,
-            },
-        });
+        const userForRequest = await this.findUserById(
+            invitation.organisationMembership.user.id
+        );
         if (!userForRequest) {
             throw new Error("User not found");
         }
@@ -239,12 +253,7 @@ export class UserValidationService {
         this.mapAuthZUserToEntity(user, auth0User);
 
         const savedUser = await this.userRepository.save(user);
-        const userForRequest = await this.userRepository.findOne({
-            where: {id: savedUser.id},
-            relations: {
-                memberships: true,
-            },
-        });
+        const userForRequest = await this.findUserById(savedUser.id);
         if (!userForRequest) {
             throw new Error("User not found");
         }

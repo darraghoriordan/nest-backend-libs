@@ -9,7 +9,12 @@ import {
     Delete,
     UseGuards,
 } from "@nestjs/common";
-import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
+import {
+    ApiBearerAuth,
+    ApiOkResponse,
+    ApiOperation,
+    ApiTags,
+} from "@nestjs/swagger";
 import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
 import {OrganisationSubscriptionRecord} from "./entities/organisation-subscription.entity.js";
 import {OrganisationSubscriptionService} from "./organisation-subscriptions.service.js";
@@ -36,6 +41,7 @@ export class OrganisationSubscriptionsController {
     }
 
     @MandatoryUserClaims("modify:all")
+    @ApiOperation({tags: ["SuperPower"]})
     @Post()
     @ApiOkResponse({type: [OrganisationSubscriptionRecord]})
     async addSubscription(
@@ -46,6 +52,7 @@ export class OrganisationSubscriptionsController {
     }
 
     @MandatoryUserClaims("modify:all")
+    @ApiOperation({tags: ["SuperPower"]})
     @Delete(":uuid")
     @ApiOkResponse({type: BooleanResult})
     async deleteSubscription(

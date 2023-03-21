@@ -9,7 +9,7 @@ import {ConfigModule} from "@nestjs/config";
 import configVariables from "./InvitationConfigurationVariables.js";
 import {InvitationsConfigurationService} from "./InvitationConfigurationService.js";
 import {OrganisationMembership} from "../organisation-memberships/entities/organisation-membership.entity.js";
-import {User} from "../user-internal/entities/user.entity.js";
+import {User} from "../user/entities/user.entity.js";
 
 @Module({
     imports: [

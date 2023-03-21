@@ -1,22 +1,15 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {Inject, Injectable, Logger} from "@nestjs/common";
 import Stripe from "stripe";
-import {RequestUser} from "../../authorization/models/RequestWithUser.js";
 import {StripeCheckoutSessionRequestDto} from "../models/StripeCheckoutSessionRequestDto.js";
 import {StripeCheckoutSessionResponseDto} from "../models/StripeCheckoutSessionResponseDto.js";
 import {StripeClientConfigurationService} from "../StripeClientConfigurationService.js";
 import {PaymentSessionService} from "../../payment-sessions/payment-session.service.js";
-
-import {StripeCustomerPortalResponseDto} from "../models/StripeCustomerPortalResponseDto.js";
-import {StripeCustomerPortalRequestDto} from "../models/StripeCustomerPortalRequestDto.js";
 import {InjectRepository} from "@nestjs/typeorm";
 import {StripeCheckoutEvent} from "../entities/stripe-checkout-event.entity.js";
 import {Repository} from "typeorm";
-import {OrganisationSubscriptionService} from "../../organisation-subscriptions/organisation-subscriptions.service.js";
+import {StripeCustomerPortalResponseDto} from "../models/StripeCustomerPortalResponseDto.js";
 
-/**
- * Is this doing too much? probably.
- */
 @Injectable()
 export class StripeCheckoutService {
     private readonly logger = new Logger(StripeCheckoutService.name);
@@ -25,69 +18,9 @@ export class StripeCheckoutService {
         private readonly clientInstance: Stripe,
         private readonly stripeClientConfigurationService: StripeClientConfigurationService,
         private readonly paymentSessionService: PaymentSessionService,
-        private readonly organisationSubscriptionService: OrganisationSubscriptionService,
         @InjectRepository(StripeCheckoutEvent)
         private readonly stripeCheckoutEventRepository: Repository<StripeCheckoutEvent>
     ) {}
-
-    // must set the org id to the customer id field so we can get this later
-    public async createCustomerPortalSession(
-        parameters: StripeCustomerPortalRequestDto,
-        user: RequestUser
-    ): Promise<StripeCustomerPortalResponseDto> {
-        // is the user a member of the organisation with the subscription record
-        const subscriptionRecord =
-            await this.organisationSubscriptionService.findOne(
-                parameters.subscriptionRecordUuid
-            );
-        if (
-            !user.memberships ||
-            !user.memberships
-                .map((m) => m.organisation.uuid)
-                .includes(subscriptionRecord.organisation.uuid)
-        ) {
-            {
-                throw new Error(
-                    "You are not a member of the organisation associated with this billing account"
-                );
-            }
-        }
-
-        const session = await this.clientInstance.billingPortal.sessions.create(
-            {
-                customer: subscriptionRecord.paymentSystemCustomerId,
-                return_url: `${this.stripeClientConfigurationService.stripeRedirectsBaseUrl}${parameters.returnUrl}`,
-            }
-        );
-
-        return {sessionUrl: session.url};
-    }
-
-    public async createAuthenticatedCheckoutSession(
-        parameters: StripeCheckoutSessionRequestDto,
-        user: RequestUser
-    ): Promise<StripeCheckoutSessionResponseDto> {
-        // create a new session in the database
-        const paymentReference = await this.paymentSessionService.createSession(
-            {
-                organisationUuid: parameters.organisationId,
-                userUuid: user.uuid,
-            }
-        );
-
-        const mappedParameters = {
-            mode: parameters.mode as unknown as Stripe.Checkout.SessionCreateParams.Mode,
-            client_reference_id: paymentReference.uuid,
-            line_items: parameters.lineItems,
-            customer_email: user.email,
-            success_url: `${this.stripeClientConfigurationService.stripeRedirectsBaseUrl}${parameters.successFrontendPath}`,
-            cancel_url: parameters.cancelFrontendPath
-                ? `${this.stripeClientConfigurationService.stripeRedirectsBaseUrl}${parameters.cancelFrontendPath}`
-                : undefined,
-        } as Stripe.Checkout.SessionCreateParams;
-
-        return this.createStripeSession(mappedParameters);
-    }
 
     public async createCheckoutSession(
         parameters: StripeCheckoutSessionRequestDto
@@ -95,11 +28,11 @@ export class StripeCheckoutService {
         // create a new session in the database
         const paymentReference = await this.paymentSessionService.createSession(
             {
-                organisationUuid: parameters.organisationId,
+                organisationUuid: parameters.organisationUuid,
             }
         );
 
-        const mappedParameters = {
+        const mappedSessionParameters = {
             mode: parameters.mode as unknown as Stripe.Checkout.SessionCreateParams.Mode,
             client_reference_id: paymentReference.uuid,
             line_items: parameters.lineItems,
@@ -109,29 +42,32 @@ export class StripeCheckoutService {
                 : undefined,
         } as Stripe.Checkout.SessionCreateParams;
 
-        return this.createStripeSession(mappedParameters);
-    }
-
-    private async createStripeSession(
-        mappedParameters: Stripe.Checkout.SessionCreateParams
-    ): Promise<StripeCheckoutSessionResponseDto> {
         const session = await this.clientInstance.checkout.sessions.create(
-            mappedParameters
+            mappedSessionParameters
         );
 
         if (!session.url) {
             this.logger.error("Failed to create stripe checkout session", {
-                mappedParameters,
+                mappedSessionParameters,
             });
             throw new Error("Failed to create checkout session");
         }
 
-        const response = new StripeCheckoutSessionResponseDto();
+        return {stripeSessionUrl: session.url, stripeSessionId: session.id};
+    }
 
-        response.stripeSessionUrl = session.url;
-        response.stripeSessionId = session.id;
+    public async createStripePortalSession(
+        paymentSystemCustomerId: string,
+        returnUrl: string
+    ): Promise<StripeCustomerPortalResponseDto> {
+        const session = await this.clientInstance.billingPortal.sessions.create(
+            {
+                customer: paymentSystemCustomerId,
+                return_url: `${this.stripeClientConfigurationService.stripeRedirectsBaseUrl}${returnUrl}`,
+            }
+        );
 
-        return response;
+        return {sessionUrl: session.url};
     }
 
     public async getLast(

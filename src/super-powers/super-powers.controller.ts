@@ -1,5 +1,10 @@
 import {UseGuards, Controller, Post} from "@nestjs/common";
-import {ApiBearerAuth, ApiTags, ApiOkResponse} from "@nestjs/swagger";
+import {
+    ApiBearerAuth,
+    ApiTags,
+    ApiOkResponse,
+    ApiOperation,
+} from "@nestjs/swagger";
 import {ClaimsAuthorisationGuard} from "../authorization/guards/ClaimsAuthorisationGuard.js";
 import {DefaultAuthGuard} from "../authorization/guards/DefaultAuthGuard.js";
 import {MandatoryUserClaims} from "../authorization/guards/MandatoryUserClaims.decorator.js";
@@ -13,6 +18,7 @@ export class SuperPowersController {
     constructor(private readonly spService: SuperPowersService) {}
 
     @Post("reset-database")
+    @ApiOperation({tags: ["SuperPower"]})
     @ApiOkResponse()
     @MandatoryUserClaims("modify:all")
     async resetDatabase(): Promise<boolean> {

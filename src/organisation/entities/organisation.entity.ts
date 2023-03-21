@@ -36,6 +36,8 @@ export class Organisation {
     @Type(() => OrganisationMembership)
     memberships?: OrganisationMembership[];
 
+    @ApiPropertyOptional({type: OrganisationSubscriptionRecord, isArray: true})
+    @Type(() => OrganisationSubscriptionRecord)
     @OneToMany(
         () => OrganisationSubscriptionRecord,
         (osr) => osr.organisation,

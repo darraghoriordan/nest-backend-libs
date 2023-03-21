@@ -73,9 +73,11 @@ export class User {
     })
     memberships?: OrganisationMembership[];
 
+    // We don't want to expose the api keys to the user
+    // We don't want to load them unless explicitly
     @ApiPropertyOptional({type: () => UserApiKey, isArray: true})
     @Type(() => UserApiKey)
-    @OneToMany(() => UserApiKey, (om) => om.user, {})
+    @OneToMany(() => UserApiKey, (om) => om.user, {eager: false})
     apiKeys?: UserApiKey[];
 
     @CreateDateColumn()

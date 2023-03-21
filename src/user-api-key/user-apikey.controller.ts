@@ -9,7 +9,12 @@ import {
     Post,
     Get,
 } from "@nestjs/common";
-import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
+import {
+    ApiBearerAuth,
+    ApiOkResponse,
+    ApiOperation,
+    ApiTags,
+} from "@nestjs/swagger";
 import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
 import {BooleanResult} from "../root-app/models/boolean-result.js";
 import {UserApiKey} from "./userApiKey.entity.js";
@@ -28,6 +33,7 @@ export class UserApiKeyController {
 
     @Get()
     @MandatoryUserClaims("read:all")
+    @ApiOperation({tags: ["SuperPower"]})
     @ApiOkResponse({type: UserApiKey, isArray: true})
     async getAllForUser(
         @Request() request: RequestWithUser
@@ -38,6 +44,7 @@ export class UserApiKeyController {
     @Put(":uuid")
     // eslint-disable-next-line sonarjs/no-duplicate-string
     @MandatoryUserClaims("modify:all")
+    @ApiOperation({tags: ["SuperPower"]})
     @ApiOkResponse({type: UserApiKey})
     async generateNewKey(
         @Param("uuid") uuid: string,
@@ -51,6 +58,7 @@ export class UserApiKeyController {
 
     @Post()
     @MandatoryUserClaims("modify:all")
+    @ApiOperation({tags: ["SuperPower"]})
     @ApiOkResponse({type: UserApiKey})
     async update(
         @Body() createKeyDto: CreateApiKeyDto,
@@ -64,6 +72,7 @@ export class UserApiKeyController {
 
     @Delete(":uuid")
     @MandatoryUserClaims("modify:all")
+    @ApiOperation({tags: ["SuperPower"]})
     @ApiOkResponse({type: BooleanResult})
     async remove(
         @Param("uuid") uuid: string,

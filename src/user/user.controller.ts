@@ -44,7 +44,6 @@ export class UserController {
             return {
                 ...request.user,
                 memberships: request.user.memberships ?? [],
-                apiKeys: request.user.apiKeys ?? [],
                 isSuper: request.user.permissions.includes(
                     SuperUserClaims.MODIFY_ALL
                 ),
@@ -63,7 +62,6 @@ export class UserController {
         return {
             ...result,
             memberships: request.user.memberships ?? [],
-            apiKeys: request.user.apiKeys ?? [],
         };
     }
 
@@ -88,7 +86,7 @@ export class UserController {
         const result = await this.userService.update(
             uuid,
             updateUserDto,
-            request.user.uuid
+            request.user
         );
         return {result: result.affected && result.affected > 0};
     }
@@ -99,10 +97,7 @@ export class UserController {
         @Param("uuid") uuid: string,
         @Request() request: RequestWithUser
     ): Promise<BooleanResult> {
-        const deleteResult = await this.userService.remove(
-            uuid,
-            request.user.uuid
-        );
+        const deleteResult = await this.userService.remove(uuid, request.user);
         return {result: deleteResult !== undefined};
     }
 }

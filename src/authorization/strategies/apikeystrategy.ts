@@ -2,7 +2,7 @@ import {HeaderAPIKeyStrategy} from "passport-headerapikey";
 import {PassportStrategy} from "@nestjs/passport";
 import {UserValidationService} from "../services/UserValidation.service.js";
 import {Injectable} from "@nestjs/common";
-import {User} from "../../user-internal/entities/user.entity.js";
+import {User} from "../../user/entities/user.entity.js";
 
 @Injectable()
 export class ApiKeyStrategy extends PassportStrategy(HeaderAPIKeyStrategy) {
@@ -32,14 +32,16 @@ export class ApiKeyStrategy extends PassportStrategy(HeaderAPIKeyStrategy) {
         ) => boolean
     ) {
         try {
-            const foundUser =
-                await this.userValidationService.validateUserApiKey(apiKey);
+            const foundUser = await this.userValidationService.findUserByApiKey(
+                apiKey
+            );
 
-            if (!foundUser) {
+            if (!foundUser || foundUser === null) {
                 done(new Error("Invalid API key"));
             }
 
-            done(undefined, foundUser);
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            done(undefined, foundUser!);
         } catch (error) {
             done(error as Error);
         }

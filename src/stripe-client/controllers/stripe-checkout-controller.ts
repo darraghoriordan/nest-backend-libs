@@ -3,8 +3,8 @@ import {AuthGuard} from "@nestjs/passport";
 import {ApiBearerAuth, ApiTags, ApiOkResponse} from "@nestjs/swagger";
 import {RequestWithUser} from "../../authorization/models/RequestWithUser.js";
 import {StripeCheckoutSessionRequestDto} from "../models/StripeCheckoutSessionRequestDto.js";
-import {StripeCheckoutService} from "../services/stripe-checkout.service.js";
 import {StripeCheckoutSessionResponseDto} from "../models/StripeCheckoutSessionResponseDto.js";
+import {AuthenticatedStripeCheckoutService} from "../services/auth-stripe-checkout.service.js";
 
 /**
  * This controller creates authenticated checkout sessions for Stripe.
@@ -19,7 +19,9 @@ import {StripeCheckoutSessionResponseDto} from "../models/StripeCheckoutSessionR
 @ApiTags("Payments")
 // eslint-disable-next-line @darraghor/nestjs-typed/injectable-should-be-provided
 export class StripeCheckoutController {
-    constructor(private readonly stripeService: StripeCheckoutService) {}
+    constructor(
+        private readonly stripeService: AuthenticatedStripeCheckoutService
+    ) {}
 
     @Post("checkout-session")
     @ApiOkResponse({type: StripeCheckoutSessionResponseDto})
@@ -28,7 +30,7 @@ export class StripeCheckoutController {
         @Request() request: RequestWithUser,
         @Body() createSessionDto: StripeCheckoutSessionRequestDto
     ): Promise<StripeCheckoutSessionResponseDto> {
-        return this.stripeService.createAuthenticatedCheckoutSession(
+        return this.stripeService.createCheckoutSession(
             createSessionDto,
             request.user
         );

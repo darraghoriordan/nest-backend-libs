@@ -12,7 +12,7 @@ import {
     RelationId,
     UpdateDateColumn,
 } from "typeorm";
-import {User} from "../user-internal/entities/user.entity.js";
+import {User} from "../user/entities/user.entity.js";
 
 @Entity()
 export class UserApiKey {

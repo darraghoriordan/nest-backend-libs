@@ -19,7 +19,7 @@ import {
 import {Invitation} from "../../invitations/entities/invitation.entity.js";
 import {MembershipRole} from "../../organisation/entities/member-role.entity.js";
 import {Organisation} from "../../organisation/entities/organisation.entity.js";
-import {User} from "../../user-internal/entities/user.entity.js";
+import {User} from "../../user/entities/user.entity.js";
 
 @Entity()
 export class OrganisationMembership {
@@ -47,6 +47,8 @@ export class OrganisationMembership {
     @RelationId((membership: OrganisationMembership) => membership.user)
     public userId!: number;
 
+    @ApiProperty()
+    @Type(() => Organisation)
     @ManyToOne(() => Organisation, (org) => org.memberships, {
         eager: true,
         cascade: ["insert", "update"],
