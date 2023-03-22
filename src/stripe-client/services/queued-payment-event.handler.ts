@@ -80,13 +80,13 @@ export class StripeQueuedEventHandler {
                 subscriptionFulfilmentDto.paymentSystemMode,
                 true,
                 (fullSession.subscription! as Stripe.Subscription)
-                    .current_period_end
+                    ?.current_period_end
             );
 
             subscriptionFulfilmentDto.paymentSystemTransactionId =
                 fullSession.mode === "subscription" ||
                 lineItem.price?.type === "recurring"
-                    ? (fullSession.subscription! as Stripe.Subscription).id
+                    ? (fullSession.subscription! as Stripe.Subscription)?.id
                     : fullSession.id;
 
             subscriptionFulfilmentDto.millerPaymentReferenceUuid =

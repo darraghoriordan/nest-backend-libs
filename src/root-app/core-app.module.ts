@@ -4,6 +4,7 @@
 import "reflect-metadata";
 import helmet from "helmet";
 import {
+    CacheModule,
     ClassSerializerInterceptor,
     INestApplication,
     Module,
@@ -23,10 +24,35 @@ import {HealthModule} from "../health/Health.module.js";
 import {LoggerModule as LoggingConfigModule} from "../logger/logger.module.js";
 import {LoggingConfigurationService} from "../logger/LoggingConfigurationService.js";
 import {AuthzModule} from "../authorization/authz.module.js";
+import ioredisCache from "cache-manager-ioredis-yet";
+import {IORedisOptions} from "@nestjs/microservices/external/redis.interface.js";
 
 @Module({
     imports: [
         ConfigModule.forRoot({cache: true}),
+        CacheModule.registerAsync<IORedisOptions>({
+            imports: [CoreConfigModule],
+            useFactory: async (
+                configService: CoreConfigurationService
+
+                // eslint-disable-next-line @typescript-eslint/require-await
+            ) => {
+                const redisUrl = new URL(
+                    configService.bullQueueHost || "redis://localhost"
+                );
+                return {
+                    ttl: 60,
+                    store: await ioredisCache.redisStore({
+                        host: redisUrl.hostname,
+                        password: redisUrl.password,
+                        port: Number(redisUrl.port),
+                        username: redisUrl.username,
+                        maxRetriesPerRequest: 3,
+                    }),
+                };
+            },
+            inject: [CoreConfigurationService],
+        }),
         LoggerModule.forRootAsync({
             imports: [LoggingConfigModule],
             inject: [LoggingConfigurationService],
@@ -71,7 +97,7 @@ import {AuthzModule} from "../authorization/authz.module.js";
     ],
     controllers: [AppController],
     providers: [AppService, SwaggerGen],
-    exports: [SwaggerGen, BullModule, LoggerModule, AuthzModule],
+    exports: [SwaggerGen, BullModule, LoggerModule, AuthzModule, CacheModule],
 })
 export class CoreModule {
     public static initApplication(

@@ -66,9 +66,19 @@ export class UserValidationService {
             permissionsSet.add("read:all");
             permissionsSet.add("modify:all");
         }
+        const activePaidForProducts = new Set<string>(
+            user.memberships
+                ?.flatMap((m) => m.organisation.subscriptionRecords || [])
+                ?.filter((s) => s && s.validUntil > new Date())
+                ?.map((s) => s?.productDisplayName) || []
+        );
 
         // eslint-disable-next-line sonarjs/prefer-immediate-return
-        return {...user, permissions: [...permissionsSet]} as RequestUser;
+        return {
+            ...user,
+            permissions: [...permissionsSet],
+            activeSubscriptionProducts: [...activePaidForProducts],
+        } as RequestUser;
     }
 
     async validateUser(

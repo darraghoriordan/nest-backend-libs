@@ -5,4 +5,5 @@ export interface RequestWithUser extends Request {
 }
 export type RequestUser = Pick<User, Exclude<keyof User, "nullChecks">> & {
     permissions: string[];
+    activeSubscriptionProducts: string[];
 };
