@@ -30,6 +30,8 @@ export class PaymentSessionReference {
     @Column({nullable: true})
     organisationUuid?: string;
 
-    @Column()
-    userUuid!: string;
+    // This is nullable because it we have a sample "not authenticated" controller
+    // but you most likely want to make this non-nullable
+    @Column({nullable: true})
+    userUuid?: string;
 }

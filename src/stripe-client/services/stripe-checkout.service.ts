@@ -9,6 +9,7 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {StripeCheckoutEvent} from "../entities/stripe-checkout-event.entity.js";
 import {Repository} from "typeorm";
 import {StripeCustomerPortalResponseDto} from "../models/StripeCustomerPortalResponseDto.js";
+import {RequestUser} from "../../authorization/models/RequestWithUser.js";
 
 @Injectable()
 export class StripeCheckoutService {
@@ -23,12 +24,14 @@ export class StripeCheckoutService {
     ) {}
 
     public async createCheckoutSession(
-        parameters: StripeCheckoutSessionRequestDto
+        parameters: StripeCheckoutSessionRequestDto,
+        requestUser?: RequestUser
     ): Promise<StripeCheckoutSessionResponseDto> {
         // create a new session in the database
         const paymentReference = await this.paymentSessionService.createSession(
             {
                 organisationUuid: parameters.organisationUuid,
+                userUuid: requestUser?.uuid,
             }
         );
 

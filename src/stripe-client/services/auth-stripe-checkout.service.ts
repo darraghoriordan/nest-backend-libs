@@ -77,6 +77,9 @@ export class AuthenticatedStripeCheckoutService {
             throw new Error("You are not the owner of this organisation");
         }
 
-        return this.stripeCheckoutService.createCheckoutSession(parameters);
+        return this.stripeCheckoutService.createCheckoutSession(
+            parameters,
+            user
+        );
     }
 }

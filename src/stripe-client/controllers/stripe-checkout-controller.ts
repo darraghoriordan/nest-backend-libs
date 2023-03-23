@@ -1,6 +1,6 @@
 import {UseGuards, Controller, Post, Body, Request} from "@nestjs/common";
-import {AuthGuard} from "@nestjs/passport";
 import {ApiBearerAuth, ApiTags, ApiOkResponse} from "@nestjs/swagger";
+import {DefaultAuthGuard} from "../../authorization/guards/DefaultAuthGuard.js";
 import {RequestWithUser} from "../../authorization/models/RequestWithUser.js";
 import {StripeCheckoutSessionRequestDto} from "../models/StripeCheckoutSessionRequestDto.js";
 import {StripeCheckoutSessionResponseDto} from "../models/StripeCheckoutSessionResponseDto.js";
@@ -13,7 +13,7 @@ import {AuthenticatedStripeCheckoutService} from "../services/auth-stripe-checko
  *
  * This is not automatically included in the StripeClientModule.
  */
-@UseGuards(AuthGuard("jwt"))
+@UseGuards(DefaultAuthGuard)
 @ApiBearerAuth()
 @Controller("payments/stripe")
 @ApiTags("Payments")
