@@ -41,13 +41,16 @@ import {IORedisOptions} from "@nestjs/microservices/external/redis.interface.js"
                     configService.bullQueueHost || "redis://localhost"
                 );
                 return {
-                    ttl: 60_000,
+                    ttl: 5000,
+                    max: 100,
+
                     store: await ioredisCache.redisStore({
                         host: redisUrl.hostname,
                         password: redisUrl.password,
                         port: Number(redisUrl.port),
                         username: redisUrl.username,
                         maxRetriesPerRequest: 3,
+                        // ttl: 5,
                     }),
                 };
             },
