@@ -24,36 +24,23 @@ import {HealthModule} from "../health/Health.module.js";
 import {LoggerModule as LoggingConfigModule} from "../logger/logger.module.js";
 import {LoggingConfigurationService} from "../logger/LoggingConfigurationService.js";
 import {AuthzModule} from "../authorization/authz.module.js";
-import ioredisCache from "cache-manager-ioredis-yet";
-import {IORedisOptions} from "@nestjs/microservices/external/redis.interface.js";
+import {redisStore} from "cache-manager-redis-yet";
+import type {RedisClientOptions} from "redis";
 
 @Module({
     imports: [
         ConfigModule.forRoot({cache: true}),
-        CacheModule.registerAsync<IORedisOptions>({
+        CacheModule.registerAsync<RedisClientOptions>({
             imports: [CoreConfigModule],
-            useFactory: async (
-                configService: CoreConfigurationService
-
-                // eslint-disable-next-line @typescript-eslint/require-await
-            ) => {
-                const redisUrl = new URL(
-                    configService.bullQueueHost || "redis://localhost"
-                );
+            useFactory: async (configService: CoreConfigurationService) => {
                 return {
-                    ttl: 5000,
-                    max: 100,
-
-                    store: await ioredisCache.redisStore({
-                        host: redisUrl.hostname,
-                        password: redisUrl.password,
-                        port: Number(redisUrl.port),
-                        username: redisUrl.username,
-                        maxRetriesPerRequest: 3,
-                        // ttl: 5,
+                    store: await redisStore({
+                        url: configService.bullQueueHost || "should-throw",
+                        ttl: 10_000,
                     }),
                 };
             },
+            isGlobal: true,
             inject: [CoreConfigurationService],
         }),
         LoggerModule.forRootAsync({
