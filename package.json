@@ -49,19 +49,6 @@
         "semantic-release": "semantic-release",
         "copyOpenApiGenerationModule": "copyfiles --error --up 1 \"src/open-api-generation/**/*\" \"src/open-api-generation/*\" \"src/database-initialisation/*\" dist"
     },
-    "peerDependencies": {
-        "@nestjs/axios": "2.0.0",
-        "@nestjs/common": "9.3.12",
-        "@nestjs/config": "2.3.1",
-        "@nestjs/core": "9.3.12",
-        "@nestjs/microservices": "9.3.12",
-        "@nestjs/passport": "9.0.3",
-        "@nestjs/platform-express": "9.3.12",
-        "@nestjs/swagger": "6.2.1",
-        "@nestjs/terminus": "9.2.1",
-        "@nestjs/typeorm": "9.0.1",
-        "typeorm": "0.3.12"
-    },
     "dependencies": {
         "@nestjs/axios": "2.0.0",
         "@nestjs/common": "9.3.12",
@@ -86,20 +73,16 @@
         "dotenv": "16.0.3",
         "helmet": "6.0.1",
         "jwks-rsa": "3.0.1",
-        "knip": "2.1.2",
         "nanoid": "4.0.1",
         "nestjs-pino": "3.1.2",
         "nodemailer": "6.9.1",
         "passport": "0.6.0",
         "passport-headerapikey": "1.2.2",
         "passport-jwt": "4.0.1",
-        "pg": "8.10.0",
         "pino-http": "8.3.3",
         "pino-pretty": "10.0.0",
         "redis": "4.6.5",
         "reflect-metadata": "0.1.13",
-        "res": "0.4.0",
-        "resource": "0.8.1",
         "rimraf": "4.4.1",
         "rxjs": "7.8.0",
         "stripe": "11.16.0",
@@ -107,6 +90,7 @@
         "twitter-api-v2": "1.14.2"
     },
     "devDependencies": {
+        "knip": "2.1.2",
         "@commitlint/cli": "17.5.0",
         "@commitlint/config-conventional": "17.4.4",
         "@darraghor/eslint-plugin-nestjs-typed": "3.19.0",
