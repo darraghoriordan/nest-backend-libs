@@ -49,6 +49,23 @@
         "semantic-release": "semantic-release",
         "copyOpenApiGenerationModule": "copyfiles --error --up 1 \"src/open-api-generation/**/*\" \"src/open-api-generation/*\" \"src/database-initialisation/*\" dist"
     },
+    "peerDependencies": {
+        "@nestjs/axios": "2.0.0",
+        "@nestjs/common": "9.3.12",
+        "@nestjs/config": "2.3.1",
+        "@nestjs/bull": "0.6.3",
+        "@nestjs/core": "9.3.12",
+        "@nestjs/microservices": "9.3.12",
+        "@nestjs/passport": "9.0.3",
+        "@nestjs/platform-express": "9.3.12",
+        "@nestjs/swagger": "6.2.1",
+        "@nestjs/terminus": "9.2.1",
+        "@nestjs/typeorm": "9.0.1",
+        "typeorm": "0.3.12",
+        "reflect-metadata": "0.1.13",
+        "class-transformer": "0.5.1",
+        "class-validator": "0.14.0"
+    },
     "dependencies": {
         "@nestjs/axios": "2.0.0",
         "@nestjs/common": "9.3.12",
