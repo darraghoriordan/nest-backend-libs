@@ -167,6 +167,7 @@ export class OrganisationSubscriptionService {
             existingSubscription.validUntil = subRecord.validUntil;
             existingSubscription.productDisplayName =
                 subRecord.productDisplayName;
+            existingSubscription.internalSku = subRecord.internalSku;
 
             const result = await this.orgSubRepository.save(
                 existingSubscription

@@ -16,6 +16,7 @@ import {OrganisationSubscriptionsModule} from "../organisation-subscriptions/org
 import {PaymentSessionModule} from "../payment-sessions/payment-session.module.js";
 import {StripeEventsController} from "./controllers/stripe-events-controller.js";
 import {AuthenticatedStripeCheckoutService} from "./services/auth-stripe-checkout.service.js";
+import SubscriptionRecordMapper from "./services/subscriptionRecord.mapper.js";
 
 @Module({
     imports: [
@@ -34,6 +35,7 @@ import {AuthenticatedStripeCheckoutService} from "./services/auth-stripe-checkou
         StripeCheckoutService,
         AuthenticatedStripeCheckoutService,
         StripeWebhookHandler,
+        SubscriptionRecordMapper,
     ],
     exports: [
         TypeOrmModule,
@@ -42,6 +44,7 @@ import {AuthenticatedStripeCheckoutService} from "./services/auth-stripe-checkou
         BullModule,
         StripeWebhookHandler,
         StripeClientProvider,
+        SubscriptionRecordMapper,
     ],
     controllers: [
         StripeWebhookController,

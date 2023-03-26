@@ -33,6 +33,10 @@ export class OrganisationSubscriptionRecord {
 
     @Column()
     @ApiProperty()
+    internalSku!: string;
+
+    @Column()
+    @ApiProperty()
     productDisplayName!: string;
 
     @Column()

@@ -11,11 +11,11 @@ import {
 } from "@nestjs/bull";
 import {Job} from "bull";
 import Stripe from "stripe";
-import {SaveOrganisationSubscriptionRecordDto} from "../../organisation-subscriptions/models/fulfillSubscriptionDto.js";
 import {InjectRepository} from "@nestjs/typeorm";
 import {StripeCheckoutEvent} from "../entities/stripe-checkout-event.entity.js";
 import {Repository} from "typeorm";
 import {OrganisationSubscriptionService} from "../../organisation-subscriptions/organisation-subscriptions.service.js";
+import SubscriptionRecordMapper from "./subscriptionRecord.mapper.js";
 
 @Injectable()
 @Processor("stripe-events")
@@ -33,7 +33,8 @@ export class StripeQueuedEventHandler {
         private readonly stripe: Stripe,
         @InjectRepository(StripeCheckoutEvent)
         private readonly stripeCheckoutEventRepository: Repository<StripeCheckoutEvent>,
-        private readonly organisationSubscriptionService: OrganisationSubscriptionService
+        private readonly organisationSubscriptionService: OrganisationSubscriptionService,
+        private readonly subRecordMapper: SubscriptionRecordMapper
     ) {}
     @OnQueueFailed()
     onError(job: Job<Stripe.Event>, error: Error) {
@@ -57,183 +58,6 @@ export class StripeQueuedEventHandler {
         this.logger.log(`Completed job ${job.id} of type ${job.name}`);
     }
 
-    public mapCheckoutSessionToSubFulfilment(
-        fullSession: Stripe.Response<Stripe.Checkout.Session>
-    ): SaveOrganisationSubscriptionRecordDto[] {
-        // for subscription products use stripes subscription end date
-        // for one-off products use today + 100 years
-        const subs = [];
-
-        for (const lineItem of fullSession.line_items!.data) {
-            const subscriptionFulfilmentDto = this.createFulfilmentDto(
-                lineItem.price?.product,
-                fullSession.customer,
-                fullSession.customer_email,
-                fullSession.customer_details?.email
-            );
-
-            subscriptionFulfilmentDto.paymentSystemMode = this.mapPaymentType(
-                lineItem.price?.type,
-                fullSession.mode
-            );
-            subscriptionFulfilmentDto.validUntil = this.mapNewValidUntil(
-                subscriptionFulfilmentDto.paymentSystemMode,
-                true,
-                (fullSession.subscription! as Stripe.Subscription)
-                    ?.current_period_end
-            );
-
-            subscriptionFulfilmentDto.paymentSystemTransactionId =
-                fullSession.mode === "subscription" ||
-                lineItem.price?.type === "recurring"
-                    ? (fullSession.subscription! as Stripe.Subscription)?.id
-                    : fullSession.id;
-
-            subscriptionFulfilmentDto.millerPaymentReferenceUuid =
-                fullSession.client_reference_id ?? undefined;
-
-            subs.push(subscriptionFulfilmentDto);
-        }
-        return subs;
-    }
-    private createFulfilmentDto(
-        product?: unknown,
-        customer?: unknown,
-        altEmail?: string | null,
-        altEmail2?: string | null
-    ): SaveOrganisationSubscriptionRecordDto {
-        const subscriptionFulfilmentDto: SaveOrganisationSubscriptionRecordDto =
-            new SaveOrganisationSubscriptionRecordDto();
-
-        subscriptionFulfilmentDto.paymentSystemName = "stripe";
-
-        subscriptionFulfilmentDto.paymentSystemProductId = (
-            product as Stripe.Product
-        )?.id;
-
-        subscriptionFulfilmentDto.productDisplayName = (
-            product as Stripe.Product
-        ).name;
-
-        subscriptionFulfilmentDto.paymentSystemCustomerId =
-            (customer as Stripe.Customer)?.id || "unknown";
-
-        subscriptionFulfilmentDto.paymentSystemCustomerEmail =
-            (customer as Stripe.Customer)?.email ||
-            altEmail ||
-            altEmail2 ||
-            "unknown";
-
-        return subscriptionFulfilmentDto;
-    }
-    public mapInvoiceToSubFulfilment(
-        fullInvoice: Stripe.Response<Stripe.Invoice>
-    ): SaveOrganisationSubscriptionRecordDto[] {
-        // for subscription products use stripes subscription end date
-        // for one-off products use today + 100 years
-
-        const subs = [];
-        for (const lineItem of fullInvoice.lines.data) {
-            const subscriptionFulfilmentDto = this.createFulfilmentDto(
-                lineItem.price?.product,
-                fullInvoice.customer,
-                fullInvoice.customer_email
-            );
-
-            const fullSubscription =
-                fullInvoice.subscription! as Stripe.Subscription;
-
-            subscriptionFulfilmentDto.paymentSystemMode = this.mapPaymentType(
-                lineItem.price?.type
-            );
-            subscriptionFulfilmentDto.validUntil = this.mapNewValidUntil(
-                subscriptionFulfilmentDto.paymentSystemMode,
-                fullSubscription.status === "active" ||
-                    fullSubscription.status === "trialing",
-                fullSubscription.current_period_end
-            );
-
-            subscriptionFulfilmentDto.paymentSystemTransactionId =
-                lineItem.price?.type === "recurring"
-                    ? fullSubscription.id
-                    : fullInvoice.id;
-
-            subs.push(subscriptionFulfilmentDto);
-        }
-        return subs;
-    }
-
-    private mapPaymentType(
-        type?: string,
-        sessionMode?: string
-    ): "subscription" | "payment" {
-        if (type === "recurring" || sessionMode === "subscription") {
-            return "subscription";
-        }
-        return "payment";
-    }
-    private mapNewValidUntil(
-        paymentSystemMode: string,
-        isActive: boolean,
-        stripeCurrentPeriodEnd?: number
-    ) {
-        let newValidUntil: Date = new Date();
-
-        if (paymentSystemMode === "payment") {
-            // the valid until is basically the end of time
-            const todayPlus100 = new Date();
-            todayPlus100.setFullYear(todayPlus100.getFullYear() + 500);
-            newValidUntil = todayPlus100;
-        }
-
-        // otherwise it's a subscription
-        if (paymentSystemMode === "subscription" && isActive) {
-            if (!stripeCurrentPeriodEnd) {
-                throw new Error("stripeCurrentPeriodEnd is not set");
-            }
-            const twoDaysInMilliSeconds = 2 * 24 * 60 * 60 * 1000;
-            const stripeCurrentPeriodEndMilliSeconds =
-                stripeCurrentPeriodEnd * 1000;
-            newValidUntil = new Date(
-                stripeCurrentPeriodEndMilliSeconds + twoDaysInMilliSeconds
-            );
-            this.logger.log(
-                `Set valid until to ${newValidUntil.toISOString()} based on sub ${stripeCurrentPeriodEnd}`
-            );
-        }
-
-        return newValidUntil;
-    }
-
-    public mapSubscriptionToSubFulfilment(
-        fullSubscription: Stripe.Response<Stripe.Subscription>,
-        additionalMeta: {
-            isActive: boolean;
-        }
-    ): SaveOrganisationSubscriptionRecordDto[] {
-        // for subscription products use stripes subscription end date
-        // for one-off products use today + 100 years
-        const subs = [];
-        for (const lineItem of fullSubscription.items.data) {
-            const subscriptionFulfilmentDto = this.createFulfilmentDto(
-                lineItem.price?.product,
-                fullSubscription.customer
-            );
-
-            subscriptionFulfilmentDto.paymentSystemMode = "subscription";
-            subscriptionFulfilmentDto.paymentSystemTransactionId =
-                fullSubscription.id;
-
-            subscriptionFulfilmentDto.validUntil = this.mapNewValidUntil(
-                subscriptionFulfilmentDto.paymentSystemMode,
-                additionalMeta.isActive,
-                fullSubscription.current_period_end
-            );
-
-            subs.push(subscriptionFulfilmentDto);
-        }
-        return subs;
-    }
     // eslint-disable-next-line @typescript-eslint/require-await
     @Process()
     public async handleEvent(job: Job<Stripe.Event>): Promise<void> {
@@ -242,21 +66,8 @@ export class StripeQueuedEventHandler {
         this.logger.log("Handling queued item", {
             eventType,
         });
-        try {
-            const eventToStore = this.stripeCheckoutEventRepository.create();
-            eventToStore.stripeObjectType = eventType || "unknown";
-            eventToStore.clientReferenceId = "not set";
+        await this.saveRawEventForAudit(eventType, job);
 
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            eventToStore.stripeSessionId =
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                (job?.data?.data?.object as any)?.id || "unknown";
-            eventToStore.stripeData = job.data;
-
-            await this.stripeCheckoutEventRepository.save(eventToStore);
-        } catch (error) {
-            this.logger.error("Error saving Stripe event", error);
-        }
         // see - https://stripe.com/docs/billing/subscriptions/webhooks
         switch (eventType) {
             case "checkout.session.completed": {
@@ -279,7 +90,9 @@ export class StripeQueuedEventHandler {
                             }
                         );
                     const subs =
-                        this.mapCheckoutSessionToSubFulfilment(fullSession);
+                        this.subRecordMapper.mapCheckoutSessionToSubRecord(
+                            fullSession
+                        );
 
                     const result =
                         await this.organisationSubscriptionService.save(subs);
@@ -290,6 +103,7 @@ export class StripeQueuedEventHandler {
             }
             case "checkout.session.async_payment_succeeded": {
                 // Payment link payment is successful for async payment methods. (bank drafts, etc.)
+                // probably not relevant for most people. But if you want to support it, here's how.
                 const stripeDataProperty = job.data.data
                     .object as Stripe.Checkout.Session;
                 const fullSession =
@@ -304,7 +118,9 @@ export class StripeQueuedEventHandler {
                         }
                     );
                 const subs =
-                    this.mapCheckoutSessionToSubFulfilment(fullSession);
+                    this.subRecordMapper.mapCheckoutSessionToSubRecord(
+                        fullSession
+                    );
 
                 const result = await this.organisationSubscriptionService.save(
                     subs
@@ -338,27 +154,7 @@ export class StripeQueuedEventHandler {
             }
 
             case "invoice.paid": {
-                // Continue to provision the subscription as payments continue to be made.
-                // Store the status in your database and check when a user accesses your service.
-                // This approach helps you avoid hitting rate limits.
-                const stripeDataProperty = job.data.data
-                    .object as Stripe.Invoice;
-                const fullInvoice = await this.stripe.invoices.retrieve(
-                    stripeDataProperty.id,
-                    {
-                        expand: [
-                            "lines.data.price.product",
-                            "customer",
-                            "subscription",
-                        ],
-                    }
-                );
-                const subs = this.mapInvoiceToSubFulfilment(fullInvoice);
-
-                const result = await this.organisationSubscriptionService.save(
-                    subs
-                );
-                this.logger.log("Invoiced payment succeeded", {result});
+                // Customer payment succeeded. You can just use the subscription.updated event instead
 
                 return;
             }
@@ -392,6 +188,7 @@ export class StripeQueuedEventHandler {
             }
             case "customer.subscription.deleted": {
                 // 	Sent when a customer’s subscription ends.
+
                 const stripeDataProperty = job.data.data
                     .object as Stripe.Subscription;
                 const fullSession = await this.stripe.subscriptions.retrieve(
@@ -400,9 +197,12 @@ export class StripeQueuedEventHandler {
                         expand: ["items.data.price.product", "customer"],
                     }
                 );
-                const subs = this.mapSubscriptionToSubFulfilment(fullSession, {
-                    isActive: false,
-                });
+                const subs = this.subRecordMapper.mapSubscriptionToSubRecord(
+                    fullSession,
+                    {
+                        isActive: false,
+                    }
+                );
                 for (const sub of subs) {
                     sub.validUntil = new Date();
                 }
@@ -433,7 +233,7 @@ export class StripeQueuedEventHandler {
                             expand: ["items.data.price.product", "customer"],
                         }
                     );
-                const subs = this.mapSubscriptionToSubFulfilment(
+                const subs = this.subRecordMapper.mapSubscriptionToSubRecord(
                     fullSubscription,
                     {
                         isActive:
@@ -457,6 +257,27 @@ export class StripeQueuedEventHandler {
                     data: job.data.data,
                 });
             }
+        }
+    }
+
+    private async saveRawEventForAudit(
+        eventType: string,
+        job: Job<Stripe.Event>
+    ) {
+        try {
+            const eventToStore = this.stripeCheckoutEventRepository.create();
+            eventToStore.stripeObjectType = eventType || "unknown";
+            eventToStore.clientReferenceId = "not set";
+
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            eventToStore.stripeSessionId =
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                (job?.data?.data?.object as any)?.id || "unknown";
+            eventToStore.stripeData = job.data;
+
+            await this.stripeCheckoutEventRepository.save(eventToStore);
+        } catch (error) {
+            this.logger.error("Error saving Stripe event", error);
         }
     }
 }

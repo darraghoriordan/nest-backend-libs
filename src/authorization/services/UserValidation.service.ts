@@ -70,7 +70,7 @@ export class UserValidationService {
             user.memberships
                 ?.flatMap((m) => m.organisation.subscriptionRecords || [])
                 ?.filter((s) => s && s.validUntil > new Date())
-                ?.map((s) => s?.productDisplayName) || []
+                ?.map((s) => s?.internalSku) || []
         );
 
         // eslint-disable-next-line sonarjs/prefer-immediate-return

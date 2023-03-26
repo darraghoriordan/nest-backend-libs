@@ -36,6 +36,10 @@ export class SaveOrganisationSubscriptionRecordDto {
     @ApiProperty()
     paymentSystemName!: string;
 
+    @IsString()
+    @ApiProperty()
+    internalSku!: string;
+
     @Transform(({value}) => new Date(value as string))
     @Type(() => Date)
     @IsDate()
