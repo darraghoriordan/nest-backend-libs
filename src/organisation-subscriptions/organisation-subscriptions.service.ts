@@ -1,5 +1,7 @@
+import {InjectQueue} from "@nestjs/bull";
 import {Injectable, Logger, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
+import {Queue} from "bull";
 import {Repository} from "typeorm";
 import {Roles} from "../organisation/dto/RolesEnum.js";
 import {Organisation} from "../organisation/entities/organisation.entity.js";
@@ -15,8 +17,11 @@ export class OrganisationSubscriptionService {
         private orgRepo: Repository<Organisation>,
         @InjectRepository(OrganisationSubscriptionRecord)
         private orgSubRepository: Repository<OrganisationSubscriptionRecord>,
-        private readonly paymentSessionService: PaymentSessionService
+        private readonly paymentSessionService: PaymentSessionService,
+        @InjectQueue("subscription-activation-changed")
+        private queue: Queue
     ) {}
+
     private notFoundMessage =
         "Organisation not found or you are not owner of it";
     async findAllForOwnerOfOrg(
@@ -95,6 +100,7 @@ export class OrganisationSubscriptionService {
     ): Promise<OrganisationSubscriptionRecord[]> {
         const results: OrganisationSubscriptionRecord[] = [];
         for (const subRecord of subRecordDtoCollection) {
+            let shouldRaiseEvent = false;
             let existingSubscription = await this.orgSubRepository.findOne({
                 where: {
                     paymentSystemTransactionId:
@@ -151,7 +157,9 @@ export class OrganisationSubscriptionService {
                     );
                 }
             }
-
+            if (existingSubscription.validUntil !== subRecord.validUntil) {
+                shouldRaiseEvent = true;
+            }
             existingSubscription.paymentSystemMode =
                 subRecord.paymentSystemMode;
             existingSubscription.paymentSystemCustomerId =
@@ -173,20 +181,44 @@ export class OrganisationSubscriptionService {
                 existingSubscription
             );
             results.push(result);
+            if (shouldRaiseEvent) {
+                await this.queue.add(
+                    {
+                        organisationUuid: result.organisation.uuid,
+                        subscriptionUuid: result.uuid,
+                        productKey: result.internalSku,
+                        active: result.validUntil > new Date(),
+                    },
+                    {
+                        timeout: 24 * 60 * 60 * 1000, // 24h
+                    }
+                );
+            }
         }
 
         return results;
     }
 
     async delete(subUuid: string): Promise<boolean> {
-        const result = await this.orgSubRepository.delete({
-            uuid: subUuid,
+        const result = await this.orgSubRepository.findOne({
+            where: {
+                uuid: subUuid,
+            },
+            relations: {
+                organisation: true,
+            },
+        });
+        if (!result) {
+            throw new NotFoundException("Subscription not found");
+        }
+        await this.queue.add({
+            organisationUuid: result.organisation.uuid,
+            subscriptionUuid: result.uuid,
+            productKey: result.internalSku,
+            active: false,
         });
 
-        return (
-            result.affected !== undefined &&
-            result.affected !== null &&
-            result.affected > 0
-        );
+        await this.orgSubRepository.delete(result);
+        return true;
     }
 }

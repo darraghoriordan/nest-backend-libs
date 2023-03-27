@@ -77,7 +77,7 @@ export class UserValidationService {
         return {
             ...user,
             permissions: [...permissionsSet],
-            activeSubscriptionProducts: [...activePaidForProducts],
+            activeSubscriptionProductKeys: [...activePaidForProducts],
         } as RequestUser;
     }
 

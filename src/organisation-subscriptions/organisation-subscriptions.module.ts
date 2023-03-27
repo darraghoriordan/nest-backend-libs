@@ -6,6 +6,7 @@ import {OrganisationSubscriptionsController} from "./organisation-subscriptions.
 import {OrganisationSubscriptionRecord} from "./entities/organisation-subscription.entity.js";
 import {PaymentSessionModule} from "../payment-sessions/payment-session.module.js";
 import {AllSubscriptionsController} from "./all-subscriptions.controller.js";
+import {BullModule} from "@nestjs/bull";
 
 @Module({
     imports: [
@@ -13,6 +14,9 @@ import {AllSubscriptionsController} from "./all-subscriptions.controller.js";
             Organisation,
             OrganisationSubscriptionRecord,
         ]),
+        BullModule.registerQueueAsync({
+            name: "subscription-activation-changed",
+        }),
         PaymentSessionModule,
     ],
     controllers: [
@@ -20,6 +24,6 @@ import {AllSubscriptionsController} from "./all-subscriptions.controller.js";
         AllSubscriptionsController,
     ],
     providers: [OrganisationSubscriptionService],
-    exports: [OrganisationSubscriptionService],
+    exports: [OrganisationSubscriptionService, BullModule],
 })
 export class OrganisationSubscriptionsModule {}
