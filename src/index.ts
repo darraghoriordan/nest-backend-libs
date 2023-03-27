@@ -36,6 +36,7 @@ export {
     CliCommandService,
 };
 
+export type {RequestUser} from "./authorization/models/RequestWithUser.js";
 export {SuperPowersModule} from "./super-powers/super-powers.module.js";
 export {OrganisationModule} from "./organisation/organisation.module.js";
 

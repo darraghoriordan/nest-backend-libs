@@ -11,7 +11,7 @@ export class PostgresTypeOrmConfigurationProvider {
      * @returns
      */
     public static getTypeOrmConfig(): DataSourceOptions {
-        const nodeModuleCorePath = path.resolve(
+        const libraryEntityScanPath = path.resolve(
             path.join(
                 // __dirname,
                 process.env.CORE_MODULE_ENTITY_PATH || "..",
@@ -20,7 +20,7 @@ export class PostgresTypeOrmConfigurationProvider {
             )
         );
 
-        const appModulePath = path.resolve(
+        const appEntityScanPath = path.resolve(
             path.join(
                 // __dirname,
                 process.env.APP_MODULE_ENTITY_PATH || "dist",
@@ -39,12 +39,12 @@ export class PostgresTypeOrmConfigurationProvider {
             )
         );
         console.log("Using database configuration paths", {
-            appModulePath,
-            moduleLocalDirName: path.dirname(
+            appEntityScanPath: appEntityScanPath,
+            libraryEntityScanPath: libraryEntityScanPath,
+            moduleCurrentDirectory: path.dirname(
                 url.fileURLToPath(import.meta.url)
             ),
             migrationsPath,
-            nodeModuleCorePath,
             pwd: process.cwd(),
         });
         // database url is used in dokku
@@ -56,7 +56,7 @@ export class PostgresTypeOrmConfigurationProvider {
                 migrationsTableName: "migrations",
                 migrationsRun: true,
                 synchronize: false,
-                entities: [nodeModuleCorePath, appModulePath],
+                entities: [libraryEntityScanPath, appEntityScanPath],
                 migrations: [migrationsPath],
             };
         }
@@ -73,7 +73,7 @@ export class PostgresTypeOrmConfigurationProvider {
             migrationsRun: true,
             logging: process.env.APP_POSTGRES_LOGGING === "true",
             synchronize: false,
-            entities: [nodeModuleCorePath, appModulePath],
+            entities: [libraryEntityScanPath, appEntityScanPath],
             migrations: [migrationsPath],
             cli: {
                 migrationsDir: "src/migrations",
