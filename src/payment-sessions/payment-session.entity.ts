@@ -27,11 +27,14 @@ export class PaymentSessionReference {
     @ApiProperty()
     createdDate!: Date;
 
+    // note that this is not a database relation
     @Column({nullable: true})
     organisationUuid?: string;
 
     // This is nullable because it we have a sample "not authenticated" controller
+    // in this set of modules.
     // but you most likely want to make this non-nullable
+    // also note this is not a relation, it's just a string
     @Column({nullable: true})
     userUuid?: string;
 }

@@ -51,7 +51,14 @@ export class UserValidationService {
         user: User,
         authProviderPermissions: string[] | undefined
     ): RequestUser {
-        console.debug({list: this.config.superUserIds}, "super user ids");
+        console.debug(
+            {
+                list: this.config.superUserIds,
+                userId: user.uuid,
+                userMail: user.email,
+            },
+            "super user ids"
+        );
         if (!user?.id) {
             throw new Error(
                 "Unable to authenticate and register a valid user with this auth0 user"

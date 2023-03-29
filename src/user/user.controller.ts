@@ -59,8 +59,15 @@ export class UserController {
             uuid,
             request.user
         );
+        const activePaidForProducts = new Set<string>(
+            result.memberships
+                ?.flatMap((m) => m.organisation.subscriptionRecords || [])
+                ?.filter((s) => s && s.validUntil > new Date())
+                ?.map((s) => s?.internalSku) || []
+        );
         return {
             ...result,
+            activeSubscriptionProductKeys: [...activePaidForProducts],
             memberships: request.user.memberships ?? [],
         };
     }
@@ -78,6 +85,9 @@ export class UserController {
 
     @Patch(":uuid")
     @ApiOkResponse({type: BooleanResult})
+    @ApiOperation({
+        description: "Limited to Super Admin role or the user themselves.",
+    })
     async update(
         @Param("uuid") uuid: string,
         @Body() updateUserDto: UpdateUserDto,
@@ -92,6 +102,9 @@ export class UserController {
     }
 
     @Delete(":uuid")
+    @ApiOperation({
+        description: "Limited to Super Admin role or the user themselves.",
+    })
     @ApiOkResponse({type: BooleanResult})
     async remove(
         @Param("uuid") uuid: string,

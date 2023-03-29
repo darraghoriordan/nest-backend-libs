@@ -61,16 +61,7 @@ export class OrganisationController {
         @Param("uuid") uuid: string,
         @Request() request: RequestWithUser
     ): Promise<BooleanResult> {
-        const deleteResult = await this.organisationService.remove(
-            uuid,
-            request.user.id
-        );
-        return {
-            result:
-                deleteResult !== undefined &&
-                deleteResult.affected !== undefined &&
-                deleteResult?.affected !== null &&
-                deleteResult?.affected > 0,
-        };
+        await this.organisationService.remove(uuid, request.user.id);
+        return {result: true};
     }
 }

@@ -280,6 +280,6 @@ export class InvitationService {
             orgId: invitation.organisationMembership.organisation.id,
             user: currentUser,
         });
-        return this.invitationRepository.remove(invitation);
+        return this.invitationRepository.softRemove(invitation);
     }
 }

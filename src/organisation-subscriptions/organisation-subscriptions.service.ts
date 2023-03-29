@@ -211,14 +211,14 @@ export class OrganisationSubscriptionService {
         if (!result) {
             throw new NotFoundException("Subscription not found");
         }
+
+        await this.orgSubRepository.softRemove(result);
         await this.queue.add({
             organisationUuid: result.organisation.uuid,
             subscriptionUuid: result.uuid,
             productKey: result.internalSku,
             active: false,
         });
-
-        await this.orgSubRepository.delete(result);
         return true;
     }
 }

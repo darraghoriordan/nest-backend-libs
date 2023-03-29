@@ -44,6 +44,9 @@ export class UserDto {
     @ApiProperty({type: () => OrganisationMembership, isArray: true})
     memberships!: OrganisationMembership[];
 
+    @ApiProperty({type: String, isArray: true})
+    activeSubscriptionProductKeys!: string[];
+
     @ApiProperty()
     createdDate!: Date;
 

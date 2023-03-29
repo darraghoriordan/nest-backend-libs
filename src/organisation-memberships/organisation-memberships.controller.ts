@@ -54,17 +54,7 @@ export class OrganisationMembershipsController {
         @Param("membershipUuid") membershipUuid: string,
         @Request() request: RequestWithUser
     ): Promise<BooleanResult> {
-        const deleteResult = await this.omService.remove(
-            orgUuid,
-            membershipUuid,
-            request.user.id
-        );
-        return {
-            result:
-                deleteResult !== undefined &&
-                deleteResult.affected !== undefined &&
-                deleteResult?.affected !== null &&
-                deleteResult?.affected > 0,
-        };
+        await this.omService.remove(orgUuid, membershipUuid, request.user.id);
+        return {result: true};
     }
 }

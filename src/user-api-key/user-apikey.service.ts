@@ -78,8 +78,8 @@ export class UserApiKeyService {
         if (!userApiKey) {
             throw new NotFoundException();
         }
-
-        const result = await this.repository.remove(userApiKey);
-        return result.deletedDate !== undefined;
+        // note, no soft delete here. Once a key is gone it should be gone
+        await this.repository.remove(userApiKey);
+        return true;
     }
 }

@@ -1,6 +1,6 @@
 import {Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import {DeleteResult, Repository, UpdateResult} from "typeorm";
+import {Repository, UpdateResult} from "typeorm";
 import {OrganisationMembership} from "../organisation-memberships/entities/organisation-membership.entity.js";
 import {CreateOrganisationDto} from "./dto/create-organisation.dto.js";
 import {Roles} from "./dto/RolesEnum.js";
@@ -105,8 +105,8 @@ export class OrganisationService {
         return this.repository.update(ownerOfOrg.id, ownerOfOrg);
     }
 
-    async remove(uuid: string, currentUserId: number): Promise<DeleteResult> {
-        const ownerOfOrg = await this.repository.findOneOrFail({
+    async remove(uuid: string, currentUserId: number): Promise<void> {
+        const ownedOrg = await this.repository.findOneOrFail({
             where: {
                 uuid,
                 memberships: {
@@ -120,8 +120,6 @@ export class OrganisationService {
             },
         });
 
-        return this.repository.delete({
-            id: ownerOfOrg.id,
-        });
+        await this.repository.softRemove(ownedOrg);
     }
 }

@@ -130,12 +130,12 @@ export class UserService {
                 )
             ) {
                 throw new Error(
-                    "Can't remove the owner of an organisation. Un-assign a new owner first."
+                    "Can't remove the owner of an organisation. Assign a new owner first."
                 );
             }
         }
 
-        return this.repository.remove(user);
+        return this.repository.softRemove(user);
     }
 
     private isCurrentUserGuard(

@@ -5,6 +5,7 @@ import {OrganisationMembershipsController} from "./organisation-memberships.cont
 import {OrganisationMembershipsService} from "./organisation-memberships.service.js";
 import {Organisation} from "../organisation/entities/organisation.entity.js";
 import {MembershipRole} from "../organisation/entities/member-role.entity.js";
+import {Invitation} from "../invitations/entities/invitation.entity.js";
 
 @Module({
     imports: [
@@ -12,6 +13,7 @@ import {MembershipRole} from "../organisation/entities/member-role.entity.js";
             Organisation,
             OrganisationMembership,
             MembershipRole,
+            Invitation,
         ]),
     ],
     controllers: [OrganisationMembershipsController],

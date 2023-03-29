@@ -4,7 +4,6 @@ import {Type} from "class-transformer";
 import {
     Column,
     CreateDateColumn,
-    DeleteDateColumn,
     Entity,
     Generated,
     Index,
@@ -73,6 +72,7 @@ export class OrganisationMembership {
     @OneToMany(() => MembershipRole, (role) => role.membership, {
         eager: true,
         cascade: ["insert", "update"],
+        onDelete: "CASCADE",
         orphanedRowAction: "delete",
     })
     @Type(() => MembershipRole)
@@ -85,8 +85,4 @@ export class OrganisationMembership {
     @UpdateDateColumn()
     @ApiProperty()
     updateDate!: Date;
-
-    @DeleteDateColumn()
-    @ApiPropertyOptional()
-    deletedDate?: Date;
 }

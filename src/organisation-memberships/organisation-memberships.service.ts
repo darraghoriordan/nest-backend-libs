@@ -1,6 +1,7 @@
 import {Injectable, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import {DeleteResult, Repository} from "typeorm";
+import {Repository} from "typeorm";
+import {Invitation} from "../invitations/entities/invitation.entity.js";
 import {Roles} from "../organisation/dto/RolesEnum.js";
 import {MembershipRole} from "../organisation/entities/member-role.entity.js";
 import {Organisation} from "../organisation/entities/organisation.entity.js";
@@ -13,7 +14,9 @@ export class OrganisationMembershipsService {
         @InjectRepository(Organisation)
         private orgRepo: Repository<Organisation>,
         @InjectRepository(OrganisationMembership)
-        private membershipRepo: Repository<OrganisationMembership>
+        private membershipRepo: Repository<OrganisationMembership>,
+        @InjectRepository(Invitation)
+        private invitationRepo: Repository<Invitation>
     ) {}
     private notFoundMessage =
         "Organisation not found or you are not owner of it";
@@ -39,7 +42,7 @@ export class OrganisationMembershipsService {
         if (!isAMember) {
             throw new Error("You are not a member of this organisation");
         }
-        console.log("memberships", memberships);
+
         return memberships;
     }
     async createOrUpdate(
@@ -116,7 +119,7 @@ export class OrganisationMembershipsService {
         orgUuid: string,
         membershipUuid: string,
         currentUserId: number
-    ): Promise<DeleteResult> {
+    ): Promise<void> {
         // find the org
         const org = await this.orgRepo.findOne({
             where: {
@@ -141,6 +144,10 @@ export class OrganisationMembershipsService {
         if (!membership) {
             throw new Error("Membership not found");
         }
-        return await this.membershipRepo.delete(membership.id);
+        if (membership.invitations) {
+            await this.invitationRepo.softRemove(membership.invitations);
+        }
+
+        await this.membershipRepo.remove(membership);
     }
 }
