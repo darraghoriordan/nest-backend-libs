@@ -10,16 +10,16 @@ import {SubActivationQueueModule} from "./sub-activation-queue.module.js";
 
 @Module({
     imports: [
+        PaymentSessionModule,
+        SubActivationQueueModule,
         TypeOrmModule.forFeature([
             Organisation,
             OrganisationSubscriptionRecord,
         ]),
-        SubActivationQueueModule,
-        PaymentSessionModule,
     ],
     controllers: [
-        OrganisationSubscriptionsController,
         AllSubscriptionsController,
+        OrganisationSubscriptionsController,
     ],
     providers: [OrganisationSubscriptionService],
     exports: [OrganisationSubscriptionService],

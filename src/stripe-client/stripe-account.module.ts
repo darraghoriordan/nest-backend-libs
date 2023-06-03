@@ -20,36 +20,36 @@ import SubscriptionRecordMapper from "./services/subscriptionRecord.mapper.js";
 
 @Module({
     imports: [
-        ConfigModule.forFeature(configVariables),
-        TypeOrmModule.forFeature([StripeCheckoutEvent]),
-        CoreModule,
-        OrganisationSubscriptionsModule,
         BullModule.registerQueueAsync({
             name: "stripe-events",
         }),
+        ConfigModule.forFeature(configVariables),
+        CoreModule,
+        OrganisationSubscriptionsModule,
         PaymentSessionModule,
+        TypeOrmModule.forFeature([StripeCheckoutEvent]),
     ],
     providers: [
-        StripeClientProvider,
-        StripeClientConfigurationService,
-        StripeCheckoutService,
         AuthenticatedStripeCheckoutService,
+        StripeCheckoutService,
+        StripeClientConfigurationService,
+        StripeClientProvider,
         StripeWebhookHandler,
         SubscriptionRecordMapper,
     ],
     exports: [
-        TypeOrmModule,
-        StripeCheckoutService,
         AuthenticatedStripeCheckoutService,
         BullModule,
-        StripeWebhookHandler,
+        StripeCheckoutService,
         StripeClientProvider,
+        StripeWebhookHandler,
         SubscriptionRecordMapper,
+        TypeOrmModule,
     ],
     controllers: [
-        StripeWebhookController,
         StripeCustomerPortalController,
         StripeEventsController,
+        StripeWebhookController,
     ],
 })
 export class StripeAccountModule {}

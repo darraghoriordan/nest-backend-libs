@@ -8,9 +8,9 @@ import {AuthzClientProvider as AuthZClientProvider} from "./AuthzClientProvider.
 @Module({
     imports: [ConfigModule.forFeature(configVariables)],
     providers: [
+        AuthClientConfigurationService,
         AuthZClientProvider,
         AuthZClientService,
-        AuthClientConfigurationService,
     ],
     exports: [AuthZClientService],
 })

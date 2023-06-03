@@ -12,19 +12,19 @@ import {SmtpEmailHandler} from "./smtp-email-handler.js";
 
 @Module({
     imports: [
-        ConfigModule.forFeature(configVariables),
-        TypeOrmModule.forFeature([Email]),
         BullModule.registerQueueAsync({
             name: "smtp-emails",
         }),
+        ConfigModule.forFeature(configVariables),
+        TypeOrmModule.forFeature([Email]),
     ],
     providers: [
+        EmailConfigurationService,
         EmailTransporterProvider,
         SmtpEmailClient,
-        EmailConfigurationService,
         SmtpEmailHandler,
     ],
     controllers: [EmailClientController],
-    exports: [SmtpEmailClient, BullModule],
+    exports: [BullModule, SmtpEmailClient],
 })
 export class SmtpEmailClientModule {}

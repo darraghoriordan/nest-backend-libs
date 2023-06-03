@@ -13,18 +13,18 @@ import {Invitation} from "../invitations/entities/invitation.entity.js";
 
 @Module({
     imports: [
-        ConfigModule.forFeature(configVariables),
-        TypeOrmModule.forFeature([User, Invitation]),
-        PassportModule.register({defaultStrategy: "jwt"}),
         AuthzClientModule,
+        ConfigModule.forFeature(configVariables),
+        PassportModule.register({defaultStrategy: "jwt"}),
+        TypeOrmModule.forFeature([User, Invitation]),
     ],
     providers: [
         ApiKeyStrategy,
-        JwtStrategy,
-        AuthConfigurationService,
-        UserValidationService,
         ApiKeyStrategy,
+        AuthConfigurationService,
+        JwtStrategy,
+        UserValidationService,
     ],
-    exports: [PassportModule, AuthConfigurationService],
+    exports: [AuthConfigurationService, PassportModule],
 })
 export class AuthzModule {}

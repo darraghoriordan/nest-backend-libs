@@ -29,36 +29,7 @@ import type {RedisClientOptions} from "redis";
 
 @Module({
     imports: [
-        ConfigModule.forRoot({cache: true}),
-        CacheModule.registerAsync<RedisClientOptions>({
-            imports: [CoreConfigModule],
-            useFactory: async (configService: CoreConfigurationService) => {
-                return {
-                    store: await redisStore({
-                        url: configService.bullQueueHost || "should-throw",
-                        ttl: 10_000,
-                    }),
-                };
-            },
-            isGlobal: true,
-            inject: [CoreConfigurationService],
-        }),
-        LoggerModule.forRootAsync({
-            imports: [LoggingConfigModule],
-            inject: [LoggingConfigurationService],
-            // eslint-disable-next-line @typescript-eslint/require-await
-            useFactory: async (config: LoggingConfigurationService) => {
-                return {
-                    pinoHttp: {
-                        level: config.minLevel,
-                        transport: config.usePrettyLogs
-                            ? {target: "pino-pretty"}
-                            : undefined,
-                    },
-                };
-            },
-        }),
-        CoreConfigModule,
+        AuthzModule,
         BullModule.forRootAsync({
             imports: [CoreConfigModule],
 
@@ -82,12 +53,42 @@ import type {RedisClientOptions} from "redis";
             },
             inject: [CoreConfigurationService],
         }),
+        CacheModule.registerAsync<RedisClientOptions>({
+            imports: [CoreConfigModule],
+            useFactory: async (configService: CoreConfigurationService) => {
+                return {
+                    store: await redisStore({
+                        url: configService.bullQueueHost || "should-throw",
+                        ttl: 10_000,
+                    }),
+                };
+            },
+            isGlobal: true,
+            inject: [CoreConfigurationService],
+        }),
+
+        ConfigModule.forRoot({cache: true}),
+        CoreConfigModule,
         HealthModule,
-        AuthzModule,
+        LoggerModule.forRootAsync({
+            imports: [LoggingConfigModule],
+            inject: [LoggingConfigurationService],
+            // eslint-disable-next-line @typescript-eslint/require-await
+            useFactory: async (config: LoggingConfigurationService) => {
+                return {
+                    pinoHttp: {
+                        level: config.minLevel,
+                        transport: config.usePrettyLogs
+                            ? {target: "pino-pretty"}
+                            : undefined,
+                    },
+                };
+            },
+        }),
     ],
     controllers: [AppController],
     providers: [AppService, SwaggerGen],
-    exports: [SwaggerGen, BullModule, LoggerModule, AuthzModule, CacheModule],
+    exports: [AuthzModule, BullModule, CacheModule, LoggerModule, SwaggerGen],
 })
 export class CoreModule {
     public static initApplication(

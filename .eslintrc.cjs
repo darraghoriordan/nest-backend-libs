@@ -68,6 +68,7 @@ module.exports = {
             "error",
             {allowWholeFile: true},
         ],
+        "@darraghor/nestjs-typed/sort-module-metadata-arrays": ["error"],
         "@darraghor/nestjs-typed/injectable-should-be-provided": [
             "error",
             {

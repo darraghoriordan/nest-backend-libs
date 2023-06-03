@@ -14,12 +14,12 @@ import {User} from "../user/entities/user.entity.js";
 @Module({
     imports: [
         ConfigModule.forFeature(configVariables),
-        TypeOrmModule.forFeature([OrganisationMembership, User, Invitation]),
-        SmtpEmailClientModule,
         OrganisationModule,
+        SmtpEmailClientModule,
+        TypeOrmModule.forFeature([OrganisationMembership, User, Invitation]),
     ],
     controllers: [InvitationController],
-    providers: [InvitationService, InvitationsConfigurationService],
+    providers: [InvitationsConfigurationService, InvitationService],
     exports: [InvitationService],
 })
 export class InvitationModule {}

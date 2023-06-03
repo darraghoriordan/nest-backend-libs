@@ -11,7 +11,7 @@ services:
             - ${APP_POSTGRES_PORT}:5432
         volumes:
             - ./infrastructure/database-initialisation:/docker-entrypoint-initdb.d
-            - ./.docker-compose/.persist/postgres:/var/lib/postgresql/data
+            - ./.docker-compose/.persistence-local/postgres:/var/lib/postgresql/data
         environment:
             - POSTGRES_DB=${APP_POSTGRES_DATABASE}
             - POSTGRES_SCHEMA_NAME=${APP_POSTGRES_SCHEMA}

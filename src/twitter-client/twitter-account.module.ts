@@ -9,8 +9,8 @@ import {TwitterClientProvider} from "./TwitterClientProvider.js";
 @Module({
     imports: [ConfigModule.forFeature(configVariables)],
     providers: [
-        TwitterClientProvider,
         TwitterClientConfigurationService,
+        TwitterClientProvider,
         TwitterClientService,
     ],
     exports: [TwitterClientService],

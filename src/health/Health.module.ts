@@ -4,7 +4,7 @@ import {TerminusModule} from "@nestjs/terminus";
 import {HealthController} from "./Health.controller.js";
 
 @Module({
-    imports: [TerminusModule, HttpModule],
+    imports: [HttpModule, TerminusModule],
     controllers: [HealthController],
 })
 export class HealthModule {}
