@@ -4,7 +4,6 @@
 import "reflect-metadata";
 import helmet from "helmet";
 import {
-    CacheModule,
     ClassSerializerInterceptor,
     INestApplication,
     Module,
@@ -26,6 +25,7 @@ import {LoggingConfigurationService} from "../logger/LoggingConfigurationService
 import {AuthzModule} from "../authorization/authz.module.js";
 import {redisStore} from "cache-manager-redis-yet";
 import type {RedisClientOptions} from "redis";
+import {CacheModule} from "@nestjs/cache-manager";
 
 @Module({
     imports: [
