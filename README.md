@@ -1,8 +1,33 @@
 # nest-backend-libs
 
-A collection of nest modules for building backends faster
+Nest backend libraries is a set of NestJS modules that accelerate product builds with the NestJS framework.
 
-## Stripe Module
+This is the code that powers the backend for [Miller Start website](https://usemiller.dev) and some other apps I run.
+
+You can see how this library is used in a NestJS application on GitHub as [use-miller](https://github.com/darraghoriordan/use-miller).
+
+## Modules used in most applications
+
+The library includes the following modules that can be imported into your NestJS application. They are mostly dependant on each other so you should import them all. But they are things that are common to most applications so it makes sense to have them together in this library if you use this stack.
+
+-   Authorization
+-   Auth0 for authentication
+-   Configuration
+-   Postgres + typeorm
+-   SQLite + typeorm
+-   health checks
+-   invitations
+-   logging
+-   organisations
+-   subscriptions
+-   payments (Stripe but should work with any)
+-   CLI (e.g. for running stable diffusion)
+
+## Modules with no dependencies
+
+-   Open API
+
+## Stripe Module Notes
 
 A module for integrating stripe into your nest application.
 
