@@ -3892,10 +3892,10 @@ eslint-plugin-promise@6.1.1:
   resolved "https://registry.yarnpkg.com/eslint-plugin-promise/-/eslint-plugin-promise-6.1.1.tgz#269a3e2772f62875661220631bd4dafcb4083816"
   integrity sha512-tjqWDwVZQo7UIPMeDReOpUgHCmCiH+ePnVT+5zVapL0uuHnegBUs2smM13CzOs2Xb5+MHMRFTs9v24yjba4Oig==
 
-eslint-plugin-sonarjs@0.19.0:
-  version "0.19.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-sonarjs/-/eslint-plugin-sonarjs-0.19.0.tgz#6654bc1c6d24c2183891b8bfe1175004dbba1e3c"
-  integrity sha512-6+s5oNk5TFtVlbRxqZN7FIGmjdPCYQKaTzFPmqieCmsU1kBYDzndTeQav0xtQNwZJWu5awWfTGe8Srq9xFOGnw==
+eslint-plugin-sonarjs@0.20.0:
+  version "0.20.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-sonarjs/-/eslint-plugin-sonarjs-0.20.0.tgz#215529e6e89c5c9b5cb6af9e7ef9a1ce45c53bb0"
+  integrity sha512-BRhZ7BY/oTr6DDaxvx58ReTg7R+J8T+Y2ZVGgShgpml25IHBTIG7EudUtHuJD1zhtMgUEt59x3VNvUQRo2LV6w==
 
 eslint-plugin-unicorn@48.0.1:
   version "48.0.1"
@@ -5832,10 +5832,10 @@ kleur@^3.0.3:
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
 
-knip@2.17.3:
-  version "2.17.3"
-  resolved "https://registry.yarnpkg.com/knip/-/knip-2.17.3.tgz#9f28bb16010ef9c4db6f94665eaa47246a68371b"
-  integrity sha512-yYz3svML67eDMk+JP4kjAT5PFgwiBExPYRTxLc3EyCyzjyso4JqMqXRGBzn2Xikm6Ud8JRBYmCHB4w1eVZFDSA==
+knip@2.19.0:
+  version "2.19.0"
+  resolved "https://registry.yarnpkg.com/knip/-/knip-2.19.0.tgz#172dca845312400063e66309708db26fae08b542"
+  integrity sha512-6o85NZvCFLJ1Fr0Qaa9WUOzcNWxr5ORB0ec60saBNcXigoSBwoIkViq+Ltp+x1+Ti4eolumV9Kwp5qUcVqK1WQ==
   dependencies:
     "@ericcornelissen/bash-parser" "^0.5.2"
     "@npmcli/map-workspaces" "^3.0.4"
@@ -7479,10 +7479,10 @@ pino-abstract-transport@^1.0.0, pino-abstract-transport@v1.0.0:
     readable-stream "^4.0.0"
     split2 "^4.0.0"
 
-pino-http@8.3.3:
-  version "8.3.3"
-  resolved "https://registry.yarnpkg.com/pino-http/-/pino-http-8.3.3.tgz#2b140e734bfc6babe0df272a43bb8f36f2b525c0"
-  integrity sha512-p4umsNIXXVu95HD2C8wie/vXH7db5iGRpc+yj1/ZQ3sRtTQLXNjoS6Be5+eI+rQbqCRxen/7k/KSN+qiZubGDw==
+pino-http@8.4.0:
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/pino-http/-/pino-http-8.4.0.tgz#ebfd601f7244d7bd9ead578843025505da4e3f56"
+  integrity sha512-9I1eRLxsujQJwLQTrHBU0wDlwnry2HzV2TlDwAsmZ9nT3Y2NQBLrz+DYp73L4i11vl/eudnFT8Eg0Kp62tMwEw==
   dependencies:
     get-caller-file "^2.0.5"
     pino "^8.0.0"
@@ -8656,10 +8656,10 @@ strip-json-comments@~2.0.1:
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
   integrity sha512-4gB8na07fecVVkOI6Rs4e7T6NOTki5EmL7TUduTs6bu3EdnSycntVJ4re8kgZA+wx9IueI2Y11bfbgwtzuE0KQ==
 
-stripe@12.16.0:
-  version "12.16.0"
-  resolved "https://registry.yarnpkg.com/stripe/-/stripe-12.16.0.tgz#a52f3ab9480b10435dd1e9792820c65bfd406506"
-  integrity sha512-iwVkyZsS9KsWmEVK5qnbPeX/m94+Z3fXIRU7Q4iNBS2Zuj1spGIjLKMN3tejUs/ZZ2o7dCYFJvVdC2aZMYo8GA==
+stripe@12.17.0:
+  version "12.17.0"
+  resolved "https://registry.yarnpkg.com/stripe/-/stripe-12.17.0.tgz#4036240ca1c318e4e4a18bd2b04b9478bc6f8191"
+  integrity sha512-f8GhS2LQlGCDZ1Akyu57txgSWyLUEYf0yZYS7x2aTKJXVua5lLmmgfJFFYHfTgEdS5P6rurf0Ghcf/HVLggv5g==
   dependencies:
     "@types/node" ">=8.1.0"
     qs "^6.11.0"
