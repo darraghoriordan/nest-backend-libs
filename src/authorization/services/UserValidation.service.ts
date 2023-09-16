@@ -8,7 +8,6 @@ import {
 import {InjectRepository} from "@nestjs/typeorm";
 import {IsNull, MoreThan, Repository} from "typeorm";
 import {AuthZClientService} from "../../authzclient/authz.service.js";
-import {UserProfile} from "../../authzclient/UserProfile.dto.js";
 import {Invitation} from "../../invitations/entities/invitation.entity.js";
 import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity.js";
 import {Roles} from "../../organisation/dto/RolesEnum.js";
@@ -18,6 +17,7 @@ import {User} from "../../user/entities/user.entity.js";
 import {AuthConfigurationService} from "../config/AuthConfigurationService.js";
 import {AccessToken} from "../models/AccessToken.js";
 import {RequestUser} from "../models/RequestWithUser.js";
+import {UserInfoResponse} from "auth0";
 
 @Injectable()
 export class UserValidationService {
@@ -31,18 +31,20 @@ export class UserValidationService {
         private readonly config: AuthConfigurationService
     ) {}
 
-    async getAuth0User(rawAccessToken: string): Promise<UserProfile> {
+    async getAuth0User(rawAccessToken: string): Promise<UserInfoResponse> {
         const result = await this.authzClient.getUser(rawAccessToken);
 
         if (result === undefined) {
             throw new Error("Error getting user profile from Auth0");
         }
 
-        if (result.email_verified === false) {
-            throw new BadRequestException(
-                "Email not verified. You must verify your email address to use this service."
-            );
-        }
+        // removing this for now because it's not suitable when asking
+        // for payment right away. Might work better for fremium?
+        // if (result.email_verified === false) {
+        //     throw new BadRequestException(
+        //         "Email not verified. You must verify your email address to use this service."
+        //     );
+        // }
 
         return result;
     }
@@ -205,7 +207,7 @@ export class UserValidationService {
         invitation.acceptedOn = new Date();
         // set the user's membership to member
         const memberRole = invitation.organisationMembership.roles?.find(
-            (r) => r.name === Roles.invited
+            (r) => r.name === Roles.invited.toString()
         );
         if (!memberRole) {
             throw new Error("Invited role not found for member");
@@ -277,7 +279,7 @@ export class UserValidationService {
         return userForRequest;
     }
 
-    mapAuthZUserToEntity(user: User, auth0User: UserProfile) {
+    mapAuthZUserToEntity(user: User, auth0User: UserInfoResponse) {
         user.auth0UserId = auth0User.sub;
         user.blocked = false;
         user.email = auth0User.email;

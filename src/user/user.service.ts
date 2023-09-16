@@ -61,10 +61,11 @@ export class UserService {
             },
         });
         if (
-            user.memberships?.some((m) =>
-                currentUser.memberships?.some(
-                    (cu) => cu.organisationId === m.organisationId
-                )
+            user.memberships?.some(
+                (m) =>
+                    currentUser.memberships?.some(
+                        (cu) => cu.organisationId === m.organisationId
+                    )
             )
         ) {
             return user;
@@ -125,8 +126,9 @@ export class UserService {
         if (!currentUser.permissions.includes("modify:all")) {
             this.isCurrentUserGuard(uuid, currentUser.uuid, "update");
             if (
-                user.memberships?.some((m) =>
-                    m.roles?.some((r) => r.name === Roles.owner)
+                user.memberships?.some(
+                    (m) =>
+                        m.roles?.some((r) => r.name === Roles.owner.toString())
                 )
             ) {
                 throw new Error(

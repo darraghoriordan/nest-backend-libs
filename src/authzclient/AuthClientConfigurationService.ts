@@ -15,4 +15,10 @@ export class AuthClientConfigurationService extends ValidatedConfigurationServic
     get auth0Domain(): string {
         return this.configService.get<string>("authclient.auth0Domain")!;
     }
+
+    @IsDefined()
+    @IsString()
+    get auth0ClientId(): string {
+        return this.configService.get<string>("authclient.auth0ClientId")!;
+    }
 }
