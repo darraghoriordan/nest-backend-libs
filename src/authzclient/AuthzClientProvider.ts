@@ -1,5 +1,4 @@
-import pkg from "auth0";
-const {AuthenticationClient} = pkg;
+import {AuthenticationClient} from "auth0";
 
 import {AuthClientConfigurationService} from "./AuthClientConfigurationService.js";
 import type {AuthenticationClientOptions} from "auth0";
