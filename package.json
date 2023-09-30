@@ -102,7 +102,7 @@
         "pino-pretty": "10.2.0",
         "redis": "4.6.10",
         "reflect-metadata": "0.1.13",
-        "rimraf": "5.0.4",
+        "rimraf": "5.0.5",
         "rxjs": "7.8.1",
         "stripe": "13.6.0",
         "swagger-ui-express": "5.0.0",
