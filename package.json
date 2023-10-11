@@ -10,7 +10,7 @@
         "url": "https://github.com/darraghoriordan/nest-backend-libs"
     },
     "engines": {
-        "node": ">=v18.17.1"
+        "node": ">=v18.18"
     },
     "files": [
         "dist",
