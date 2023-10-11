@@ -4,6 +4,7 @@ import {AuthZClientService} from "./authz.service.js";
 import configVariables from "./AuthClientConfigurationVariables.js";
 import {ConfigModule} from "@nestjs/config";
 import {AuthzClientProvider as AuthZClientProvider} from "./AuthzClientProvider.js";
+import {AuthzUserInfoProvider} from "./AuthzUserInfoProvider.js";
 
 @Module({
     imports: [ConfigModule.forFeature(configVariables)],
@@ -11,6 +12,7 @@ import {AuthzClientProvider as AuthZClientProvider} from "./AuthzClientProvider.
         AuthClientConfigurationService,
         AuthZClientProvider,
         AuthZClientService,
+        AuthzUserInfoProvider,
     ],
     exports: [AuthZClientService],
 })
