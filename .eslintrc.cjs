@@ -126,6 +126,10 @@ module.exports = {
                 format: ["camelCase"],
             },
             {
+                selector: "import",
+                format: ["camelCase", "PascalCase"],
+            },
+            {
                 selector: "enumMember",
                 format: ["UPPER_CASE"],
             },
