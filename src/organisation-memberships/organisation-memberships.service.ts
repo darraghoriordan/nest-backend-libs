@@ -75,6 +75,7 @@ export class OrganisationMembershipsService {
             // add all roles to the existing membership
             for (const role of createOmDto.roles) {
                 const existingRole = existingMembership.roles?.find(
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
                     (r) => r.name === role
                 );
                 if (!existingRole) {
@@ -106,6 +107,7 @@ export class OrganisationMembershipsService {
         const membership = org.memberships?.find(
             (m) =>
                 m.user.id === currentUserId &&
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
                 m.roles?.some((r) => r.name === Roles.owner)
         );
         if (!membership) {

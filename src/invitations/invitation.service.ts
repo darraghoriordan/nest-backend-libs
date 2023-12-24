@@ -91,10 +91,12 @@ export class InvitationService {
         });
 
         if (
-            existingMemberships.some((m) =>
-                m.roles?.some(
-                    (r) => r.name === Roles.member || r.name === Roles.owner
-                )
+            existingMemberships.some(
+                (m) =>
+                    m.roles?.some(
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+                        (r) => r.name === Roles.member || r.name === Roles.owner
+                    )
             )
         ) {
             const message =
@@ -146,9 +148,8 @@ export class InvitationService {
         membership.invitations?.push(unsavedInvitation);
         membership.roles = [role];
 
-        const savedMembership = await this.orgMembershipRepository.save(
-            membership
-        );
+        const savedMembership =
+            await this.orgMembershipRepository.save(membership);
         const retrievedMembership = await this.orgMembershipRepository.findOne({
             where: {id: savedMembership.id},
             relations: {
@@ -200,9 +201,8 @@ export class InvitationService {
         // if it gets to here we have a queued invitation
         validInvitation.notificationSent = new Date();
 
-        const savedInvitation = await this.invitationRepository.save(
-            validInvitation
-        );
+        const savedInvitation =
+            await this.invitationRepository.save(validInvitation);
         // we need to return the membership with the invitation
         // torm doesn't like if we just assign and return so get it again
         const fullInvitation = await this.invitationRepository.findOne({
@@ -253,6 +253,7 @@ export class InvitationService {
                 },
             });
         if (
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
             requesterMembership.roles?.some((role) => role.name === Roles.owner)
         ) {
             return;

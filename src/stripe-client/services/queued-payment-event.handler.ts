@@ -74,8 +74,7 @@ export class StripeQueuedEventHandler {
                 // Payment is successful and for example the subscription can be created.
                 // If you support asynchronous payment methods, handle those events in the
                 // checkout.session.async_payment_succeeded webhook.
-                const stripeDataProperty = job.data.data
-                    .object as Stripe.Checkout.Session;
+                const stripeDataProperty = job.data.data.object;
                 if (stripeDataProperty.payment_status === "paid") {
                     // fulfil it
                     const fullSession =
@@ -104,8 +103,7 @@ export class StripeQueuedEventHandler {
             case "checkout.session.async_payment_succeeded": {
                 // Payment link payment is successful for async payment methods. (bank drafts, etc.)
                 // probably not relevant for most people. But if you want to support it, here's how.
-                const stripeDataProperty = job.data.data
-                    .object as Stripe.Checkout.Session;
+                const stripeDataProperty = job.data.data.object;
                 const fullSession =
                     await this.stripe.checkout.sessions.retrieve(
                         stripeDataProperty.id,
@@ -122,17 +120,15 @@ export class StripeQueuedEventHandler {
                         fullSession
                     );
 
-                const result = await this.organisationSubscriptionService.save(
-                    subs
-                );
+                const result =
+                    await this.organisationSubscriptionService.save(subs);
                 this.logger.log("Async payment succeeded", {result});
                 return;
             }
             case "checkout.session.async_payment_failed": {
                 // Payment link payment is NOT successful for async payment methods. (bank drafts, etc.)
                 // You can use this webhook to notify the user that their payment was not successful.
-                const stripeDataProperty = job.data.data
-                    .object as Stripe.Checkout.Session;
+                const stripeDataProperty = job.data.data.object;
                 this.logger.error(
                     `Async payment failed for session ${stripeDataProperty.id}`
                 );
@@ -168,8 +164,7 @@ export class StripeQueuedEventHandler {
 
                 // The subscription becomes past_due. Notify your customer and send them to the
                 // customer portal to update their payment information.
-                const stripeDataProperty = job.data.data
-                    .object as Stripe.Invoice;
+                const stripeDataProperty = job.data.data.object;
                 this.logger.error("Invoice payment failed", {
                     stripeDataProperty,
                 });
@@ -189,8 +184,7 @@ export class StripeQueuedEventHandler {
             case "customer.subscription.deleted": {
                 // 	Sent when a customer’s subscription ends.
 
-                const stripeDataProperty = job.data.data
-                    .object as Stripe.Subscription;
+                const stripeDataProperty = job.data.data.object;
                 const fullSession = await this.stripe.subscriptions.retrieve(
                     stripeDataProperty.id,
                     {
@@ -207,9 +201,8 @@ export class StripeQueuedEventHandler {
                     sub.validUntil = new Date();
                 }
 
-                const result = await this.organisationSubscriptionService.save(
-                    subs
-                );
+                const result =
+                    await this.organisationSubscriptionService.save(subs);
                 this.logger.log(
                     "Subscription deleted - validity set to today",
                     {result}
@@ -224,8 +217,7 @@ export class StripeQueuedEventHandler {
                  * For example, adding a coupon, applying a discount,
                  * adding an invoice item, and changing plans all trigger this event.
                  */
-                const stripeDataProperty = job.data.data
-                    .object as Stripe.Subscription;
+                const stripeDataProperty = job.data.data.object;
                 const fullSubscription =
                     await this.stripe.subscriptions.retrieve(
                         stripeDataProperty.id,
@@ -242,9 +234,8 @@ export class StripeQueuedEventHandler {
                     }
                 );
 
-                const result = await this.organisationSubscriptionService.save(
-                    subs
-                );
+                const result =
+                    await this.organisationSubscriptionService.save(subs);
 
                 this.logger.log("Subscription updated", {result});
                 return;
