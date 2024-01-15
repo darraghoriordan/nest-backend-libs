@@ -35,8 +35,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         request: Request,
         payload: AccessToken
     ): Promise<RequestUser | undefined> {
-        const rawAccessToken =
-            ExtractJwt.fromAuthHeaderAsBearerToken()(request);
+        const rawAccessToken = ExtractJwt.fromAuthHeaderAsBearerToken()(
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            request as any
+        );
         if (rawAccessToken === undefined || rawAccessToken === null) {
             this.logger.error("Couldn't log the raw access token");
             return;
