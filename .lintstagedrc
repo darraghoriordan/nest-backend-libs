@@ -1,6 +1,3 @@
 {
-    "*.ts": [
-        "prettier --parser typescript --write",
-        "npx eslint -c .eslintrc.cjs --ext .ts --max-warnings 0"
-    ]
+    "*.ts": ["prettier --parser typescript --write", "pnpm run lintone"]
 }
