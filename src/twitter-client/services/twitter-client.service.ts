@@ -26,7 +26,12 @@ export class TwitterClientService {
 
     public async sendTweet(
         message: string,
-        mediaIds?: string[]
+        mediaIds?:
+            | [string]
+            | [string, string]
+            | [string, string, string]
+            | [string, string, string, string]
+            | undefined
     ): Promise<void> {
         await this.clientInstance.v2.tweet(message, {
             media: {media_ids: mediaIds},
