@@ -10,7 +10,7 @@ import {ClaimsAuthorisationGuard} from "../authorization/guards/ClaimsAuthorisat
 import {DefaultAuthGuard} from "../authorization/guards/DefaultAuthGuard.js";
 import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
 import {MandatoryUserClaims} from "../index.js";
-import {AppService} from "./app.service.js";
+import {AppService, HealthResponse} from "./app.service.js";
 
 @Controller()
 @ApiTags("Application Support")
@@ -19,16 +19,16 @@ export class AppController {
     constructor(private readonly appService: AppService) {}
 
     @Get()
-    @ApiOkResponse({type: String})
-    getHello(): string {
+    @ApiOkResponse({type: HealthResponse})
+    getHello() {
         return this.appService.getHello();
     }
 
     @UseGuards(DefaultAuthGuard)
     @ApiBearerAuth()
     @Get("is-authorised")
-    @ApiOkResponse({type: String})
-    getHelloAuthorized(@Request() request: RequestWithUser): string {
+    @ApiOkResponse({type: HealthResponse})
+    getHelloAuthorized(@Request() request: RequestWithUser) {
         const testString = this.appService.getHello();
         const stringifyUser = JSON.stringify(request.user);
         this.logger.log("request user", stringifyUser);
@@ -40,8 +40,8 @@ export class AppController {
     @MandatoryUserClaims("read:all")
     @ApiOperation({tags: ["SuperPower"]})
     @Get("is-super-admin")
-    @ApiOkResponse({type: String})
-    getHelloSuperAdmin(@Request() request: RequestWithUser): string {
+    @ApiOkResponse({type: HealthResponse})
+    getHelloSuperAdmin(@Request() request: RequestWithUser) {
         const testString = this.appService.getHello();
         const stringifyUser = JSON.stringify(request.user);
         this.logger.log("request user", stringifyUser);
