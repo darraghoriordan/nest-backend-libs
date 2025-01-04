@@ -40,7 +40,7 @@ export {SubActivationQueueModule} from "./organisation-subscriptions/sub-activat
 export type {RequestUser} from "./authorization/models/RequestWithUser.js";
 export {SuperPowersModule} from "./super-powers/super-powers.module.js";
 export {OrganisationModule} from "./organisation/organisation.module.js";
-
+export {BooleanResult} from "./root-app/dtos/boolean-result.js";
 // org subscriptions
 export {OrganisationMembershipsService} from "./organisation-memberships/organisation-memberships.service.js";
 export {OrganisationMembershipsModule} from "./organisation-memberships/organisation-memberships.module.js";

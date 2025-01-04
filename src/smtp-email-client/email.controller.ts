@@ -10,7 +10,7 @@ import {Queue} from "bull";
 import {ClaimsAuthorisationGuard} from "../authorization/guards/ClaimsAuthorisationGuard.js";
 import {DefaultAuthGuard} from "../authorization/guards/DefaultAuthGuard.js";
 import {MandatoryUserClaims} from "../authorization/guards/MandatoryUserClaims.decorator.js";
-import {BooleanResult} from "../root-app/models/boolean-result.js";
+import {BooleanResult} from "../root-app/dtos/boolean-result.js";
 import {QueueItemDto} from "../root-app/models/QueueItemDto.js";
 import {SmtpEmailClient} from "./email-client.service.js";
 

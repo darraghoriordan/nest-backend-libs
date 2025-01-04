@@ -14,7 +14,7 @@ import {ApiBearerAuth, ApiOkResponse, ApiTags} from "@nestjs/swagger";
 import {Organisation} from "./entities/organisation.entity.js";
 import {AuthGuard} from "@nestjs/passport";
 import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
-import {BooleanResult} from "../root-app/models/boolean-result.js";
+import {BooleanResult} from "../root-app/dtos/boolean-result.js";
 
 @UseGuards(AuthGuard("jwt"))
 @ApiBearerAuth()

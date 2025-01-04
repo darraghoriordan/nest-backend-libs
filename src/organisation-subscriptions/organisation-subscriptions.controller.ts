@@ -19,7 +19,7 @@ import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
 import {OrganisationSubscriptionRecord} from "./entities/organisation-subscription.entity.js";
 import {OrganisationSubscriptionService} from "./organisation-subscriptions.service.js";
 import {SaveOrganisationSubscriptionRecordDto} from "./models/fulfillSubscriptionDto.js";
-import {BooleanResult} from "../root-app/models/boolean-result.js";
+import {BooleanResult} from "../root-app/dtos/boolean-result.js";
 import {MandatoryUserClaims} from "../authorization/guards/MandatoryUserClaims.decorator.js";
 import {DefaultAuthGuard} from "../authorization/guards/DefaultAuthGuard.js";
 import {ClaimsAuthorisationGuard} from "../authorization/guards/ClaimsAuthorisationGuard.js";

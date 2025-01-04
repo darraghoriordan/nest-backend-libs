@@ -16,7 +16,7 @@ import {
     ApiTags,
 } from "@nestjs/swagger";
 import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
-import {BooleanResult} from "../root-app/models/boolean-result.js";
+import {BooleanResult} from "../root-app/dtos/boolean-result.js";
 import {UserApiKey} from "./userApiKey.entity.js";
 import {UserApiKeyService} from "./user-apikey.service.js";
 import CreateApiKeyDto from "./CreateApiKeyDto.js";

@@ -19,7 +19,7 @@ import {
 } from "@nestjs/swagger";
 import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
 import {isUUID} from "class-validator";
-import {BooleanResult} from "../root-app/models/boolean-result.js";
+import {BooleanResult} from "../root-app/dtos/boolean-result.js";
 import {UserDto} from "./dto/userResponseDto.js";
 import {User} from "./entities/user.entity.js";
 import {DefaultAuthGuard} from "../authorization/guards/DefaultAuthGuard.js";

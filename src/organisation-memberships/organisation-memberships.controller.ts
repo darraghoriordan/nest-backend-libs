@@ -15,7 +15,7 @@ import {OrganisationMembershipsService} from "./organisation-memberships.service
 import {Organisation} from "../organisation/entities/organisation.entity.js";
 import {CreateUpdateMembershipDto} from "./dtos/create-membership-dto.js";
 import {OrganisationMembership} from "./entities/organisation-membership.entity.js";
-import {BooleanResult} from "../root-app/models/boolean-result.js";
+import {BooleanResult} from "../root-app/dtos/boolean-result.js";
 
 @UseGuards(AuthGuard("jwt"))
 @ApiBearerAuth()
