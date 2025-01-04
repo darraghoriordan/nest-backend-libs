@@ -25,13 +25,13 @@ export class OrganisationSubscriptionService {
     private notFoundMessage =
         "Organisation not found or you are not owner of it";
     async findAllForOwnerOfOrg(
-        orgId: number,
+        orgUuid: string,
         currentUserId: number
     ): Promise<OrganisationSubscriptionRecord[]> {
         // find the org if the user is owner
         const org = await this.orgRepo.findOne({
             where: {
-                id: orgId,
+                uuid: orgUuid,
                 memberships: {
                     userId: currentUserId,
                     roles: {
@@ -96,7 +96,7 @@ export class OrganisationSubscriptionService {
     // eslint-disable-next-line sonarjs/cognitive-complexity
     async save(
         subRecordDtoCollection: SaveOrganisationSubscriptionRecordDto[],
-        orgId?: number
+        orgUuid?: string
     ): Promise<OrganisationSubscriptionRecord[]> {
         const results: OrganisationSubscriptionRecord[] = [];
         for (const subRecord of subRecordDtoCollection) {
@@ -112,7 +112,7 @@ export class OrganisationSubscriptionService {
                 // if no existing subscription then create a new one, get the org
                 let org: Organisation | undefined;
 
-                if (orgId === undefined) {
+                if (orgUuid === undefined) {
                     if (!subRecord.millerPaymentReferenceUuid) {
                         this.logger.error(
                             "No organisation uuid or payment reference uuid provided. Cannot match this payment to a customer",
@@ -138,7 +138,7 @@ export class OrganisationSubscriptionService {
                     org =
                         (await this.orgRepo.findOne({
                             where: {
-                                id: orgId,
+                                uuid: orgUuid,
                             },
                         })) || undefined;
                 }
@@ -177,9 +177,8 @@ export class OrganisationSubscriptionService {
                 subRecord.productDisplayName;
             existingSubscription.internalSku = subRecord.internalSku;
 
-            const result = await this.orgSubRepository.save(
-                existingSubscription
-            );
+            const result =
+                await this.orgSubRepository.save(existingSubscription);
             results.push(result);
             if (shouldRaiseEvent) {
                 await this.queue.add(
@@ -199,10 +198,19 @@ export class OrganisationSubscriptionService {
         return results;
     }
 
-    async delete(subUuid: string): Promise<boolean> {
+    async delete({
+        subScriptionUuid,
+        orgUuId,
+    }: {
+        orgUuId: string;
+        subScriptionUuid: string;
+    }): Promise<boolean> {
         const result = await this.orgSubRepository.findOne({
             where: {
-                uuid: subUuid,
+                uuid: subScriptionUuid,
+                organisation: {
+                    uuid: orgUuId,
+                },
             },
             relations: {
                 organisation: true,

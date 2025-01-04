@@ -26,7 +26,7 @@ import {ClaimsAuthorisationGuard} from "../authorization/guards/ClaimsAuthorisat
 
 @ApiBearerAuth()
 @UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
-@Controller("organisation/:orgId/subscriptions")
+@Controller("organisation/:orgUuid/subscriptions")
 @ApiTags("Organisation Subscriptions")
 export class OrganisationSubscriptionsController {
     constructor(private readonly osrService: OrganisationSubscriptionService) {}
@@ -34,10 +34,10 @@ export class OrganisationSubscriptionsController {
     @Get()
     @ApiOkResponse({type: [OrganisationSubscriptionRecord]})
     async findAll(
-        @Param("orgId") orgId: number,
+        @Param("orgUuid") orgUuid: string,
         @Request() request: RequestWithUser
     ): Promise<OrganisationSubscriptionRecord[]> {
-        return this.osrService.findAllForOwnerOfOrg(orgId, request.user.id);
+        return this.osrService.findAllForOwnerOfOrg(orgUuid, request.user.id);
     }
 
     @MandatoryUserClaims("modify:all")
@@ -45,10 +45,10 @@ export class OrganisationSubscriptionsController {
     @Post()
     @ApiOkResponse({type: [OrganisationSubscriptionRecord]})
     async addSubscription(
-        @Param("orgId") orgId: number,
+        @Param("orgUuid") orgUuid: string,
         @Body() body: SaveOrganisationSubscriptionRecordDto
     ): Promise<OrganisationSubscriptionRecord[]> {
-        return this.osrService.save([body], orgId);
+        return this.osrService.save([body], orgUuid);
     }
 
     @MandatoryUserClaims("modify:all")
@@ -56,10 +56,13 @@ export class OrganisationSubscriptionsController {
     @Delete(":uuid")
     @ApiOkResponse({type: BooleanResult})
     async deleteSubscription(
-        @Param("orgId") orgId: number,
+        @Param("orgUuid") orgUuId: string,
         @Param("uuid") uuid: string
     ): Promise<BooleanResult> {
-        const isDeleted = await this.osrService.delete(uuid);
+        const isDeleted = await this.osrService.delete({
+            orgUuId,
+            subScriptionUuid: uuid,
+        });
         return {result: isDeleted};
     }
 }
