@@ -4,6 +4,7 @@
 import "reflect-metadata";
 import helmet from "helmet";
 import {
+    BadRequestException,
     ClassSerializerInterceptor,
     INestApplication,
     Module,
@@ -121,6 +122,12 @@ export class CoreModule {
                         whitelist: true,
                         forbidNonWhitelisted: true,
                         forbidUnknownValues: true,
+                        exceptionFactory: (e) => {
+                            loggerService.error(e);
+                            throw new BadRequestException(
+                                "Bad request, please check your input"
+                            );
+                        },
                     })
                 );
                 app.useGlobalInterceptors(
