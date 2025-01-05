@@ -146,10 +146,11 @@ export class OrganisationMembershipsService {
         if (!membership) {
             throw new Error("Membership not found");
         }
+        // cascade to invitations
         if (membership.invitations) {
             await this.invitationRepo.softRemove(membership.invitations);
         }
 
-        await this.membershipRepo.remove(membership);
+        await this.membershipRepo.softRemove(membership);
     }
 }
