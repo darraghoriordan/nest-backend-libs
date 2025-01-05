@@ -4,6 +4,7 @@ import {Type} from "class-transformer";
 import {
     Column,
     CreateDateColumn,
+    DeleteDateColumn,
     Entity,
     Generated,
     Index,
@@ -81,6 +82,10 @@ export class OrganisationMembership {
     @CreateDateColumn()
     @ApiProperty()
     createdDate!: Date;
+
+    @DeleteDateColumn()
+    @ApiPropertyOptional()
+    deletedDate?: Date;
 
     @UpdateDateColumn()
     @ApiProperty()
