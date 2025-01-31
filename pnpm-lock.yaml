@@ -120,8 +120,8 @@ importers:
         specifier: 7.8.1
         version: 7.8.1
       stripe:
-        specifier: 17.5.0
-        version: 17.5.0
+        specifier: 17.6.0
+        version: 17.6.0
       swagger-ui-express:
         specifier: 5.0.1
         version: 5.0.1(express@4.21.2)
@@ -5175,8 +5175,8 @@ packages:
     resolution: {integrity: sha512-0fk9zBqO67Nq5M/m45qHCJxylV/DhBlIOVExqgOMiCCrzrhU6tCibRXNqE3jwJLftzE9SNuZtYbpzcO+i9FiKw==}
     engines: {node: '>=14.16'}
 
-  stripe@17.5.0:
-    resolution: {integrity: sha512-kcyeAkDFjGsVl17FqnG7q/+xIjt0ZjOo9Dm+q8deAvs2Xe4iAHrhxyoP4etUVFc+/LZJANjIPVR+ZOnt9hr/Ug==}
+  stripe@17.6.0:
+    resolution: {integrity: sha512-+HB6+SManp0gSRB0dlPmXO+io18krlAe0uimXhhIkL/RG/VIRigkfoM3QDJPkqbuSW0XsA6uzsivNCJU1ELEDA==}
     engines: {node: '>=12.*'}
 
   summary@2.1.0:
@@ -11485,7 +11485,7 @@ snapshots:
 
   strip-json-comments@5.0.1: {}
 
-  stripe@17.5.0:
+  stripe@17.6.0:
     dependencies:
       '@types/node': 22.10.2
       qs: 6.13.1
