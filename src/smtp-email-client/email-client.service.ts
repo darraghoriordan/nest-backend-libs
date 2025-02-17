@@ -21,7 +21,6 @@ export class SmtpEmailClient {
     ) {}
 
     public async verify() {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call
         await this.smtpEmailTransporter.verify();
     }
 
@@ -45,9 +44,8 @@ export class SmtpEmailClient {
         ].join(",");
         const email = this.emailRepository.create();
 
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         email.htmlBody = htmlBody;
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
         email.textBody = plainTextBody;
         email.bccTo = serialisedBccEmailAddresses;
         email.to = serialisedToEmailAddresses;

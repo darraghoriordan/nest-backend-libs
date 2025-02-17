@@ -13,11 +13,11 @@ export class QueueItemDto {
     @ApiProperty({type: Date})
     @Allow()
     queueDateLocal!: Date;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
     @ApiProperty()
     @IsString()
     result!: string;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
     @ApiProperty()
     @IsString()
     data!: string;

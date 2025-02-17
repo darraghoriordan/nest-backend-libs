@@ -1,6 +1,6 @@
 import {Injectable, Logger} from "@nestjs/common";
 import {exec} from "child_process";
-// eslint-disable-next-line unicorn/import-style
+
 import util from "util";
 
 const execPromise = util.promisify(exec);

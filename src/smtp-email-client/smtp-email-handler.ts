@@ -27,23 +27,21 @@ export class SmtpEmailHandler {
     ) {}
 
     @OnQueueFailed()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError(job: Job<Email>, error: any) {
         this.logger.error(
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unsafe-member-access
-            `Failed job ${job.id} of type ${job.name}: ${error.message as any}`,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            `Failed job ${job.id} of type ${job.name}: ${error.message as string}`,
+
             error.stack
         );
     }
 
     @OnQueueActive()
-    // eslint-disable-next-line sonarjs/no-identical-functions
     onActive(job: Job<Email>) {
         this.logger.log(`Active job ${job.id} of type ${job.name}`, job.data);
     }
 
     @OnQueueCompleted()
-    // eslint-disable-next-line sonarjs/no-identical-functions
     onComplete(job: Job<Email>) {
         this.logger.log(
             `Completed job ${job.id} of type ${job.name}`,
@@ -51,7 +49,6 @@ export class SmtpEmailHandler {
         );
     }
 
-    // eslint-disable-next-line @typescript-eslint/require-await
     @Process()
     public async handleEvent(job: Job<Email>): Promise<void> {
         const emailData = job.data;
@@ -66,7 +63,7 @@ export class SmtpEmailHandler {
         }
 
         this.logger.log(`Sending an email. Email id: ${savedEmail.id}`);
-        emailData;
+
         const sendEmailBody = {
             from: `"${this.config.senderName}" <${this.config.senderEmailAddress}>`,
             to: emailData.to,
@@ -79,7 +76,7 @@ export class SmtpEmailHandler {
         if (emailData.textBody) {
             sendEmailBody.text = emailData.textBody;
         }
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const info = await this.smtpEmailTransporter.sendMail(sendEmailBody);
 
         emailData.sentDate = new Date();

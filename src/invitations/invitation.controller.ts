@@ -29,15 +29,15 @@ export class InvitationController {
     // but invitation work is kicked off by the auth strategy as it
     // tries to resolve the correct user there in the middleware
     // before the request reaches the controller
-    // eslint-disable-next-line @typescript-eslint/require-await
+
     @Post("accept")
     @ApiOkResponse()
-    async accept(
+    accept(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         @Query("invitationId") invitationId: string,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         @Request() request: RequestWithUser
-    ): Promise<boolean> {
+    ): boolean {
         return true;
     }
 
@@ -45,9 +45,8 @@ export class InvitationController {
     @Get(":orgId")
     @ApiOkResponse({type: [Invitation]})
     async getAllForOrg(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         @Param("orgId") orgId: string,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
         @Request() request: RequestWithUser
     ): Promise<Invitation[]> {
         return this.invitationService.getAllForOrg(orgId, request.user);

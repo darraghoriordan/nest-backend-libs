@@ -20,7 +20,6 @@ export class StripeCustomerPortalController {
         type: StripeCustomerPortalResponseDto,
         description: "The URL to the customer portal",
     })
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async createCustomerPortalSession(
         @Request() request: RequestWithUser,
         @Body() body: StripeCustomerPortalRequestDto

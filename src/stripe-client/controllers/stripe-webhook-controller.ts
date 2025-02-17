@@ -36,11 +36,10 @@ export class StripeWebhookController {
         private queue: Queue
     ) {}
 
-    // eslint-disable-next-line @typescript-eslint/require-await
     @Post("webhook-receiver")
     @ApiOkResponse()
     @ApiBadRequestResponse()
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, unicorn/prevent-abbreviations
+    // eslint-disable-next-line unicorn/prevent-abbreviations
     async webhookReceiver(@Req() req: RawBodyRequest<ExpressRequest>) {
         return this.stripeWebhookService.handleWebhook(req);
     }
@@ -79,7 +78,6 @@ export class StripeWebhookController {
     @ApiOperation({tags: ["SuperPower"]})
     @MandatoryUserClaims("read:all")
     @Get("peekfailedjobs")
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     @ApiOkResponse({type: [QueueItemDto]})
     async peekFailedQueueJobs(): Promise<QueueItemDto[]> {
         const jobs = await this.queue.getJobs(["delayed", "failed"]);

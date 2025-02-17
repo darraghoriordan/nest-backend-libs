@@ -32,7 +32,6 @@ export class OrganisationController {
         return this.organisationService.findOne(uuid, request.user.id);
     }
 
-    // eslint-disable-next-line @typescript-eslint/require-await
     @Get()
     @ApiOkResponse({type: Organisation, isArray: true})
     async findAllForUser(

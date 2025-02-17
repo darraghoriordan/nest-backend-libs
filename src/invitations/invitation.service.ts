@@ -91,12 +91,11 @@ export class InvitationService {
         });
 
         if (
-            existingMemberships.some(
-                (m) =>
-                    m.roles?.some(
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-                        (r) => r.name === Roles.member || r.name === Roles.owner
-                    )
+            existingMemberships.some((m) =>
+                m.roles?.some(
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+                    (r) => r.name === Roles.member || r.name === Roles.owner
+                )
             )
         ) {
             const message =
@@ -106,13 +105,10 @@ export class InvitationService {
         }
 
         if (
-            existingMemberships.some(
-                (m) =>
-                    m.invitations &&
-                    m.invitations.some(
-                        (mi) =>
-                            mi.acceptedOn === null && mi.expiresOn > new Date()
-                    )
+            existingMemberships.some((m) =>
+                m.invitations?.some(
+                    (mi) => mi.acceptedOn === null && mi.expiresOn > new Date()
+                )
             )
         ) {
             const message =

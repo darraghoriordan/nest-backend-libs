@@ -1,5 +1,5 @@
-export type AccessToken = {
+export interface AccessToken {
     sub: string;
     gty: string;
     permissions: string[];
-};
+}

@@ -62,7 +62,6 @@ export class EmailClientController {
     @MandatoryUserClaims("read:all")
     @ApiOperation({tags: ["SuperPower"]})
     @Get("peekfailedjobs")
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     @ApiOkResponse({type: [QueueItemDto]})
     async peekFailedQueueJobs(): Promise<QueueItemDto[]> {
         const jobs = await this.queue.getJobs(["delayed", "failed"]);

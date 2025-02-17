@@ -1,6 +1,5 @@
 // The "barrels" issue means these must all be imported individually, which is a pain.
 
-/* eslint-disable unicorn/prefer-export-from */
 import {RunningCommandLineModule} from "./runningCommandLine/RunningCommandLine.module.js";
 import {TwitterAccountModule} from "./twitter-client/twitter-account.module.js";
 import {SmtpEmailClientModule} from "./smtp-email-client/smtp-email-client.module.js";

@@ -10,15 +10,17 @@ export class ApiKeyStrategy extends PassportStrategy(HeaderAPIKeyStrategy) {
         super(
             {header: "Authorization", prefix: "Api-Key "},
             true,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
             async (
                 apiKey: string,
                 done: (
                     error: Error | undefined,
                     user?: User,
-                    info?: {[key: string]: any}
+                    info?: Record<string, unknown>
                 ) => boolean
             ) => {
-                return await this.validate(apiKey, done);
+                await this.validate(apiKey, done);
             }
         );
     }
@@ -28,13 +30,12 @@ export class ApiKeyStrategy extends PassportStrategy(HeaderAPIKeyStrategy) {
         done: (
             error: Error | undefined,
             user?: User,
-            info?: {[key: string]: any}
+            info?: Record<string, unknown>
         ) => boolean
     ) {
         try {
-            const foundUser = await this.userValidationService.findUserByApiKey(
-                apiKey
-            );
+            const foundUser =
+                await this.userValidationService.findUserByApiKey(apiKey);
 
             if (!foundUser || foundUser === null) {
                 done(new Error("Invalid API key"));

@@ -23,7 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
                 jwksUri: `https://${config.auth0Domain}/.well-known/jwks.json`,
             }),
             passReqToCallback: true,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             audience: config.auth0Audience,
             issuer: `https://${config.auth0Domain}/`,
@@ -36,14 +36,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         payload: AccessToken
     ): Promise<RequestUser | undefined> {
         const rawAccessToken = ExtractJwt.fromAuthHeaderAsBearerToken()(
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             request as any
         );
-        if (rawAccessToken === undefined || rawAccessToken === null) {
+        if (!rawAccessToken) {
             this.logger.error("Couldn't log the raw access token");
             return;
         }
-
+        this.logger.log(
+            `Validating user with payload sub: ${JSON.stringify(payload?.sub)}`
+        );
         const invitationId = request.query.invitationId as string;
 
         return this.userValidationService.validateUser(

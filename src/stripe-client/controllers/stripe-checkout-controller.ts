@@ -25,7 +25,6 @@ export class StripeCheckoutController {
 
     @Post("checkout-session")
     @ApiOkResponse({type: StripeCheckoutSessionResponseDto})
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async createCheckoutSession(
         @Request() request: RequestWithUser,
         @Body() createSessionDto: StripeCheckoutSessionRequestDto

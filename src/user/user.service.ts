@@ -61,11 +61,10 @@ export class UserService {
             },
         });
         if (
-            user.memberships?.some(
-                (m) =>
-                    currentUser.memberships?.some(
-                        (cu) => cu.organisationId === m.organisationId
-                    )
+            user.memberships?.some((m) =>
+                currentUser.memberships?.some(
+                    (cu) => cu.organisationId === m.organisationId
+                )
             )
         ) {
             return user;
@@ -126,9 +125,8 @@ export class UserService {
         if (!currentUser.permissions.includes("modify:all")) {
             this.isCurrentUserGuard(uuid, currentUser.uuid, "update");
             if (
-                user.memberships?.some(
-                    (m) =>
-                        m.roles?.some((r) => r.name === Roles.owner.toString())
+                user.memberships?.some((m) =>
+                    m.roles?.some((r) => r.name === Roles.owner.toString())
                 )
             ) {
                 throw new Error(
@@ -143,7 +141,7 @@ export class UserService {
     private isCurrentUserGuard(
         uuid: string,
         currentUserUuid: string,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
         attemptedAction: string
     ) {
         if (uuid !== currentUserUuid) {

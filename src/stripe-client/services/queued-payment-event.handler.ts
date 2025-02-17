@@ -1,5 +1,5 @@
 /* eslint-disable sonarjs/no-duplicate-string */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 /* eslint-disable sonarjs/no-duplicated-branches */
 import {Inject, Injectable, Logger} from "@nestjs/common";
 import {
@@ -39,15 +39,14 @@ export class StripeQueuedEventHandler {
     @OnQueueFailed()
     onError(job: Job<Stripe.Event>, error: Error) {
         this.logger.error(
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unsafe-member-access
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-explicit-any
             `Failed job ${job.id} of type ${job.name}: ${error.message as any}`,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
             {errorStack: error}
         );
     }
 
     @OnQueueActive()
-    // eslint-disable-next-line sonarjs/no-identical-functions
     onActive(job: Job<Stripe.Event>) {
         this.logger.log(`Active job ${job.id} of type ${job.name}`);
     }
@@ -58,7 +57,6 @@ export class StripeQueuedEventHandler {
         this.logger.log(`Completed job ${job.id} of type ${job.name}`);
     }
 
-    // eslint-disable-next-line @typescript-eslint/require-await
     @Process()
     public async handleEvent(job: Job<Stripe.Event>): Promise<void> {
         const eventType = job.data.type;
@@ -262,7 +260,7 @@ export class StripeQueuedEventHandler {
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             eventToStore.stripeSessionId =
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
                 (job?.data?.data?.object as any)?.id || "unknown";
             eventToStore.stripeData = job.data;
 

@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import "reflect-metadata";
 import helmet from "helmet";
 import {
@@ -24,9 +21,9 @@ import {HealthModule} from "../health/Health.module.js";
 import {LoggerModule as LoggingConfigModule} from "../logger/logger.module.js";
 import {LoggingConfigurationService} from "../logger/LoggingConfigurationService.js";
 import {AuthzModule} from "../authorization/authz.module.js";
-import {redisStore} from "cache-manager-redis-yet";
 import type {RedisClientOptions} from "redis";
 import {CacheModule} from "@nestjs/cache-manager";
+import {createKeyv} from "@keyv/redis";
 
 @Module({
     imports: [
@@ -34,11 +31,7 @@ import {CacheModule} from "@nestjs/cache-manager";
         BullModule.forRootAsync({
             imports: [CoreConfigModule],
 
-            useFactory: async (
-                configService: CoreConfigurationService
-
-                // eslint-disable-next-line @typescript-eslint/require-await
-            ) => {
+            useFactory: (configService: CoreConfigurationService) => {
                 const redisUrl = new URL(
                     configService.bullQueueHost || "redis://localhost"
                 );
@@ -56,12 +49,13 @@ import {CacheModule} from "@nestjs/cache-manager";
         }),
         CacheModule.registerAsync<RedisClientOptions>({
             imports: [CoreConfigModule],
-            useFactory: async (configService: CoreConfigurationService) => {
+            useFactory: (configService: CoreConfigurationService) => {
                 return {
-                    store: await redisStore({
-                        url: configService.bullQueueHost || "should-throw",
-                        ttl: 10_000,
-                    }),
+                    stores: [
+                        createKeyv(
+                            configService.bullQueueHost || "should-throw"
+                        ),
+                    ],
                 };
             },
             isGlobal: true,
@@ -93,7 +87,7 @@ import {CacheModule} from "@nestjs/cache-manager";
 })
 export class CoreModule {
     public static initApplication(
-        // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types,@typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         rootModule: any,
         callback: (appModule: INestApplication) => void | Promise<void>,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -151,7 +145,7 @@ export class CoreModule {
                     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                     `Failed to initialize, due to: ${initialisationError}`
                 );
-                // eslint-disable-next-line unicorn/no-process-exit
+
                 process.exit(1);
             }
         })();

@@ -1,9 +1,9 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 import {TypeOrmModuleOptions} from "@nestjs/typeorm";
 import path from "path";
 import {DataSourceOptions} from "typeorm";
 import url from "url";
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class PostgresTypeOrmConfigurationProvider {
     /**
      * This method uses process.env directly because it is also used in a node script that doesn't have access
@@ -14,7 +14,7 @@ export class PostgresTypeOrmConfigurationProvider {
         const libraryEntityScanPath = path.resolve(
             path.join(
                 // __dirname,
-                process.env.CORE_MODULE_ENTITY_PATH || "..",
+                process.env.CORE_MODULE_ENTITY_PATH ?? "..",
                 "**",
                 "*.entity.{ts,js}"
             )
@@ -23,7 +23,7 @@ export class PostgresTypeOrmConfigurationProvider {
         const appEntityScanPath = path.resolve(
             path.join(
                 // __dirname,
-                process.env.APP_MODULE_ENTITY_PATH || "dist",
+                process.env.APP_MODULE_ENTITY_PATH ?? "dist",
                 "**",
                 "*.entity.{ts,js}"
             )
@@ -32,7 +32,7 @@ export class PostgresTypeOrmConfigurationProvider {
         const migrationsPath = path.resolve(
             path.join(
                 // __dirname,
-                process.env.MIGRATIONS_PATH || "dist",
+                process.env.MIGRATIONS_PATH ?? "dist",
                 "**",
                 "migrations",
                 "*.{ts,js}"
@@ -64,7 +64,7 @@ export class PostgresTypeOrmConfigurationProvider {
         return {
             type: "postgres",
             host: process.env.APP_POSTGRES_HOST,
-            port: Number.parseInt(process.env.APP_POSTGRES_PORT || "5000", 10),
+            port: Number.parseInt(process.env.APP_POSTGRES_PORT ?? "5000", 10),
             username: process.env.APP_POSTGRES_USER,
             password: process.env.APP_POSTGRES_PASSWORD,
             database: process.env.APP_POSTGRES_DATABASE,

@@ -33,7 +33,8 @@ export class StripeWebhookHandler {
 
         try {
             const event = this.clientInstance.webhooks.constructEvent(
-                request.rawBody as Buffer, // is a buffer according to nest docs
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                request.rawBody!, // is a buffer according to nest docs
                 signature,
                 this.config.webhookVerificationKey
             );

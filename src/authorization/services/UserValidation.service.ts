@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
     BadRequestException,
     Injectable,
@@ -72,6 +71,10 @@ export class UserValidationService {
             user.auth0UserId &&
             this.config.superUserIds.includes(user.auth0UserId)
         ) {
+            console.log(
+                "Super user detected, adding additional permissions: " +
+                    user.auth0UserId
+            );
             permissionsSet.add("read:all");
             permissionsSet.add("modify:all");
         }
@@ -96,6 +99,9 @@ export class UserValidationService {
         invitationId?: string
     ): Promise<RequestUser> {
         if (invitationId) {
+            this.logger.log(
+                "Invitation id provider, will take the invitation path"
+            );
             // even though there is commonality here it's easier to treat the invitation path as completely separate
             return this.addPermissionsToUser(
                 await this.handleInvitedUser(rawAccessToken, invitationId),
@@ -111,8 +117,6 @@ export class UserValidationService {
         // - already configured
         // then just return the user
         if (
-            foundUser !== undefined &&
-            foundUser !== null &&
             foundUser?.memberships !== undefined &&
             foundUser?.memberships !== null &&
             foundUser?.memberships?.length > 0
@@ -166,11 +170,9 @@ export class UserValidationService {
         });
     }
 
-    // eslint-disable-next-line @typescript-eslint/require-await
     async handleInvitedUser(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         rawAccessToken: string,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
         invitationCode: string
     ): Promise<User> {
         const now = new Date();
@@ -220,6 +222,7 @@ export class UserValidationService {
         );
 
         try {
+            this.logger.log("Saving updated invitation and the user");
             await this.invitationRepository.save(invitation);
         } catch (error) {
             if (
@@ -238,6 +241,7 @@ export class UserValidationService {
         if (!userForRequest) {
             throw new Error("User not found");
         }
+        this.logger.log("Returning the found user");
         return userForRequest;
     }
 
@@ -247,7 +251,9 @@ export class UserValidationService {
     ) {
         // get the user's profile details from auth0
         const auth0User = await this.getAuth0User(rawAccessToken);
-
+        this.logger.log(
+            `Found user ${auth0User.name} with email ${auth0User.email} on auth0`
+        );
         // create role
         const newRole = new MembershipRole();
         newRole.name = Roles.owner;
@@ -268,7 +274,9 @@ export class UserValidationService {
 
         // assign the membership
         user.memberships = [membership];
-
+        this.logger.log(
+            `Mapping newly created user ${auth0User.name} with email ${auth0User.email} to the user entity`
+        );
         this.mapAuthZUserToEntity(user, auth0User);
 
         const savedUser = await this.userRepository.save(user);
@@ -276,6 +284,7 @@ export class UserValidationService {
         if (!userForRequest) {
             throw new Error("User not found");
         }
+        this.logger.log(`Saved and returning user ${userForRequest.name} `);
         return userForRequest;
     }
 

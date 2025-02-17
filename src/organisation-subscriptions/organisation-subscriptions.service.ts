@@ -134,7 +134,6 @@ export class OrganisationSubscriptionService {
                             },
                         })) || undefined;
                 } else {
-                    // eslint-disable-next-line prefer-const
                     org =
                         (await this.orgRepo.findOne({
                             where: {

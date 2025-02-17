@@ -8,7 +8,7 @@ export const EmailTransporterProvider = {
             host: config.smtpHost,
             port: config.smtpPort,
             secure: config.smtpPort === 465 ? true : false, // true for 465, false for other ports
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
             auth: {
                 user: config.emailUsername,
                 pass: config.emailPassword,

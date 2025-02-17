@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/require-await */
 import * as yargs from "yargs";
 import {exec} from "child_process";
-// eslint-disable-next-line unicorn/import-style
+
 import util from "util";
 import path from "path";
 import url from "url";
@@ -9,12 +8,12 @@ import url from "url";
  * Generates a new migration file with sql needs to be executed to update schema.
  */
 
-type ArgumentsType = {
+interface ArgumentsType {
     o: string;
     fePath: string;
     itPath: string;
     packageName: string;
-};
+}
 
 export class WriteApiClientCommand
     implements yargs.CommandModule<ArgumentsType, ArgumentsType>
@@ -49,7 +48,7 @@ export class WriteApiClientCommand
     }
 
     async handler(
-        // eslint-disable-next-line unicorn/prevent-abbreviations
+        // eslint-disable-next-line unicorn/prevent-abbreviations, @typescript-eslint/no-explicit-any
         args: yargs.ArgumentsCamelCase<any> // this breaks if i use ArgumentsType but change back for dev
     ): Promise<void> {
         // call the script

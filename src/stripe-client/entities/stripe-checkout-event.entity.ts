@@ -31,7 +31,7 @@ export class StripeCheckoutEvent {
 
     @Exclude()
     @Column("jsonb", {name: "stripeObject", nullable: false})
-    stripeData: any;
+    stripeData: unknown;
 
     // special case for returning the stripe data
     @ApiProperty({type: String, name: "stripeDataAsString"})

@@ -69,7 +69,6 @@ export class OrganisationMembership {
     invitations?: Relation<Invitation>[];
 
     @ApiPropertyOptional({type: () => MembershipRole, isArray: true})
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     @OneToMany(() => MembershipRole, (role) => role.membership, {
         eager: true,
         cascade: ["insert", "update"],

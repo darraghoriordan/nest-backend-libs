@@ -18,7 +18,6 @@ export class TwitterClientService {
         type: EUploadMimeType
     ): Promise<string> {
         return this.clientInstance.v1.uploadMedia(
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             Buffer.from(bytes, "binary"),
             {mimeType: type}
         );
@@ -31,7 +30,6 @@ export class TwitterClientService {
             | [string, string]
             | [string, string, string]
             | [string, string, string, string]
-            | undefined
     ): Promise<void> {
         await this.clientInstance.v2.tweet(message, {
             media: {media_ids: mediaIds},

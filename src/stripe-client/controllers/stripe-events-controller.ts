@@ -14,10 +14,10 @@ import {ClaimsAuthorisationGuard} from "../../authorization/guards/ClaimsAuthori
 import {DefaultAuthGuard} from "../../authorization/guards/DefaultAuthGuard.js";
 import {MandatoryUserClaims} from "../../authorization/guards/MandatoryUserClaims.decorator.js";
 
-export type EventQuery = {
+export interface EventQuery {
     take: number;
     skip: number;
-};
+}
 
 @UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
 @ApiBearerAuth()
@@ -32,7 +32,6 @@ export class StripeEventsController {
     @ApiQuery({name: "take", required: true, type: Number})
     @ApiQuery({name: "skip", required: true, type: Number})
     @ApiOkResponse({type: StripeCheckoutEvent, isArray: true})
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async getLastEvents(
         @Request() request: RequestWithUser,
         @Query() query: EventQuery

@@ -29,9 +29,8 @@ export class AuthenticatedStripeCheckoutService {
                 parameters.subscriptionRecordUuid
             );
         if (
-            !user.memberships ||
             !user.memberships
-                .filter((m) => m.roles?.some((r) => r.name === "owner"))
+                ?.filter((m) => m.roles?.some((r) => r.name === "owner"))
                 .map((m) => m.organisation.uuid)
                 .includes(subscriptionRecord.organisation.uuid)
         ) {
@@ -61,9 +60,8 @@ export class AuthenticatedStripeCheckoutService {
         // is the current user the owner of the org?
         if (
             !parameters.organisationUuid ||
-            !user.memberships ||
             !user.memberships
-                .filter((m) => m.roles?.some((r) => r.name === "owner"))
+                ?.filter((m) => m.roles?.some((r) => r.name === "owner"))
                 .map((m) => m.organisation.uuid)
                 .includes(parameters.organisationUuid)
         ) {

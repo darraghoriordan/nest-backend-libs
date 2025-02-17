@@ -15,6 +15,7 @@ export class NotFoundInterceptor implements NestInterceptor {
     intercept(
         context: ExecutionContext,
         stream$: CallHandler
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ): Observable<any> {
         return stream$.handle().pipe(
             tap((data) => {
