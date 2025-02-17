@@ -113,7 +113,7 @@
     "devDependencies": {
         "@commitlint/cli": "19.7.1",
         "@commitlint/config-conventional": "19.7.1",
-        "@darraghor/eslint-plugin-nestjs-typed": "6.2.3",
+        "@darraghor/eslint-plugin-nestjs-typed": "6.2.4",
         "@nestjs/cli": "11.0.3",
         "@nestjs/schematics": "^11.0.1",
         "@semantic-release/changelog": "6.0.3",
@@ -127,8 +127,8 @@
         "@types/supertest": "6.0.2",
         "@eslint/js": "9.20.0",
         "@types/yargs": "17.0.33",
-        "@typescript-eslint/eslint-plugin": "8.24.0",
-        "@typescript-eslint/parser": "8.24.0",
+        "@typescript-eslint/eslint-plugin": "8.24.1",
+        "@typescript-eslint/parser": "8.24.1",
         "copyfiles": "2.4.1",
         "eslint": "9.20.1",
         "eslint-config-prettier": "10.0.1",
@@ -148,7 +148,7 @@
         "ts-node": "10.9.2",
         "tsconfig-paths": "4.2.0",
         "typescript": "5.7.3",
-        "typescript-eslint": "8.24.0",
+        "typescript-eslint": "8.24.1",
         "yargs": "17.7.2"
     },
     "lint-staged": {
