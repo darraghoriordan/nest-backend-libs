@@ -23,7 +23,7 @@ import {LoggingConfigurationService} from "../logger/LoggingConfigurationService
 import {AuthzModule} from "../authorization/authz.module.js";
 import type {RedisClientOptions} from "redis";
 import {CacheModule} from "@nestjs/cache-manager";
-import {createKeyv} from "@keyv/redis";
+import KeyvRedis from "@keyv/redis";
 
 @Module({
     imports: [
@@ -55,12 +55,10 @@ import {createKeyv} from "@keyv/redis";
                     "Loading cache module with url",
                     configService.bullQueueHost
                 );
+                const redis = new KeyvRedis(configService.bullQueueHost);
+
                 return {
-                    stores: [
-                        createKeyv({
-                            url: configService.bullQueueHost || "should-throw",
-                        }),
-                    ],
+                    stores: [redis],
                 };
             },
             isGlobal: true,
