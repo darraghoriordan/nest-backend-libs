@@ -49,7 +49,8 @@ import {createKeyv} from "@keyv/redis";
         }),
         CacheModule.registerAsync<RedisClientOptions>({
             imports: [CoreConfigModule],
-            useFactory: (configService: CoreConfigurationService) => {
+            // eslint-disable-next-line @typescript-eslint/require-await
+            useFactory: async (configService: CoreConfigurationService) => {
                 return {
                     stores: [
                         createKeyv(
@@ -62,7 +63,7 @@ import {createKeyv} from "@keyv/redis";
             inject: [CoreConfigurationService],
         }),
 
-        ConfigModule.forRoot({cache: true}),
+        ConfigModule.forRoot({cache: true, isGlobal: true}),
         CoreConfigModule,
         HealthModule,
         LoggerModule.forRootAsync({
