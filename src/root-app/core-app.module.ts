@@ -51,18 +51,19 @@ import {createKeyv} from "@keyv/redis";
             imports: [CoreConfigModule],
             // eslint-disable-next-line @typescript-eslint/require-await
             useFactory: async (configService: CoreConfigurationService) => {
-                console.log(
+                console.debug(
                     "Loading cache module with url",
                     configService.bullQueueHost
                 );
                 return {
                     stores: [
-                        createKeyv(
-                            configService.bullQueueHost || "should-throw"
-                        ),
+                        createKeyv({
+                            url: configService.bullQueueHost || "should-throw",
+                        }),
                     ],
                 };
             },
+            isGlobal: true,
             inject: [CoreConfigurationService],
         }),
 
