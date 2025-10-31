@@ -108,7 +108,7 @@
         "stripe": "17.7.0",
         "swagger-ui-express": "5.0.1",
         "twitter-api-v2": "1.22.0",
-        "typeorm": "0.3.20"
+        "typeorm": "0.3.26"
     },
     "devDependencies": {
         "@commitlint/cli": "19.8.0",
