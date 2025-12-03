@@ -45,7 +45,6 @@ export class Organisation {
             cascade: ["insert", "update"],
         }
     )
-    @Type(() => OrganisationSubscriptionRecord)
     subscriptionRecords?: OrganisationSubscriptionRecord[];
 
     @Column()

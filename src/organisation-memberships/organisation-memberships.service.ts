@@ -1,4 +1,8 @@
-import {Injectable, NotFoundException} from "@nestjs/common";
+import {
+    ForbiddenException,
+    Injectable,
+    NotFoundException,
+} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
 import {Invitation} from "../invitations/entities/invitation.entity.js";
@@ -40,7 +44,9 @@ export class OrganisationMembershipsService {
         const isAMember = memberships.some((m) => m.user.id === currentUserId);
 
         if (!isAMember) {
-            throw new Error("You are not a member of this organisation");
+            throw new ForbiddenException(
+                "You are not a member of this organisation"
+            );
         }
 
         return memberships;
@@ -143,7 +149,7 @@ export class OrganisationMembershipsService {
             (m) => m.uuid === membershipUuid
         );
         if (!membership) {
-            throw new Error("Membership not found");
+            throw new NotFoundException("Membership not found");
         }
         // cascade to invitations
         if (membership.invitations) {

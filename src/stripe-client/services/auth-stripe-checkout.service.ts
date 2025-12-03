@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import {Injectable, Logger} from "@nestjs/common";
+import {ForbiddenException, Injectable, Logger} from "@nestjs/common";
 import {RequestUser} from "../../authorization/models/RequestWithUser.js";
 import {StripeCheckoutSessionRequestDto} from "../models/StripeCheckoutSessionRequestDto.js";
 import {StripeCheckoutSessionResponseDto} from "../models/StripeCheckoutSessionResponseDto.js";
@@ -42,7 +42,7 @@ export class AuthenticatedStripeCheckoutService {
                         organisationUuid: subscriptionRecord.organisation.uuid,
                     }
                 );
-                throw new Error(
+                throw new ForbiddenException(
                     "You are not a member of the organisation associated with this billing account"
                 );
             }
@@ -72,7 +72,9 @@ export class AuthenticatedStripeCheckoutService {
                     organisationUuid: parameters.organisationUuid,
                 }
             );
-            throw new Error("You are not the owner of this organisation");
+            throw new ForbiddenException(
+                "You are not the owner of this organisation"
+            );
         }
 
         return this.stripeCheckoutService.createCheckoutSession(

@@ -1,4 +1,9 @@
-import {Injectable, Logger, NotFoundException} from "@nestjs/common";
+import {
+    ConflictException,
+    Injectable,
+    Logger,
+    NotFoundException,
+} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
 import {RequestUser} from "../authorization/models/RequestWithUser.js";
@@ -129,7 +134,7 @@ export class UserService {
                     m.roles?.some((r) => r.name === Roles.owner.toString())
                 )
             ) {
-                throw new Error(
+                throw new ConflictException(
                     "Can't remove the owner of an organisation. Assign a new owner first."
                 );
             }

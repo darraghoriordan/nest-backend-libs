@@ -29,9 +29,11 @@ export class UserApiKey {
     public uuid!: string;
 
     @ApiProperty()
+    @Column({unique: true})
     apiKey!: string;
 
     @ApiProperty()
+    @Column()
     description!: string;
 
     @ManyToOne(() => User)

@@ -8,6 +8,7 @@ import {
     IsIn,
     IsOptional,
     IsString,
+    IsUUID,
     ValidateNested,
 } from "class-validator";
 import {StripeCheckoutLineItem} from "./StripeCheckoutLineItem.js";
@@ -15,6 +16,7 @@ import {StripeCheckoutLineItem} from "./StripeCheckoutLineItem.js";
 export class StripeCheckoutSessionRequestDto {
     @ApiPropertyOptional()
     @IsOptional()
+    @IsUUID("4")
     organisationUuid?: string;
 
     @ApiProperty({isArray: true, type: StripeCheckoutLineItem})

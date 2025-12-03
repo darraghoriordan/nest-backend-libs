@@ -52,7 +52,7 @@ export class UserValidationService {
         user: User,
         authProviderPermissions: string[] | undefined
     ): RequestUser {
-        console.debug(
+        this.logger.debug(
             {
                 list: this.config.superUserIds,
                 userId: user.uuid,
@@ -71,7 +71,7 @@ export class UserValidationService {
             user.auth0UserId &&
             this.config.superUserIds.includes(user.auth0UserId)
         ) {
-            console.log(
+            this.logger.log(
                 "Super user detected, adding additional permissions: " +
                     user.auth0UserId
             );

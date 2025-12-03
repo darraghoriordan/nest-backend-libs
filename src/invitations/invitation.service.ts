@@ -1,12 +1,13 @@
 import {
     BadRequestException,
+    ConflictException,
     ForbiddenException,
     Injectable,
+    InternalServerErrorException,
     Logger,
-    NotFoundException,
 } from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import {IsNull, MoreThan, Repository} from "typeorm";
+import {DataSource, IsNull, MoreThan, Repository} from "typeorm";
 import {Roles} from "../organisation/dto/RolesEnum.js";
 import {CreateInvitationDto} from "./dto/create-invitation.dto.js";
 import {Invitation} from "./entities/invitation.entity.js";
@@ -25,10 +26,9 @@ export class InvitationService {
         private invitationRepository: Repository<Invitation>,
         @InjectRepository(OrganisationMembership)
         private orgMembershipRepository: Repository<OrganisationMembership>,
-        @InjectRepository(User)
-        private userRepository: Repository<User>,
         private readonly emailClient: SmtpEmailClient,
-        private readonly configService: InvitationsConfigurationService
+        private readonly configService: InvitationsConfigurationService,
+        private readonly dataSource: DataSource
     ) {}
 
     async getOneActiveInvitation(invitationCode: string) {
@@ -101,13 +101,14 @@ export class InvitationService {
             const message =
                 "A user with this email address is already a member of this organisation";
             this.logger.error(message, {createDto, createdBy});
-            throw new Error(message);
+            throw new ConflictException(message);
         }
 
         if (
             existingMemberships.some((m) =>
                 m.invitations?.some(
-                    (mi) => mi.acceptedOn === null && mi.expiresOn > new Date()
+                    (mi) =>
+                        mi.acceptedOn === undefined && mi.expiresOn > new Date()
                 )
             )
         ) {
@@ -117,76 +118,107 @@ export class InvitationService {
             throw new BadRequestException(message);
         }
 
-        // new empty user
-        const user = new User();
-        user.email = createDto.emailAddress;
-        const savedUser = await this.userRepository.save(user);
-        // new role
-        const role = new MembershipRole();
-        role.name = Roles.invited;
+        // Use a transaction to ensure all related entities are saved atomically
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
 
-        // a new invitation
-        const unsavedInvitation = new Invitation();
-        unsavedInvitation.emailAddress = createDto.emailAddress;
-        unsavedInvitation.expiresOn = new Date();
-        unsavedInvitation.expiresOn.setDate(
-            unsavedInvitation.expiresOn.getDate() + 1
-        );
+        let retrievedMembership: OrganisationMembership;
+        let validInvitation: Invitation;
 
-        unsavedInvitation.givenName = createDto.givenName;
+        try {
+            // new empty user
+            const user = new User();
+            user.email = createDto.emailAddress;
+            const savedUser = await queryRunner.manager.save(user);
+            // new role
+            const role = new MembershipRole();
+            role.name = Roles.invited;
 
-        // create a new membership
-        const membership = this.orgMembershipRepository.create({
-            invitations: [],
-        });
-        membership.organisationId = createDto.organisationId;
-        membership.userId = savedUser.id;
-        membership.invitations?.push(unsavedInvitation);
-        membership.roles = [role];
+            // a new invitation
+            const unsavedInvitation = new Invitation();
+            unsavedInvitation.emailAddress = createDto.emailAddress;
+            unsavedInvitation.expiresOn = new Date();
+            unsavedInvitation.expiresOn.setDate(
+                unsavedInvitation.expiresOn.getDate() + 1
+            );
 
-        const savedMembership =
-            await this.orgMembershipRepository.save(membership);
-        const retrievedMembership = await this.orgMembershipRepository.findOne({
-            where: {id: savedMembership.id},
-            relations: {
-                invitations: true,
-                organisation: true,
-            },
-        });
+            unsavedInvitation.givenName = createDto.givenName;
 
-        if (!retrievedMembership) {
-            this.logger.error("New membership did not save correctly", {
-                createDto,
-                createdBy,
-                createdMembershipId: savedMembership?.id,
-            });
-            throw new Error("New membership did not save correctly");
-        }
+            // create a new membership
+            const membership = queryRunner.manager.create(
+                OrganisationMembership,
+                {
+                    invitations: [],
+                }
+            );
+            membership.organisationId = createDto.organisationId;
+            membership.userId = savedUser.id;
+            membership.invitations?.push(unsavedInvitation);
+            membership.roles = [role];
 
-        const validInvitation = retrievedMembership.invitations?.find(
-            (invitation) =>
-                invitation.expiresOn > new Date() && !invitation.acceptedOn
-        );
+            const savedMembership = await queryRunner.manager.save(membership);
+            const foundMembership = await queryRunner.manager.findOne(
+                OrganisationMembership,
+                {
+                    where: {id: savedMembership.id},
+                    relations: {
+                        invitations: true,
+                        organisation: true,
+                    },
+                }
+            );
 
-        if (!validInvitation) {
-            this.logger.error("New invitation did not save correctly", {
-                createDto,
-                createdBy,
-                createdMembershipId: savedMembership?.id,
-            });
-            throw new Error("New invitation did not save correctly");
+            if (!foundMembership) {
+                this.logger.error("New membership did not save correctly", {
+                    createDto,
+                    createdBy,
+                    createdMembershipId: savedMembership.id,
+                });
+                throw new InternalServerErrorException(
+                    "New membership did not save correctly"
+                );
+            }
+
+            retrievedMembership = foundMembership;
+
+            const foundInvitation = retrievedMembership.invitations?.find(
+                (invitation) =>
+                    invitation.expiresOn > new Date() &&
+                    invitation.acceptedOn === undefined
+            );
+
+            if (!foundInvitation) {
+                this.logger.error("New invitation did not save correctly", {
+                    createDto,
+                    createdBy,
+                    createdMembershipId: savedMembership.id,
+                });
+                throw new InternalServerErrorException(
+                    "New invitation did not save correctly"
+                );
+            }
+
+            validInvitation = foundInvitation;
+
+            await queryRunner.commitTransaction();
+        } catch (error) {
+            await queryRunner.rollbackTransaction();
+            throw error;
+        } finally {
+            await queryRunner.release();
         }
 
         // try to email the invitation
         await this.emailClient.sendMail(
-            [unsavedInvitation.emailAddress],
+            [validInvitation.emailAddress],
             [],
             `Invitation to join ${retrievedMembership.organisation.name}`,
             createdBy.uuid,
             `You have been invited to join ${
                 retrievedMembership.organisation.name
             } by ${
-                createdBy.givenName || "another member"
+                createdBy.givenName ?? "another member"
             }. Please click the link below to accept the invitation.
 
             ${this.configService.baseUrl}/accept-invitation/${
@@ -270,9 +302,6 @@ export class InvitationService {
             },
         });
 
-        if (!invitation) {
-            throw new NotFoundException();
-        }
         await this.canManageInvitationsForThisOrg({
             orgId: invitation.organisationMembership.organisation.id,
             user: currentUser,

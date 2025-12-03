@@ -20,7 +20,6 @@ import {Invitation} from "../invitations/entities/invitation.entity.js";
     ],
     providers: [
         ApiKeyStrategy,
-        ApiKeyStrategy,
         AuthConfigurationService,
         JwtStrategy,
         UserValidationService,
