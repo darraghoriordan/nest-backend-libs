@@ -6,6 +6,11 @@ on:
 jobs:
     publish:
         runs-on: ubuntu-latest
+        permissions:
+            contents: write # to be able to publish a GitHub release
+            issues: write # to be able to comment on released issues
+            pull-requests: write # to be able to comment on released pull requests
+            id-token: write # to enable use of OIDC for trusted publishing and npm provenance
         steps:
             - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
             - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4
@@ -37,6 +42,6 @@ jobs:
             - run: pnpm run build
             - name: Release
               env:
-                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    
                   GH_TOKEN: ${{ secrets.GH_TOKEN }}
               run: npx semantic-release
