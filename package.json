@@ -31,6 +31,10 @@
     "keywords": [
         "nestjs"
     ],
+    "publishConfig": {
+        "access": "public",
+        "provenance": true
+    },
     "bin": {
         "miller": "dist/cli/cli.js",
         "generate-client": "dist/open-api-generation/generate.sh"

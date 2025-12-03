@@ -16,6 +16,7 @@ jobs:
             - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4
               with:
                   node-version-file: ".nvmrc"
+                  registry-url: "https://registry.npmjs.org"
             - uses: pnpm/action-setup@v2
               name: Install pnpm
               id: pnpm-install
@@ -42,6 +43,7 @@ jobs:
             - run: pnpm run build
             - name: Release
               env:
-    
+                  NPM_CONFIG_PROVENANCE: true
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
                   GH_TOKEN: ${{ secrets.GH_TOKEN }}
               run: npx semantic-release

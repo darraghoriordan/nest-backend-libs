@@ -9,6 +9,6 @@ import {UserApiKey} from "./userApiKey.entity.js";
     imports: [TypeOrmModule.forFeature([UserApiKey]), UserInternalModule],
     controllers: [UserApiKeyController],
     providers: [UserApiKeyService],
-    exports: [],
+    exports: [UserApiKeyService],
 })
 export class UserApiKeyModule {}
