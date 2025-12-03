@@ -26,11 +26,14 @@ export default class SubscriptionRecordMapper {
                 lineItem.price?.type,
                 fullSession.mode
             );
+            const typedSubscription =
+                fullSession.subscription! as Stripe.Subscription;
             subscriptionFulfilmentDto.validUntil = this.mapNewValidUntil(
                 subscriptionFulfilmentDto.paymentSystemMode,
                 true,
-                (fullSession.subscription! as Stripe.Subscription)
-                    ?.current_period_end
+                typedSubscription.cancel_at_period_end
+                    ? typedSubscription.cancel_at
+                    : undefined
             );
 
             subscriptionFulfilmentDto.paymentSystemTransactionId =
@@ -86,7 +89,7 @@ export default class SubscriptionRecordMapper {
     private mapNewValidUntil(
         paymentSystemMode: string,
         isActive: boolean,
-        stripeCurrentPeriodEnd?: number
+        stripeCurrentPeriodEnd?: number | null
     ) {
         let newValidUntil: Date = new Date();
 
@@ -138,7 +141,9 @@ export default class SubscriptionRecordMapper {
             subscriptionFulfilmentDto.validUntil = this.mapNewValidUntil(
                 subscriptionFulfilmentDto.paymentSystemMode,
                 additionalMeta.isActive,
-                fullSubscription.current_period_end
+                fullSubscription.cancel_at_period_end
+                    ? fullSubscription.cancel_at
+                    : undefined
             );
 
             subs.push(subscriptionFulfilmentDto);
