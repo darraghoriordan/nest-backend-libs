@@ -40,7 +40,7 @@ export class OrganisationMembership {
         eager: true,
         cascade: ["insert", "update"],
     })
-    user!: User;
+    user!: Relation<User>;
 
     @Column()
     @ApiProperty()
@@ -53,7 +53,7 @@ export class OrganisationMembership {
         eager: true,
         cascade: ["insert", "update"],
     })
-    organisation!: Organisation;
+    organisation!: Relation<Organisation>;
 
     @Column()
     @ApiProperty()
@@ -76,7 +76,7 @@ export class OrganisationMembership {
         orphanedRowAction: "delete",
     })
     @Type(() => MembershipRole)
-    roles?: MembershipRole[];
+    roles?: Relation<MembershipRole>[];
 
     @CreateDateColumn()
     @ApiProperty()

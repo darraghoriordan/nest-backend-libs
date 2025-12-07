@@ -79,3 +79,9 @@ export {UserApiKeyController} from "./user-api-key/user-apikey.controller.js";
 export {UserApiKeyModule} from "./user-api-key/user-apikey.module.js";
 export {User} from "./user/entities/user.entity.js";
 export {UserService} from "./user/user.service.js";
+
+// organisations
+export {Organisation} from "./organisation/entities/organisation.entity.js";
+export {OrganisationMembership} from "./organisation-memberships/entities/organisation-membership.entity.js";
+export {MembershipRole} from "./organisation/entities/member-role.entity.js";
+export {Roles} from "./organisation/dto/RolesEnum.js";

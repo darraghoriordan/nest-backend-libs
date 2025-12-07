@@ -21,8 +21,17 @@
         "esModuleInterop": true,
         "inlineSources": false,
         "target": "ES2022",
-        "lib": ["es2022"],
+        "lib": [
+            "es2022"
+        ],
         "sourceMap": true,
         "outDir": "./dist"
-    }
+    },
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
 }

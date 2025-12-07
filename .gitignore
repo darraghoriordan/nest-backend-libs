@@ -202,3 +202,4 @@ coverage/
 .jest_cache
 openapitools.json
 .docker-compose
+junit-TEST.xml

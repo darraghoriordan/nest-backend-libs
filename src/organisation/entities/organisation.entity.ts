@@ -10,6 +10,7 @@ import {
     Index,
     OneToMany,
     PrimaryGeneratedColumn,
+    Relation,
     UpdateDateColumn,
 } from "typeorm";
 import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity.js";
@@ -34,7 +35,7 @@ export class Organisation {
         cascade: ["insert", "update"],
     })
     @Type(() => OrganisationMembership)
-    memberships?: OrganisationMembership[];
+    memberships?: Relation<OrganisationMembership>[];
 
     @ApiPropertyOptional({type: OrganisationSubscriptionRecord, isArray: true})
     @Type(() => OrganisationSubscriptionRecord)
@@ -45,7 +46,7 @@ export class Organisation {
             cascade: ["insert", "update"],
         }
     )
-    subscriptionRecords?: OrganisationSubscriptionRecord[];
+    subscriptionRecords?: Relation<OrganisationSubscriptionRecord>[];
 
     @Column()
     @ApiProperty()

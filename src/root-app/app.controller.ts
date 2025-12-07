@@ -9,7 +9,7 @@ import {
 import {ClaimsAuthorisationGuard} from "../authorization/guards/ClaimsAuthorisationGuard.js";
 import {DefaultAuthGuard} from "../authorization/guards/DefaultAuthGuard.js";
 import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
-import {MandatoryUserClaims} from "../index.js";
+import {MandatoryUserClaims} from "../authorization/guards/MandatoryUserClaims.decorator.js";
 import {AppService, HealthResponse} from "./app.service.js";
 
 @Controller()

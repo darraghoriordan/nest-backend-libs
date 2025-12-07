@@ -9,6 +9,7 @@ import {
     Index,
     OneToMany,
     PrimaryGeneratedColumn,
+    Relation,
     UpdateDateColumn,
 } from "typeorm";
 import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity.js";
@@ -71,14 +72,14 @@ export class User {
     @OneToMany(() => OrganisationMembership, (om) => om.user, {
         cascade: ["insert", "update"],
     })
-    memberships?: OrganisationMembership[];
+    memberships?: Relation<OrganisationMembership>[];
 
     // We don't want to expose the api keys to the user
     // We don't want to load them unless explicitly
     @ApiPropertyOptional({type: () => UserApiKey, isArray: true})
     @Type(() => UserApiKey)
     @OneToMany(() => UserApiKey, (om) => om.user, {eager: false})
-    apiKeys?: UserApiKey[];
+    apiKeys?: Relation<UserApiKey>[];
 
     @CreateDateColumn()
     @ApiProperty()
