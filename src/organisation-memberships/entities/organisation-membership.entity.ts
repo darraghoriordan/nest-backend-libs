@@ -44,7 +44,7 @@ export class OrganisationMembership {
 
     @Column()
     @ApiProperty()
-    @RelationId((membership: OrganisationMembership) => membership.user)
+    @RelationId((membership: any) => membership.user)
     public userId!: number;
 
     @ApiProperty()
@@ -57,7 +57,7 @@ export class OrganisationMembership {
 
     @Column()
     @ApiProperty()
-    @RelationId((membership: OrganisationMembership) => membership.organisation)
+    @RelationId((membership: any) => membership.organisation)
     public organisationId!: number;
 
     @OneToMany(() => Invitation, (inv) => inv.organisationMembership, {
@@ -66,7 +66,7 @@ export class OrganisationMembership {
         cascade: ["insert", "update"],
     })
     @JoinColumn()
-    invitations?: Relation<Invitation>[];
+    invitations?: Relation<Invitation[]>;
 
     @ApiPropertyOptional({type: () => MembershipRole, isArray: true})
     @OneToMany(() => MembershipRole, (role) => role.membership, {
@@ -76,7 +76,7 @@ export class OrganisationMembership {
         orphanedRowAction: "delete",
     })
     @Type(() => MembershipRole)
-    roles?: Relation<MembershipRole>[];
+    roles?: Relation<MembershipRole[]>;
 
     @CreateDateColumn()
     @ApiProperty()

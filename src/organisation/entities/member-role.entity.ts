@@ -25,7 +25,7 @@ export class MembershipRole {
 
     @ApiProperty()
     @Column()
-    @RelationId((mr: MembershipRole) => mr.membership)
+    @RelationId((mr: any) => mr.membership)
     public membershipId!: number;
 
     @ApiProperty()

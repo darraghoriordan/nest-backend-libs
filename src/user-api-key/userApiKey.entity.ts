@@ -40,7 +40,7 @@ export class UserApiKey {
     user!: Relation<User>;
 
     @ApiProperty()
-    @RelationId((userApiKey: UserApiKey) => userApiKey.user)
+    @RelationId((userApiKey: any) => userApiKey.user)
     userId!: number;
 
     @CreateDateColumn()

@@ -73,7 +73,7 @@ export class OrganisationSubscriptionRecord {
 
     @ApiProperty()
     @Column()
-    @RelationId((sub: OrganisationSubscriptionRecord) => sub.organisation)
+    @RelationId((sub: any) => sub.organisation)
     public organisationId!: number;
 
     @CreateDateColumn()

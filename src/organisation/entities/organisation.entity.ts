@@ -35,9 +35,12 @@ export class Organisation {
         cascade: ["insert", "update"],
     })
     @Type(() => OrganisationMembership)
-    memberships?: Relation<OrganisationMembership>[];
+    memberships?: Relation<OrganisationMembership[]>;
 
-    @ApiPropertyOptional({type: OrganisationSubscriptionRecord, isArray: true})
+    @ApiPropertyOptional({
+        type: () => OrganisationSubscriptionRecord,
+        isArray: true,
+    })
     @Type(() => OrganisationSubscriptionRecord)
     @OneToMany(
         () => OrganisationSubscriptionRecord,
@@ -46,7 +49,7 @@ export class Organisation {
             cascade: ["insert", "update"],
         }
     )
-    subscriptionRecords?: Relation<OrganisationSubscriptionRecord>[];
+    subscriptionRecords?: Relation<OrganisationSubscriptionRecord[]>;
 
     @Column()
     @ApiProperty()

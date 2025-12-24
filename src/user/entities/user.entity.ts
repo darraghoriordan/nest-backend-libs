@@ -72,14 +72,14 @@ export class User {
     @OneToMany(() => OrganisationMembership, (om) => om.user, {
         cascade: ["insert", "update"],
     })
-    memberships?: Relation<OrganisationMembership>[];
+    memberships?: Relation<OrganisationMembership[]>;
 
     // We don't want to expose the api keys to the user
     // We don't want to load them unless explicitly
     @ApiPropertyOptional({type: () => UserApiKey, isArray: true})
     @Type(() => UserApiKey)
     @OneToMany(() => UserApiKey, (om) => om.user, {eager: false})
-    apiKeys?: Relation<UserApiKey>[];
+    apiKeys?: Relation<UserApiKey[]>;
 
     @CreateDateColumn()
     @ApiProperty()
