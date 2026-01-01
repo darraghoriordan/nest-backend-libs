@@ -1,10 +1,7 @@
-import {Module} from "@nestjs/common";
+import {DynamicModule, Module} from "@nestjs/common";
 import "reflect-metadata";
 import {StripeClientConfigurationService} from "./StripeClientConfigurationService.js";
 import {StripeCheckoutService} from "./services/stripe-checkout.service.js";
-import configVariables from "./StripeConfigurationVariables.js";
-import {ConfigModule} from "@nestjs/config";
-import {CoreModule} from "../root-app/core-app.module.js";
 import {StripeClientProvider} from "./StripeClientProvider.js";
 import {BullModule} from "@nestjs/bull";
 import {TypeOrmModule} from "@nestjs/typeorm";
@@ -17,39 +14,59 @@ import {PaymentSessionModule} from "../payment-sessions/payment-session.module.j
 import {StripeEventsController} from "./controllers/stripe-events-controller.js";
 import {AuthenticatedStripeCheckoutService} from "./services/auth-stripe-checkout.service.js";
 import SubscriptionRecordMapper from "./services/subscriptionRecord.mapper.js";
+import {
+    STRIPE_MODULE_OPTIONS,
+    StripeModuleAsyncOptions,
+} from "./stripe-account.options.js";
 
-@Module({
-    imports: [
-        BullModule.registerQueueAsync({
-            name: "stripe-events",
-        }),
-        ConfigModule.forFeature(configVariables),
-        CoreModule,
-        OrganisationSubscriptionsModule,
-        PaymentSessionModule,
-        TypeOrmModule.forFeature([StripeCheckoutEvent]),
-    ],
-    providers: [
-        AuthenticatedStripeCheckoutService,
-        StripeCheckoutService,
-        StripeClientConfigurationService,
-        StripeClientProvider,
-        StripeWebhookHandler,
-        SubscriptionRecordMapper,
-    ],
-    exports: [
-        AuthenticatedStripeCheckoutService,
-        BullModule,
-        StripeCheckoutService,
-        StripeClientProvider,
-        StripeWebhookHandler,
-        SubscriptionRecordMapper,
-        TypeOrmModule,
-    ],
-    controllers: [
-        StripeCustomerPortalController,
-        StripeEventsController,
-        StripeWebhookController,
-    ],
-})
-export class StripeAccountModule {}
+@Module({})
+export class StripeAccountModule {
+    static forRoot(): never {
+        throw new Error(
+            "StripeAccountModule.forRoot() is not supported. Use forRootAsync() instead."
+        );
+    }
+
+    static forRootAsync(options: StripeModuleAsyncOptions): DynamicModule {
+        return {
+            module: StripeAccountModule,
+            global: options.isGlobal ?? false,
+            imports: [
+                ...(options.imports || []),
+                BullModule.registerQueueAsync({
+                    name: "stripe-events",
+                }),
+                OrganisationSubscriptionsModule,
+                PaymentSessionModule,
+                TypeOrmModule.forFeature([StripeCheckoutEvent]),
+            ],
+            providers: [
+                {
+                    provide: STRIPE_MODULE_OPTIONS,
+                    useFactory: options.useFactory,
+                    inject: options.inject || [],
+                },
+                AuthenticatedStripeCheckoutService,
+                StripeCheckoutService,
+                StripeClientConfigurationService,
+                StripeClientProvider,
+                StripeWebhookHandler,
+                SubscriptionRecordMapper,
+            ],
+            exports: [
+                AuthenticatedStripeCheckoutService,
+                BullModule,
+                StripeCheckoutService,
+                StripeClientProvider,
+                StripeWebhookHandler,
+                SubscriptionRecordMapper,
+                TypeOrmModule,
+            ],
+            controllers: [
+                StripeCustomerPortalController,
+                StripeEventsController,
+                StripeWebhookController,
+            ],
+        };
+    }
+}

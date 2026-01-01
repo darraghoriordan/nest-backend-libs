@@ -3,6 +3,7 @@ import helmet from "helmet";
 import {
     BadRequestException,
     ClassSerializerInterceptor,
+    DynamicModule,
     INestApplication,
     Module,
     NestApplicationOptions,
@@ -15,80 +16,113 @@ import {SwaggerGen} from "./SwaggerGen.js";
 import {NestFactory, Reflector} from "@nestjs/core";
 import {CoreConfigurationService} from "../core-config/CoreConfigurationService.js";
 import {CoreConfigModule} from "../core-config/CoreConfig.module.js";
-import {ConfigModule} from "@nestjs/config";
 import {BullModule} from "@nestjs/bull";
 import {HealthModule} from "../health/Health.module.js";
-import {LoggerModule as LoggingConfigModule} from "../logger/logger.module.js";
-import {LoggingConfigurationService} from "../logger/LoggingConfigurationService.js";
-import {AuthzModule} from "../authorization/authz.module.js";
 import type {RedisClientOptions} from "redis";
 import {CacheModule} from "@nestjs/cache-manager";
 import KeyvRedis from "@keyv/redis";
+import {CoreModuleAsyncOptions} from "../core-config/core-config.options.js";
+import {
+    LoggerModuleAsyncOptions,
+    LOGGER_MODULE_OPTIONS,
+} from "../logger/logger.options.js";
+import {LoggingConfigurationService} from "../logger/LoggingConfigurationService.js";
 
-@Module({
-    imports: [
-        AuthzModule,
-        BullModule.forRootAsync({
-            imports: [CoreConfigModule],
+export interface CoreModuleForRootAsyncOptions {
+    core: CoreModuleAsyncOptions;
+    logger: LoggerModuleAsyncOptions;
+}
 
-            useFactory: (configService: CoreConfigurationService) => {
-                const redisUrl = new URL(
-                    configService.bullQueueHost || "redis://localhost"
-                );
-                return {
-                    redis: {
-                        host: redisUrl.hostname,
-                        password: redisUrl.password,
-                        port: Number(redisUrl.port),
-                        username: redisUrl.username,
-                        maxRetriesPerRequest: 3,
-                    },
-                };
-            },
-            inject: [CoreConfigurationService],
-        }),
-        CacheModule.registerAsync<RedisClientOptions>({
-            imports: [CoreConfigModule],
-            // eslint-disable-next-line @typescript-eslint/require-await
-            useFactory: async (configService: CoreConfigurationService) => {
-                console.debug(
-                    "Loading cache module with url",
-                    configService.bullQueueHost
-                );
-                const redis = new KeyvRedis(configService.bullQueueHost);
-
-                return {
-                    stores: [redis],
-                };
-            },
-            isGlobal: true,
-            inject: [CoreConfigurationService],
-        }),
-
-        ConfigModule.forRoot({cache: true, isGlobal: true}),
-        CoreConfigModule,
-        HealthModule,
-        LoggerModule.forRootAsync({
-            imports: [LoggingConfigModule],
-            inject: [LoggingConfigurationService],
-            // eslint-disable-next-line @typescript-eslint/require-await
-            useFactory: async (config: LoggingConfigurationService) => {
-                return {
-                    pinoHttp: {
-                        level: config.minLevel,
-                        transport: config.usePrettyLogs
-                            ? {target: "pino-pretty"}
-                            : undefined,
-                    },
-                };
-            },
-        }),
-    ],
-    controllers: [AppController],
-    providers: [AppService, SwaggerGen],
-    exports: [AuthzModule, BullModule, CacheModule, LoggerModule, SwaggerGen],
-})
+@Module({})
 export class CoreModule {
+    static forRoot(): never {
+        throw new Error(
+            "CoreModule.forRoot() is not supported. Use forRootAsync() instead."
+        );
+    }
+
+    static forRootAsync(options: CoreModuleForRootAsyncOptions): DynamicModule {
+        return {
+            module: CoreModule,
+            global: true,
+            imports: [
+                // Core config
+                CoreConfigModule.forRootAsync(options.core),
+                // Bull queue - uses core config
+                BullModule.forRootAsync({
+                    imports: [CoreConfigModule.forRootAsync(options.core)],
+                    useFactory: (configService: CoreConfigurationService) => {
+                        const redisUrl = new URL(configService.bullQueueHost);
+                        return {
+                            redis: {
+                                host: redisUrl.hostname,
+                                password: redisUrl.password,
+                                port: Number(redisUrl.port),
+                                username: redisUrl.username,
+                                maxRetriesPerRequest: 3,
+                            },
+                        };
+                    },
+                    inject: [CoreConfigurationService],
+                }),
+                // Cache - uses core config
+                CacheModule.registerAsync<RedisClientOptions>({
+                    imports: [CoreConfigModule.forRootAsync(options.core)],
+                    useFactory: (configService: CoreConfigurationService) => {
+                        const redis = new KeyvRedis(
+                            configService.bullQueueHost
+                        );
+                        return {
+                            stores: [redis],
+                        };
+                    },
+                    isGlobal: true,
+                    inject: [CoreConfigurationService],
+                }),
+                // Health check
+                HealthModule,
+                // Pino logger - uses logger config
+                LoggerModule.forRootAsync({
+                    imports: [...(options.logger.imports || [])],
+                    inject: [LOGGER_MODULE_OPTIONS],
+                    useFactory: (loggerOptions: {
+                        minLevel?: string;
+                        usePrettyLogs?: boolean;
+                    }) => {
+                        return {
+                            pinoHttp: {
+                                level: loggerOptions.minLevel ?? "debug",
+                                transport: loggerOptions.usePrettyLogs
+                                    ? {target: "pino-pretty"}
+                                    : undefined,
+                            },
+                        };
+                    },
+                }),
+            ],
+            controllers: [AppController],
+            providers: [
+                // Provide logger options for pino config
+                {
+                    provide: LOGGER_MODULE_OPTIONS,
+                    useFactory: options.logger.useFactory,
+                    inject: options.logger.inject || [],
+                },
+                LoggingConfigurationService,
+                AppService,
+                SwaggerGen,
+            ],
+            exports: [
+                BullModule,
+                CacheModule,
+                CoreConfigModule,
+                LoggerModule,
+                LoggingConfigurationService,
+                SwaggerGen,
+            ],
+        };
+    }
+
     public static initApplication(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         rootModule: any,
@@ -125,8 +159,8 @@ export class CoreModule {
                         whitelist: true,
                         forbidNonWhitelisted: true,
                         forbidUnknownValues: true,
-                        exceptionFactory: (e) => {
-                            loggerService.error(e);
+                        exceptionFactory: (error) => {
+                            loggerService.error(error);
                             throw new BadRequestException(
                                 "Bad request, please check your input"
                             );
@@ -140,7 +174,7 @@ export class CoreModule {
                 const swaggerGen = app.get(SwaggerGen);
                 swaggerGen.generate(app, "open-api/swagger.json");
 
-                const baseUrl = `http://localhost:${configService.webPort}`;
+                const baseUrl = `http://localhost:${String(configService.webPort)}`;
                 const prefixPath = configService.globalPrefix
                     ? `/${configService.globalPrefix}`
                     : "";
@@ -149,7 +183,7 @@ export class CoreModule {
                     : "/swagger";
 
                 loggerService.log(
-                    `will listen on port ${configService.webPort} (DEV: ${baseUrl}${prefixPath} )`
+                    `will listen on port ${String(configService.webPort)} (DEV: ${baseUrl}${prefixPath} )`
                 );
                 loggerService.log(
                     `swagger will be available at (DEV: ${baseUrl}${swaggerPath} )`

@@ -71,18 +71,9 @@ export default defineConfig(
     eslintNestJs.configs.flatRecommended,
     {
         rules: {
-            "@darraghor/nestjs-typed/injectable-should-be-provided": [
-                "error",
-                {
-                    src: ["src/**/*.ts"], // only scan specific patterns
-                    filterFromPaths: [
-                        "dist",
-                        "node_modules",
-                        ".test.",
-                        ".spec.",
-                    ],
-                },
-            ],
+            // Disabled because this rule doesn't understand forRootAsync dynamic module patterns
+            // which this library now uses extensively
+            "@darraghor/nestjs-typed/injectable-should-be-provided": "off",
         },
     }
 );

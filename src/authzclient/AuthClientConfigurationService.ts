@@ -1,24 +1,29 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {Injectable} from "@nestjs/common";
-import {ConfigService} from "@nestjs/config";
+import {Inject, Injectable} from "@nestjs/common";
 import {IsDefined, IsString} from "class-validator";
 import {ValidatedConfigurationService} from "../configuration/ValidatedConfigurationService.js";
+import {
+    AUTHZ_CLIENT_MODULE_OPTIONS,
+    AuthzClientModuleOptions,
+} from "./authz-client.options.js";
 
 @Injectable()
 export class AuthClientConfigurationService extends ValidatedConfigurationService {
-    constructor(private configService: ConfigService) {
+    constructor(
+        @Inject(AUTHZ_CLIENT_MODULE_OPTIONS)
+        private options: AuthzClientModuleOptions
+    ) {
         super();
     }
 
     @IsDefined()
     @IsString()
     get auth0Domain(): string {
-        return this.configService.get<string>("authclient.auth0Domain")!;
+        return this.options.auth0Domain;
     }
 
     @IsDefined()
     @IsString()
     get auth0ClientId(): string {
-        return this.configService.get<string>("authclient.auth0ClientId")!;
+        return this.options.auth0ClientId;
     }
 }

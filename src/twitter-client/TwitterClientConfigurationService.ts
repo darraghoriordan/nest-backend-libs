@@ -1,33 +1,41 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {Injectable} from "@nestjs/common";
-import {ConfigService} from "@nestjs/config";
+import {Inject, Injectable} from "@nestjs/common";
 import {IsDefined, IsString} from "class-validator";
 import {ValidatedConfigurationService} from "../configuration/ValidatedConfigurationService.js";
+import {
+    TWITTER_MODULE_OPTIONS,
+    TwitterModuleOptions,
+} from "./twitter-account.options.js";
 
 @Injectable()
 export class TwitterClientConfigurationService extends ValidatedConfigurationService {
-    constructor(private configService: ConfigService) {
+    constructor(
+        @Inject(TWITTER_MODULE_OPTIONS)
+        private options: TwitterModuleOptions
+    ) {
         super();
     }
 
     @IsDefined()
     @IsString()
     get appSecret(): string {
-        return this.configService.get<string>("twitter-client.appSecret")!;
+        return this.options.appSecret;
     }
+
     @IsDefined()
     @IsString()
     get appKey(): string {
-        return this.configService.get<string>("twitter-client.appKey")!;
+        return this.options.appKey;
     }
+
     @IsDefined()
     @IsString()
     get accessToken(): string {
-        return this.configService.get<string>("twitter-client.accessToken")!;
+        return this.options.accessToken;
     }
+
     @IsDefined()
     @IsString()
     get accessSecret(): string {
-        return this.configService.get<string>("twitter-client.accessSecret")!;
+        return this.options.accessSecret;
     }
 }

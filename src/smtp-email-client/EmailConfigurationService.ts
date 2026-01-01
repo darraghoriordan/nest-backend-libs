@@ -1,66 +1,65 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {Injectable} from "@nestjs/common";
-import {ConfigService} from "@nestjs/config";
+import {Inject, Injectable} from "@nestjs/common";
 import {IsBoolean, IsDefined, IsInt, IsString} from "class-validator";
 import {ValidatedConfigurationService} from "../configuration/ValidatedConfigurationService.js";
+import {
+    SMTP_EMAIL_MODULE_OPTIONS,
+    SmtpEmailModuleOptions,
+} from "./smtp-email-client.options.js";
 
 @Injectable()
 export class EmailConfigurationService extends ValidatedConfigurationService {
-    constructor(private configService: ConfigService) {
+    constructor(
+        @Inject(SMTP_EMAIL_MODULE_OPTIONS)
+        private options: SmtpEmailModuleOptions
+    ) {
         super();
     }
 
     @IsDefined()
     @IsBoolean()
     get isEmailSyncSendEnabled(): boolean {
-        return (
-            this.configService.get<string>("email.isEmailSyncSendEnabled") ===
-            "true"
-        );
+        return this.options.isEmailSyncSendEnabled;
     }
 
     @IsDefined()
     @IsString()
     get extraEmailBcc(): string {
-        return this.configService.get<string>("email.extraEmailBcc")!;
+        return this.options.extraEmailBcc;
     }
 
     @IsDefined()
     @IsString()
     get emailPassword(): string {
-        return this.configService.get<string>("email.smtpPassword")!;
+        return this.options.emailPassword;
     }
 
     @IsDefined()
     @IsString()
     get smtpHost(): string {
-        return this.configService.get<string>("email.smtpHost")!;
+        return this.options.smtpHost;
     }
 
     @IsDefined()
     @IsInt()
     get smtpPort(): number {
-        return Number.parseInt(
-            this.configService.get<string>("email.smtpPort")!,
-            10
-        );
+        return this.options.smtpPort;
     }
 
     @IsDefined()
     @IsString()
     get emailUsername(): string {
-        return this.configService.get<string>("email.smtpUsername")!;
+        return this.options.emailUsername;
     }
 
     @IsDefined()
     @IsString()
     get senderEmailAddress(): string {
-        return this.configService.get<string>("email.senderEmailAddress")!;
+        return this.options.senderEmailAddress;
     }
 
     @IsDefined()
     @IsString()
     get senderName(): string {
-        return this.configService.get<string>("email.senderName")!;
+        return this.options.senderName;
     }
 }

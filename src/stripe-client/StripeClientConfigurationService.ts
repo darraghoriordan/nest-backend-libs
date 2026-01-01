@@ -1,34 +1,35 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {Injectable} from "@nestjs/common";
-import {ConfigService} from "@nestjs/config";
+import {Inject, Injectable} from "@nestjs/common";
 import {IsDefined, IsString} from "class-validator";
 import {ValidatedConfigurationService} from "../configuration/ValidatedConfigurationService.js";
+import {
+    STRIPE_MODULE_OPTIONS,
+    StripeModuleOptions,
+} from "./stripe-account.options.js";
 
 @Injectable()
 export class StripeClientConfigurationService extends ValidatedConfigurationService {
-    constructor(private configService: ConfigService) {
+    constructor(
+        @Inject(STRIPE_MODULE_OPTIONS)
+        private options: StripeModuleOptions
+    ) {
         super();
     }
 
     @IsDefined()
     @IsString()
     get accessToken(): string {
-        return this.configService.get<string>("stripe-client.accessToken")!;
+        return this.options.accessToken;
     }
 
     @IsDefined()
     @IsString()
     get webhookVerificationKey(): string {
-        return this.configService.get<string>(
-            "stripe-client.webhookVerificationKey"
-        )!;
+        return this.options.webhookVerificationKey;
     }
 
     @IsDefined()
     @IsString()
     get stripeRedirectsBaseUrl(): string {
-        return this.configService.get<string>(
-            "stripe-client.stripeRedirectsBaseUrl"
-        )!;
+        return this.options.stripeRedirectsBaseUrl;
     }
 }

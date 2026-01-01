@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {Injectable} from "@nestjs/common";
-import {ConfigService} from "@nestjs/config";
+import {Inject, Injectable} from "@nestjs/common";
 import {
     IsBoolean,
     IsDefined,
@@ -9,77 +7,69 @@ import {
     IsString,
 } from "class-validator";
 import {ValidatedConfigurationService} from "../configuration/ValidatedConfigurationService.js";
+import {CORE_MODULE_OPTIONS, CoreModuleOptions} from "./core-config.options.js";
 
 @Injectable()
 export class CoreConfigurationService extends ValidatedConfigurationService {
-    constructor(private configService: ConfigService) {
+    constructor(
+        @Inject(CORE_MODULE_OPTIONS)
+        private options: CoreModuleOptions
+    ) {
         super();
     }
 
     @IsDefined()
     @IsBoolean()
     get shouldGenerateSwagger(): boolean {
-        return (
-            this.configService.get<string>("core.shouldGenerateSwagger") ===
-            "true"
-        );
+        return this.options.shouldGenerateSwagger;
     }
 
     @IsDefined()
     @IsBoolean()
     get shouldAutomaticallyInstallApiModels(): boolean {
-        return (
-            this.configService.get<string>(
-                "core.shouldAutomaticallyInstallApiModels"
-            ) === "true"
-        );
+        return this.options.shouldAutomaticallyInstallApiModels;
     }
 
     @IsDefined()
     @IsBoolean()
     get shouldUseNestCors(): boolean {
-        return (
-            this.configService.get<string>("core.shouldUseNestCors") === "true"
-        );
+        return this.options.shouldUseNestCors;
     }
 
     @IsDefined()
     @IsInt()
     get webPort(): number {
-        return Number.parseInt(
-            this.configService.get<string>("core.webPort")!,
-            10
-        );
+        return this.options.webPort;
     }
 
     @IsDefined()
     @IsString()
     get appTitle(): string {
-        return this.configService.get<string>("core.appTitle")!;
+        return this.options.appTitle;
     }
 
     @IsDefined()
     @IsString()
     get frontEndAppUrl(): string {
-        return this.configService.get<string>("core.frontEndAppUrl")!;
+        return this.options.frontEndAppUrl;
     }
 
     @IsDefined()
     @IsString()
     get nodeEnv(): string {
-        return this.configService.get<string>("core.nodeEnv")!;
+        return this.options.nodeEnv;
     }
 
     @IsDefined()
     @IsString()
     get bullQueueHost(): string {
-        return this.configService.get<string>("core.bullQueueHost")!;
+        return this.options.bullQueueHost;
     }
 
     @IsString()
     @IsOptional()
     get globalPrefix(): string | undefined {
-        const raw = this.configService.get<string>("core.appGlobalPrefix");
+        const raw = this.options.globalPrefix;
         if (!raw) {
             return undefined;
         }

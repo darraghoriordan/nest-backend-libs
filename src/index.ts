@@ -85,3 +85,59 @@ export {Organisation} from "./organisation/entities/organisation.entity.js";
 export {OrganisationMembership} from "./organisation-memberships/entities/organisation-membership.entity.js";
 export {MembershipRole} from "./organisation/entities/member-role.entity.js";
 export {Roles} from "./organisation/dto/RolesEnum.js";
+
+// authz client
+export {AuthzClientModule} from "./authzclient/authz-client.module.js";
+
+// logger
+export {LoggerModule} from "./logger/logger.module.js";
+export {LoggingConfigurationService} from "./logger/LoggingConfigurationService.js";
+
+// Module options (for forRootAsync configuration)
+export type {
+    CoreModuleOptions,
+    CoreModuleAsyncOptions,
+} from "./core-config/core-config.options.js";
+export {CORE_MODULE_OPTIONS} from "./core-config/core-config.options.js";
+
+export type {
+    LoggerModuleOptions,
+    LoggerModuleAsyncOptions,
+} from "./logger/logger.options.js";
+export {LOGGER_MODULE_OPTIONS} from "./logger/logger.options.js";
+
+export type {
+    AuthzModuleOptions,
+    AuthzModuleAsyncOptions,
+} from "./authorization/authz.options.js";
+export {AUTHZ_MODULE_OPTIONS} from "./authorization/authz.options.js";
+
+export type {
+    AuthzClientModuleOptions,
+    AuthzClientModuleAsyncOptions,
+} from "./authzclient/authz-client.options.js";
+export {AUTHZ_CLIENT_MODULE_OPTIONS} from "./authzclient/authz-client.options.js";
+
+export type {
+    StripeModuleOptions,
+    StripeModuleAsyncOptions,
+} from "./stripe-client/stripe-account.options.js";
+export {STRIPE_MODULE_OPTIONS} from "./stripe-client/stripe-account.options.js";
+
+export type {
+    SmtpEmailModuleOptions,
+    SmtpEmailModuleAsyncOptions,
+} from "./smtp-email-client/smtp-email-client.options.js";
+export {SMTP_EMAIL_MODULE_OPTIONS} from "./smtp-email-client/smtp-email-client.options.js";
+
+export type {
+    TwitterModuleOptions,
+    TwitterModuleAsyncOptions,
+} from "./twitter-client/twitter-account.options.js";
+export {TWITTER_MODULE_OPTIONS} from "./twitter-client/twitter-account.options.js";
+
+export type {
+    InvitationModuleOptions,
+    InvitationModuleAsyncOptions,
+} from "./invitations/invitation.options.js";
+export {INVITATION_MODULE_OPTIONS} from "./invitations/invitation.options.js";

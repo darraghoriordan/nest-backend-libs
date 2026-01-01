@@ -1,11 +1,32 @@
-import {Module} from "@nestjs/common";
-import {ConfigModule} from "@nestjs/config";
+import {DynamicModule, Module} from "@nestjs/common";
 import {CoreConfigurationService} from "./CoreConfigurationService.js";
-import configVariables from "./CoreConfigurationVariables.js";
+import {
+    CORE_MODULE_OPTIONS,
+    CoreModuleAsyncOptions,
+} from "./core-config.options.js";
 
-@Module({
-    imports: [ConfigModule.forFeature(configVariables)],
-    exports: [CoreConfigurationService],
-    providers: [CoreConfigurationService],
-})
-export class CoreConfigModule {}
+@Module({})
+export class CoreConfigModule {
+    static forRoot(): never {
+        throw new Error(
+            "CoreConfigModule.forRoot() is not supported. Use forRootAsync() instead."
+        );
+    }
+
+    static forRootAsync(options: CoreModuleAsyncOptions): DynamicModule {
+        return {
+            module: CoreConfigModule,
+            global: options.isGlobal ?? true,
+            imports: [...(options.imports || [])],
+            providers: [
+                {
+                    provide: CORE_MODULE_OPTIONS,
+                    useFactory: options.useFactory,
+                    inject: options.inject || [],
+                },
+                CoreConfigurationService,
+            ],
+            exports: [CoreConfigurationService, CORE_MODULE_OPTIONS],
+        };
+    }
+}

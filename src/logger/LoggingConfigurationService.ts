@@ -1,42 +1,38 @@
-import {Injectable} from "@nestjs/common";
-import {ConfigService} from "@nestjs/config";
+import {Inject, Injectable} from "@nestjs/common";
 import {IsBoolean, IsDefined, IsOptional, IsString} from "class-validator";
 import {ValidatedConfigurationService} from "../configuration/ValidatedConfigurationService.js";
+import {LOGGER_MODULE_OPTIONS, LoggerModuleOptions} from "./logger.options.js";
 
 @Injectable()
 export class LoggingConfigurationService extends ValidatedConfigurationService {
-    constructor(private configService: ConfigService) {
+    constructor(
+        @Inject(LOGGER_MODULE_OPTIONS)
+        private options: LoggerModuleOptions
+    ) {
         super();
     }
 
     @IsDefined()
     @IsBoolean()
     get shouldLogForDevelopment(): boolean {
-        return this.configService.get<string>("logging.nodeEnv") === "dev";
+        return this.options.nodeEnv === "dev";
     }
 
     @IsString()
     @IsDefined()
     get loggerName(): string {
-        return (
-            this.configService.get<string>("logging.loggerName") ||
-            "DefaultLogger"
-        );
+        return this.options.loggerName ?? "DefaultLogger";
     }
 
     @IsString()
     @IsOptional()
     get minLevel(): string {
-        return (
-            this.configService.get<string>("logging.loggerMinLevel") || "debug"
-        );
+        return this.options.minLevel ?? "debug";
     }
 
     @IsBoolean()
     @IsOptional()
     get usePrettyLogs(): boolean {
-        return (
-            this.configService.get<string>("logging.usePrettyLogs") === "true"
-        );
+        return this.options.usePrettyLogs ?? false;
     }
 }
