@@ -22,7 +22,8 @@ import {CacheModule} from "@nestjs/cache-manager";
 import KeyvRedis from "@keyv/redis";
 import {CoreModuleAsyncOptions} from "../core-config/core-config.options.js";
 import {
-    LoggerModuleAsyncOptions,
+    type LoggerModuleAsyncOptions,
+    type LoggerModuleOptions,
     LOGGER_MODULE_OPTIONS,
 } from "../logger/logger.options.js";
 import {LoggingConfigurationService} from "../logger/LoggingConfigurationService.js";
@@ -80,14 +81,16 @@ export class CoreModule {
                 }),
                 // Health check
                 HealthModule,
-                // Pino logger - uses logger config
+                // Pino logger - uses logger config directly from options
                 LoggerModule.forRootAsync({
                     imports: [...(options.logger.imports || [])],
-                    inject: [LOGGER_MODULE_OPTIONS],
-                    useFactory: (loggerOptions: {
-                        minLevel?: string;
-                        usePrettyLogs?: boolean;
-                    }) => {
+                    inject: options.logger.inject || [],
+                    useFactory: async (
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        ...args: any[]
+                    ) => {
+                        const loggerOptions: LoggerModuleOptions =
+                            await options.logger.useFactory(...args);
                         return {
                             pinoHttp: {
                                 level: loggerOptions.minLevel ?? "debug",
