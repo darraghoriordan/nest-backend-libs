@@ -23,7 +23,7 @@ export class SmtpEmailClientModule {
     static forRootAsync(options: SmtpEmailModuleAsyncOptions): DynamicModule {
         return {
             module: SmtpEmailClientModule,
-            global: options.isGlobal ?? false,
+            global: options.isGlobal ?? true,
             imports: [
                 ...(options.imports || []),
                 BullModule.registerQueueAsync({
