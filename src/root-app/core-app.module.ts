@@ -166,7 +166,7 @@ export class CoreModule {
 
                 if (configService.globalPrefix) {
                     app.setGlobalPrefix(configService.globalPrefix, {
-                        exclude: ["health"],
+                        exclude: ["/", "health"],
                     });
                 }
 
