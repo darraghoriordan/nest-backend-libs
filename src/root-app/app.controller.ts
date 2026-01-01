@@ -12,7 +12,7 @@ import {RequestWithUser} from "../authorization/models/RequestWithUser.js";
 import {MandatoryUserClaims} from "../authorization/guards/MandatoryUserClaims.decorator.js";
 import {AppService, HealthResponse} from "./app.service.js";
 
-@Controller()
+@Controller("admin/health")
 @ApiTags("Application Support")
 export class AppController {
     private readonly logger = new Logger(AppController.name);
