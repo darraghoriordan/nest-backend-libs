@@ -7,7 +7,11 @@ import {
     IsString,
 } from "class-validator";
 import {ValidatedConfigurationService} from "../configuration/ValidatedConfigurationService.js";
-import {CORE_MODULE_OPTIONS, CoreModuleOptions} from "./core-config.options.js";
+import {
+    CORE_MODULE_OPTIONS,
+    CoreModuleOptions,
+    HelmetOptions,
+} from "./core-config.options.js";
 
 @Injectable()
 export class CoreConfigurationService extends ValidatedConfigurationService {
@@ -75,5 +79,9 @@ export class CoreConfigurationService extends ValidatedConfigurationService {
         }
         // Normalize: remove leading/trailing slashes
         return raw.replace(/^\/+|\/+$/g, "");
+    }
+
+    get helmetOptions(): HelmetOptions | false | undefined {
+        return this.options.helmetOptions;
     }
 }

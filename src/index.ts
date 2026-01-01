@@ -97,6 +97,7 @@ export {LoggingConfigurationService} from "./logger/LoggingConfigurationService.
 export type {
     CoreModuleOptions,
     CoreModuleAsyncOptions,
+    HelmetOptions,
 } from "./core-config/core-config.options.js";
 export {CORE_MODULE_OPTIONS} from "./core-config/core-config.options.js";
 

@@ -6,7 +6,6 @@ import {
     DynamicModule,
     INestApplication,
     Module,
-    NestApplicationOptions,
     ValidationPipe,
 } from "@nestjs/common";
 import {Logger, LoggerModule} from "nestjs-pino";
@@ -126,9 +125,7 @@ export class CoreModule {
     public static initApplication(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         rootModule: any,
-        callback: (appModule: INestApplication) => void | Promise<void>,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        options?: NestApplicationOptions
+        callback: (appModule: INestApplication) => void | Promise<void>
     ): void {
         void (async () => {
             try {
@@ -148,7 +145,10 @@ export class CoreModule {
                     });
                 }
 
-                app.use(helmet());
+                const helmetOptions = configService.helmetOptions;
+                if (helmetOptions !== false) {
+                    app.use(helmet(helmetOptions ?? undefined));
+                }
                 app.enableCors({
                     origin: [configService.frontEndAppUrl],
                 });
