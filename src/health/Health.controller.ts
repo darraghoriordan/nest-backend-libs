@@ -34,7 +34,8 @@ export class HealthController {
             () =>
                 this.http.pingCheck(
                     "backend-api",
-                    process.env.BACKEND_APP_URL || "http://localhost"
+                    (process.env.BACKEND_APP_URL || "http://localhost") +
+                        "/admin/health"
                 ),
             () => this.database.pingCheck("app-database"),
             () =>
