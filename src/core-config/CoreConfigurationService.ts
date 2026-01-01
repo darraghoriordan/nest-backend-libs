@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {Injectable} from "@nestjs/common";
 import {ConfigService} from "@nestjs/config";
-import {IsBoolean, IsDefined, IsInt, IsString} from "class-validator";
+import {
+    IsBoolean,
+    IsDefined,
+    IsInt,
+    IsOptional,
+    IsString,
+} from "class-validator";
 import {ValidatedConfigurationService} from "../configuration/ValidatedConfigurationService.js";
 
 @Injectable()
@@ -68,5 +74,16 @@ export class CoreConfigurationService extends ValidatedConfigurationService {
     @IsString()
     get bullQueueHost(): string {
         return this.configService.get<string>("core.bullQueueHost")!;
+    }
+
+    @IsString()
+    @IsOptional()
+    get globalPrefix(): string | undefined {
+        const raw = this.configService.get<string>("core.appGlobalPrefix");
+        if (!raw) {
+            return undefined;
+        }
+        // Normalize: remove leading/trailing slashes
+        return raw.replace(/^\/+|\/+$/g, "");
     }
 }

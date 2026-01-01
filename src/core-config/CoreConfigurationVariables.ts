@@ -11,4 +11,5 @@ export default registerAs("core", () => ({
     shouldAutomaticallyInstallApiModels: process.env.AUTO_INSTALL_API_MODELS,
     appTitle: process.env.APP_TITLE,
     bullQueueHost: process.env.REDIS_URL,
+    appGlobalPrefix: process.env.APP_GLOBAL_PREFIX,
 }));

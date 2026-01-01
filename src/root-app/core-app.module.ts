@@ -108,6 +108,12 @@ export class CoreModule {
                 app.useLogger(loggerService);
                 app.flushLogs();
 
+                if (configService.globalPrefix) {
+                    app.setGlobalPrefix(configService.globalPrefix, {
+                        exclude: ["health"],
+                    });
+                }
+
                 app.use(helmet());
                 app.enableCors({
                     origin: [configService.frontEndAppUrl],
@@ -134,11 +140,19 @@ export class CoreModule {
                 const swaggerGen = app.get(SwaggerGen);
                 swaggerGen.generate(app, "open-api/swagger.json");
 
+                const baseUrl = `http://localhost:${configService.webPort}`;
+                const prefixPath = configService.globalPrefix
+                    ? `/${configService.globalPrefix}`
+                    : "";
+                const swaggerPath = configService.globalPrefix
+                    ? `/${configService.globalPrefix}/swagger`
+                    : "/swagger";
+
                 loggerService.log(
-                    `will listen on port ${configService.webPort} (DEV: http://localhost:${configService.webPort} )`
+                    `will listen on port ${configService.webPort} (DEV: ${baseUrl}${prefixPath} )`
                 );
                 loggerService.log(
-                    `swagger will be available at (DEV: http://localhost:${configService.webPort}/swagger )`
+                    `swagger will be available at (DEV: ${baseUrl}${swaggerPath} )`
                 );
                 app.enableShutdownHooks();
                 await callback(app);

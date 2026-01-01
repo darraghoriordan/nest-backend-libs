@@ -23,7 +23,10 @@ export class SwaggerGen {
             .setDescription("Describes the backend api")
             .build();
         const document = SwaggerModule.createDocument(app, config);
-        SwaggerModule.setup("swagger", app, document);
+        const swaggerPath = this.config.globalPrefix
+            ? `${this.config.globalPrefix}/swagger`
+            : "swagger";
+        SwaggerModule.setup(swaggerPath, app, document);
 
         fs.writeFileSync(pathToSave, JSON.stringify(document, undefined, 2));
         this.logger.log(`Wrote swagger api doc to ${pathToSave}`);
