@@ -125,10 +125,26 @@ export class CoreModule {
         };
     }
 
+    /**
+     * Initialize a NestJS application with standard configuration.
+     *
+     * @param rootModule - The root module class
+     * @param callback - Called after app is configured, typically to call app.listen()
+     * @param options - Optional configuration
+     * @param options.preMiddleware - Callback to add Express middleware BEFORE helmet/cors/etc.
+     *                                Use this for middleware that must run before all other middleware,
+     *                                such as crawler detection middleware that needs to intercept
+     *                                requests before ServeStaticModule.
+     */
     public static initApplication(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         rootModule: any,
-        callback: (appModule: INestApplication) => void | Promise<void>
+        callback: (appModule: INestApplication) => void | Promise<void>,
+        options?: {
+            preMiddleware?: (
+                appModule: INestApplication
+            ) => void | Promise<void>;
+        }
     ): void {
         void (async () => {
             try {
@@ -141,6 +157,12 @@ export class CoreModule {
                 const configService = app.get(CoreConfigurationService);
                 app.useLogger(loggerService);
                 app.flushLogs();
+
+                // Run pre-middleware hook FIRST, before any other middleware
+                // This allows consumers to add middleware that runs before helmet, cors, etc.
+                if (options?.preMiddleware) {
+                    await options.preMiddleware(app);
+                }
 
                 if (configService.globalPrefix) {
                     app.setGlobalPrefix(configService.globalPrefix, {
