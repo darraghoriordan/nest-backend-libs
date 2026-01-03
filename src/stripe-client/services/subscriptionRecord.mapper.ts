@@ -26,14 +26,29 @@ export default class SubscriptionRecordMapper {
                 lineItem.price?.type,
                 fullSession.mode
             );
-            const typedSubscription =
-                fullSession.subscription! as Stripe.Subscription;
+
+            // For one-time payments, subscription is null - validUntil will be set to ~500 years
+            // For subscriptions, use cancel_at if cancellation is scheduled, otherwise use current_period_end from first item
+            let subscriptionPeriodEnd: number | undefined;
+            if (fullSession.subscription) {
+                const typedSubscription =
+                    fullSession.subscription as Stripe.Subscription;
+                if (
+                    typedSubscription.cancel_at_period_end &&
+                    typedSubscription.cancel_at
+                ) {
+                    subscriptionPeriodEnd = typedSubscription.cancel_at;
+                } else {
+                    // Get current_period_end from the first subscription item
+                    const firstItem = typedSubscription.items?.data?.[0];
+                    subscriptionPeriodEnd = firstItem?.current_period_end;
+                }
+            }
+
             subscriptionFulfilmentDto.validUntil = this.mapNewValidUntil(
                 subscriptionFulfilmentDto.paymentSystemMode,
                 true,
-                typedSubscription.cancel_at_period_end
-                    ? typedSubscription.cancel_at
-                    : undefined
+                subscriptionPeriodEnd
             );
 
             subscriptionFulfilmentDto.paymentSystemTransactionId =
@@ -138,12 +153,17 @@ export default class SubscriptionRecordMapper {
             subscriptionFulfilmentDto.paymentSystemTransactionId =
                 fullSubscription.id;
 
+            // Use cancel_at if cancellation is scheduled, otherwise use current_period_end from the item
+            const periodEnd =
+                fullSubscription.cancel_at_period_end &&
+                fullSubscription.cancel_at
+                    ? fullSubscription.cancel_at
+                    : lineItem.current_period_end;
+
             subscriptionFulfilmentDto.validUntil = this.mapNewValidUntil(
                 subscriptionFulfilmentDto.paymentSystemMode,
                 additionalMeta.isActive,
-                fullSubscription.cancel_at_period_end
-                    ? fullSubscription.cancel_at
-                    : undefined
+                periodEnd
             );
 
             subs.push(subscriptionFulfilmentDto);

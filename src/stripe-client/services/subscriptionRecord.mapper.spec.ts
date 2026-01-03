@@ -61,6 +61,87 @@ describe("SubscriptionRecordMapper", () => {
                 expectedMinYear
             );
         });
+
+        it("should handle null subscription for one-time payments", () => {
+            const mockSession = createMockCheckoutSession({
+                mode: "payment",
+                priceType: "one_time",
+                subscription: null,
+            });
+
+            const result = mapper.mapCheckoutSessionToSubRecord(mockSession);
+
+            expect(result[0].paymentSystemMode).toBe("payment");
+            // validUntil should be ~500 years in future
+            const now = new Date();
+            const expectedMinYear = now.getFullYear() + 499;
+            expect(result[0].validUntil.getFullYear()).toBeGreaterThan(
+                expectedMinYear
+            );
+        });
+
+        it("should use current_period_end for active subscriptions without cancellation", () => {
+            const currentPeriodEnd =
+                Math.floor(Date.now() / 1000) + 86400 * 365; // 1 year from now
+            const mockSession = createMockCheckoutSession({
+                mode: "subscription",
+                priceType: "recurring",
+                subscription: {
+                    id: "sub_123",
+                    cancel_at_period_end: false,
+                    cancel_at: null,
+                    items: {
+                        data: [
+                            {
+                                current_period_end: currentPeriodEnd,
+                            },
+                        ],
+                    },
+                },
+            });
+
+            const result = mapper.mapCheckoutSessionToSubRecord(mockSession);
+
+            // Should be current_period_end + 2 days grace period
+            const expectedDate = new Date(
+                (currentPeriodEnd + 2 * 24 * 60 * 60) * 1000
+            );
+            expect(result[0].validUntil.getTime()).toBeCloseTo(
+                expectedDate.getTime(),
+                -3 // within 1 second
+            );
+        });
+
+        it("should use cancel_at when cancellation is scheduled", () => {
+            const cancelAt = Math.floor(Date.now() / 1000) + 86400 * 30; // 30 days from now
+            const currentPeriodEnd =
+                Math.floor(Date.now() / 1000) + 86400 * 365; // 1 year from now
+            const mockSession = createMockCheckoutSession({
+                mode: "subscription",
+                priceType: "recurring",
+                subscription: {
+                    id: "sub_123",
+                    cancel_at_period_end: true,
+                    cancel_at: cancelAt,
+                    items: {
+                        data: [
+                            {
+                                current_period_end: currentPeriodEnd,
+                            },
+                        ],
+                    },
+                },
+            });
+
+            const result = mapper.mapCheckoutSessionToSubRecord(mockSession);
+
+            // Should use cancel_at, not current_period_end
+            const expectedDate = new Date((cancelAt + 2 * 24 * 60 * 60) * 1000);
+            expect(result[0].validUntil.getTime()).toBeCloseTo(
+                expectedDate.getTime(),
+                -3 // within 1 second
+            );
+        });
     });
 
     describe("mapSubscriptionToSubRecord", () => {
@@ -120,18 +201,97 @@ describe("SubscriptionRecordMapper", () => {
 
             expect(result[0].paymentSystemName).toBe("stripe");
         });
+
+        it("should use current_period_end when cancellation is not scheduled", () => {
+            const currentPeriodEnd =
+                Math.floor(Date.now() / 1000) + 86400 * 365; // 1 year from now
+            const mockSubscription = createMockSubscription({
+                cancelAtPeriodEnd: false,
+                currentPeriodEnd,
+            });
+
+            const result = mapper.mapSubscriptionToSubRecord(mockSubscription, {
+                isActive: true,
+            });
+
+            // Should be current_period_end + 2 days grace period
+            const expectedDate = new Date(
+                (currentPeriodEnd + 2 * 24 * 60 * 60) * 1000
+            );
+            expect(result[0].validUntil.getTime()).toBeCloseTo(
+                expectedDate.getTime(),
+                -3 // within 1 second
+            );
+        });
+
+        it("should set validUntil to now for inactive subscriptions", () => {
+            const mockSubscription = createMockSubscription({
+                cancelAtPeriodEnd: false,
+            });
+
+            const result = mapper.mapSubscriptionToSubRecord(mockSubscription, {
+                isActive: false,
+            });
+
+            // For inactive subscriptions, validUntil should be around now
+            const now = new Date();
+            expect(result[0].validUntil.getTime()).toBeCloseTo(
+                now.getTime(),
+                -4 // within 10 seconds
+            );
+        });
     });
 });
 
 // Test helpers
 
+interface MockSubscriptionData {
+    id: string;
+    cancel_at_period_end: boolean;
+    cancel_at: number | null;
+    items?: {
+        data: Array<{
+            current_period_end: number;
+        }>;
+    };
+}
+
 interface MockCheckoutOptions {
     mode: "payment" | "subscription";
     priceType: "recurring" | "one_time";
+    subscription?: MockSubscriptionData | null;
 }
 
 function createMockCheckoutSession(options: MockCheckoutOptions) {
-    const cancelAt = Math.floor(Date.now() / 1000) + 86400 * 30; // 30 days from now
+    const defaultCancelAt = Math.floor(Date.now() / 1000) + 86400 * 30; // 30 days from now
+    const defaultCurrentPeriodEnd = Math.floor(Date.now() / 1000) + 86400 * 365; // 1 year from now
+
+    // If subscription is explicitly set (including null), use that value
+    // Otherwise, for subscription mode create a default subscription object
+    let subscription: MockSubscriptionData | null;
+    if (options.subscription !== undefined) {
+        subscription = options.subscription;
+    } else if (
+        options.mode === "subscription" ||
+        options.priceType === "recurring"
+    ) {
+        subscription = {
+            id: "sub_123",
+            cancel_at_period_end: true,
+            cancel_at: defaultCancelAt,
+            items: {
+                data: [
+                    {
+                        current_period_end: defaultCurrentPeriodEnd,
+                    },
+                ],
+            },
+        };
+    } else {
+        // One-time payments have no subscription
+        subscription = null;
+    }
+
     return {
         id: "cs_test_123",
         mode: options.mode,
@@ -142,11 +302,7 @@ function createMockCheckoutSession(options: MockCheckoutOptions) {
         customer_email: "customer@example.com",
         customer_details: {email: "customer@example.com"},
         client_reference_id: "ref-123",
-        subscription: {
-            id: "sub_123",
-            cancel_at_period_end: true,
-            cancel_at: cancelAt,
-        },
+        subscription,
         line_items: {
             data: [
                 {
@@ -167,12 +323,14 @@ function createMockCheckoutSession(options: MockCheckoutOptions) {
 interface MockSubscriptionOptions {
     cancelAtPeriodEnd?: boolean;
     cancelAt?: number;
+    currentPeriodEnd?: number;
     productMetadata?: Record<string, string>;
     customerEmail?: string;
 }
 
 function createMockSubscription(options: MockSubscriptionOptions) {
     const defaultCancelAt = Math.floor(Date.now() / 1000) + 86400 * 30; // 30 days from now
+    const defaultCurrentPeriodEnd = Math.floor(Date.now() / 1000) + 86400 * 365; // 1 year from now
     return {
         id: "sub_123",
         cancel_at_period_end: options.cancelAtPeriodEnd ?? true,
@@ -184,6 +342,8 @@ function createMockSubscription(options: MockSubscriptionOptions) {
         items: {
             data: [
                 {
+                    current_period_end:
+                        options.currentPeriodEnd ?? defaultCurrentPeriodEnd,
                     price: {
                         type: "recurring",
                         product: {
