@@ -28,15 +28,13 @@ jobs:
               shell: bash
               run: |
                   echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-            - uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
+            - uses: actions/cache@v4
               name: Setup pnpm cache
               with:
-                  path: |
-                      ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-                      ${{ github.workspace }}/apps/frontend/.next/cache
-                  key: ${{ runner.os }}-pnpm-store-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+                  path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
                   restore-keys: |
-                      ${{ runner.os }}-pnpm-store-nextjs
+                      ${{ runner.os }}-pnpm-store-
             - name: Install dependencies
               run: pnpm install --frozen-lockfile -r
             - run: pnpm run test
