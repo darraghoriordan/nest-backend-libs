@@ -34,7 +34,7 @@ export class ClaimsAuthorisationGuard implements CanActivate {
             }
 
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (!user || !user.permissions) {
+            if (!user?.permissions) {
                 return false;
             }
             return routePermissions.every((routePermission) =>
