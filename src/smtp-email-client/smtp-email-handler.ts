@@ -1,13 +1,7 @@
-import {
-    Processor,
-    OnQueueFailed,
-    OnQueueActive,
-    OnQueueCompleted,
-    Process,
-} from "@nestjs/bull";
+import {Processor, OnWorkerEvent, WorkerHost} from "@nestjs/bullmq";
 import {Inject, Injectable, Logger} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import {Job} from "bull";
+import {Job} from "bullmq";
 import {Transporter} from "nodemailer";
 import Mail from "nodemailer/lib/mailer";
 import {Repository} from "typeorm";
@@ -16,7 +10,7 @@ import {EmailConfigurationService} from "./EmailConfigurationService.js";
 
 @Injectable()
 @Processor("smtp-emails")
-export class SmtpEmailHandler {
+export class SmtpEmailHandler extends WorkerHost {
     private readonly logger = new Logger(SmtpEmailHandler.name);
     constructor(
         private config: EmailConfigurationService,
@@ -24,9 +18,11 @@ export class SmtpEmailHandler {
         private emailRepository: Repository<Email>,
         @Inject("SmtpEmailTransporter")
         private smtpEmailTransporter: Transporter
-    ) {}
+    ) {
+        super();
+    }
 
-    @OnQueueFailed()
+    @OnWorkerEvent("failed")
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError(job: Job<Email>, error: any) {
         this.logger.error(
@@ -36,12 +32,12 @@ export class SmtpEmailHandler {
         );
     }
 
-    @OnQueueActive()
+    @OnWorkerEvent("active")
     onActive(job: Job<Email>) {
         this.logger.log(`Active job ${job.id} of type ${job.name}`, job.data);
     }
 
-    @OnQueueCompleted()
+    @OnWorkerEvent("completed")
     onComplete(job: Job<Email>) {
         this.logger.log(
             `Completed job ${job.id} of type ${job.name}`,
@@ -49,8 +45,7 @@ export class SmtpEmailHandler {
         );
     }
 
-    @Process()
-    public async handleEvent(job: Job<Email>): Promise<void> {
+    public async process(job: Job<Email>): Promise<void> {
         const emailData = job.data;
 
         const savedEmail = await this.emailRepository.save(emailData);
@@ -76,7 +71,7 @@ export class SmtpEmailHandler {
         if (emailData.textBody) {
             sendEmailBody.text = emailData.textBody;
         }
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+         
         const info = await this.smtpEmailTransporter.sendMail(sendEmailBody);
 
         emailData.sentDate = new Date();

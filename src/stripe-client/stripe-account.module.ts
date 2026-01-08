@@ -3,7 +3,7 @@ import "reflect-metadata";
 import {StripeClientConfigurationService} from "./StripeClientConfigurationService.js";
 import {StripeCheckoutService} from "./services/stripe-checkout.service.js";
 import {StripeClientProvider} from "./StripeClientProvider.js";
-import {BullModule} from "@nestjs/bull";
+import {BullModule} from "@nestjs/bullmq";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {StripeCheckoutEvent} from "./entities/stripe-checkout-event.entity.js";
 import {StripeWebhookHandler} from "./services/stripe-webhook-handler.service.js";
@@ -32,7 +32,7 @@ export class StripeAccountModule {
             module: StripeAccountModule,
             global: options.isGlobal ?? false,
             imports: [
-                ...(options.imports || []),
+                ...(options.imports ?? []),
                 BullModule.registerQueueAsync({
                     name: "stripe-events",
                 }),
@@ -44,7 +44,7 @@ export class StripeAccountModule {
                 {
                     provide: STRIPE_MODULE_OPTIONS,
                     useFactory: options.useFactory,
-                    inject: options.inject || [],
+                    inject: options.inject ?? [],
                 },
                 AuthenticatedStripeCheckoutService,
                 StripeCheckoutService,

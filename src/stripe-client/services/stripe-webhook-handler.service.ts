@@ -1,4 +1,4 @@
-import {InjectQueue} from "@nestjs/bull";
+import {InjectQueue} from "@nestjs/bullmq";
 import {
     BadRequestException,
     Inject,
@@ -6,7 +6,7 @@ import {
     Logger,
     RawBodyRequest,
 } from "@nestjs/common";
-import {Queue} from "bull";
+import {Queue} from "bullmq";
 import {Request} from "express";
 import Stripe from "stripe";
 import {StripeClientConfigurationService} from "../StripeClientConfigurationService.js";
@@ -41,7 +41,7 @@ export class StripeWebhookHandler {
             this.logger.log(
                 "stripe event verified, attempting to add to queue"
             );
-            await this.queue.add(event, {
+            await this.queue.add("stripe-event", event, {
                 attempts: 2,
             });
         } catch (error) {

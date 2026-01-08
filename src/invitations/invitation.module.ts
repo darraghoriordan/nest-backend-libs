@@ -25,7 +25,7 @@ export class InvitationModule {
             module: InvitationModule,
             global: options.isGlobal ?? false,
             imports: [
-                ...(options.imports || []),
+                ...(options.imports ?? []),
                 OrganisationModule,
                 TypeOrmModule.forFeature([
                     OrganisationMembership,
@@ -38,7 +38,7 @@ export class InvitationModule {
                 {
                     provide: INVITATION_MODULE_OPTIONS,
                     useFactory: options.useFactory,
-                    inject: options.inject || [],
+                    inject: options.inject ?? [],
                 },
                 InvitationsConfigurationService,
                 InvitationService,

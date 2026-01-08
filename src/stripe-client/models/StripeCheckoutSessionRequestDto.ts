@@ -25,7 +25,7 @@ export class StripeCheckoutSessionRequestDto {
     @Type(() => StripeCheckoutLineItem)
     lineItems!: StripeCheckoutLineItem[];
 
-    // eslint-disable-next-line @darraghor/nestjs-typed/validated-non-primitive-property-needs-type-decorator
+     
     @ApiProperty({type: String})
     @IsIn(["subscription", "payment", "setup"])
     mode!: "subscription" | "payment" | "setup";

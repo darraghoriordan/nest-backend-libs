@@ -1,4 +1,4 @@
-import {BullModule} from "@nestjs/bull";
+import {BullModule} from "@nestjs/bullmq";
 import {DynamicModule, Module} from "@nestjs/common";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {SmtpEmailClient} from "./email-client.service.js";
@@ -25,7 +25,7 @@ export class SmtpEmailClientModule {
             module: SmtpEmailClientModule,
             global: options.isGlobal ?? true,
             imports: [
-                ...(options.imports || []),
+                ...(options.imports ?? []),
                 BullModule.registerQueueAsync({
                     name: "smtp-emails",
                 }),
@@ -35,7 +35,7 @@ export class SmtpEmailClientModule {
                 {
                     provide: SMTP_EMAIL_MODULE_OPTIONS,
                     useFactory: options.useFactory,
-                    inject: options.inject || [],
+                    inject: options.inject ?? [],
                 },
                 EmailConfigurationService,
                 EmailTransporterProvider,

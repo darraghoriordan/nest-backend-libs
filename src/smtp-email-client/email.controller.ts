@@ -1,4 +1,4 @@
-import {InjectQueue} from "@nestjs/bull";
+import {InjectQueue} from "@nestjs/bullmq";
 import {Controller, Get, UseGuards} from "@nestjs/common";
 import {
     ApiBearerAuth,
@@ -6,7 +6,7 @@ import {
     ApiOperation,
     ApiTags,
 } from "@nestjs/swagger";
-import {Queue} from "bull";
+import {Queue} from "bullmq";
 import {ClaimsAuthorisationGuard} from "../authorization/guards/ClaimsAuthorisationGuard.js";
 import {DefaultAuthGuard} from "../authorization/guards/DefaultAuthGuard.js";
 import {MandatoryUserClaims} from "../authorization/guards/MandatoryUserClaims.decorator.js";
@@ -48,11 +48,11 @@ export class EmailClientController {
 
         return jobs.map((job) => {
             return {
-                id: job.id.toString(),
-                queueDateLocal: new Date(job.processedOn || 1),
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                id: job.id ?? "unknown",
+                queueDateLocal: new Date(job.processedOn ?? 1),
+
                 result: job.returnvalue,
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
                 data: job.data,
                 failReason: job.failedReason,
             };
@@ -68,11 +68,11 @@ export class EmailClientController {
 
         return jobs.map((job) => {
             return {
-                id: job.id.toString(),
-                queueDateLocal: new Date(job.processedOn || 1),
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                id: job.id ?? "unknown",
+                queueDateLocal: new Date(job.processedOn ?? 1),
+
                 result: job.returnvalue,
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
                 data: job.data,
                 failReason: job.failedReason,
             };

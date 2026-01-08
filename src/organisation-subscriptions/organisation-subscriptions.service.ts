@@ -1,7 +1,7 @@
-import {InjectQueue} from "@nestjs/bull";
+import {InjectQueue} from "@nestjs/bullmq";
 import {Injectable, Logger, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import {Queue} from "bull";
+import {Queue} from "bullmq";
 import {Repository} from "typeorm";
 import {Roles} from "../organisation/dto/RolesEnum.js";
 import {Organisation} from "../organisation/entities/organisation.entity.js";
@@ -93,7 +93,6 @@ export class OrganisationSubscriptionService {
         return this.orgSubRepository.find();
     }
 
-    // eslint-disable-next-line sonarjs/cognitive-complexity
     async save(
         subRecordDtoCollection: SaveOrganisationSubscriptionRecordDto[],
         orgUuid?: string
@@ -132,14 +131,14 @@ export class OrganisationSubscriptionService {
                             where: {
                                 uuid: paymentReference?.organisationUuid,
                             },
-                        })) || undefined;
+                        })) ?? undefined;
                 } else {
                     org =
                         (await this.orgRepo.findOne({
                             where: {
                                 uuid: orgUuid,
                             },
-                        })) || undefined;
+                        })) ?? undefined;
                 }
 
                 existingSubscription = this.orgSubRepository.create({
@@ -181,14 +180,12 @@ export class OrganisationSubscriptionService {
             results.push(result);
             if (shouldRaiseEvent) {
                 await this.queue.add(
+                    "activation-changed", // Added required job name
                     {
                         organisationUuid: result.organisation.uuid,
                         subscriptionUuid: result.uuid,
                         productKey: result.internalSku,
                         active: result.validUntil > new Date(),
-                    },
-                    {
-                        timeout: 24 * 60 * 60 * 1000, // 24h
                     }
                 );
             }
@@ -220,12 +217,15 @@ export class OrganisationSubscriptionService {
         }
 
         await this.orgSubRepository.softRemove(result);
-        await this.queue.add({
-            organisationUuid: result.organisation.uuid,
-            subscriptionUuid: result.uuid,
-            productKey: result.internalSku,
-            active: false,
-        });
+        await this.queue.add(
+            "activation-changed", // Added required job name
+            {
+                organisationUuid: result.organisation.uuid,
+                subscriptionUuid: result.uuid,
+                productKey: result.internalSku,
+                active: false,
+            }
+        );
         return true;
     }
 }

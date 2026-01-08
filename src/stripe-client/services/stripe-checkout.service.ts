@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/naming-convention */
+ 
 import {Inject, Injectable, Logger} from "@nestjs/common";
 import Stripe from "stripe";
 import {StripeCheckoutSessionRequestDto} from "../models/StripeCheckoutSessionRequestDto.js";

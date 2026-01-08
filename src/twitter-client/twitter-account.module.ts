@@ -20,12 +20,12 @@ export class TwitterAccountModule {
         return {
             module: TwitterAccountModule,
             global: options.isGlobal ?? false,
-            imports: [...(options.imports || [])],
+            imports: [...(options.imports ?? [])],
             providers: [
                 {
                     provide: TWITTER_MODULE_OPTIONS,
                     useFactory: options.useFactory,
-                    inject: options.inject || [],
+                    inject: options.inject ?? [],
                 },
                 TwitterClientConfigurationService,
                 TwitterClientProvider,

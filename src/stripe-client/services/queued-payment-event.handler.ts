@@ -1,15 +1,9 @@
-/* eslint-disable sonarjs/no-duplicate-string */
+ 
 
-/* eslint-disable sonarjs/no-duplicated-branches */
+ 
 import {Inject, Injectable, Logger} from "@nestjs/common";
-import {
-    OnQueueActive,
-    OnQueueCompleted,
-    OnQueueFailed,
-    Process,
-    Processor,
-} from "@nestjs/bull";
-import {Job} from "bull";
+import {OnWorkerEvent, WorkerHost, Processor} from "@nestjs/bullmq";
+import {Job} from "bullmq";
 import Stripe from "stripe";
 import {InjectRepository} from "@nestjs/typeorm";
 import {StripeCheckoutEvent} from "../entities/stripe-checkout-event.entity.js";
@@ -25,8 +19,8 @@ import SubscriptionRecordMapper from "./subscriptionRecord.mapper.js";
 // and the "customer.subscription.updated" event for subscription updates
 // https://stripe.com/docs/billing/subscriptions/webhooks
 
-// eslint-disable-next-line @darraghor/nestjs-typed/injectable-should-be-provided
-export class StripeQueuedEventHandler {
+ 
+export class StripeQueuedEventHandler extends WorkerHost {
     private readonly logger = new Logger(StripeQueuedEventHandler.name);
     constructor(
         @Inject("StripeClient")
@@ -35,8 +29,10 @@ export class StripeQueuedEventHandler {
         private readonly stripeCheckoutEventRepository: Repository<StripeCheckoutEvent>,
         private readonly organisationSubscriptionService: OrganisationSubscriptionService,
         private readonly subRecordMapper: SubscriptionRecordMapper
-    ) {}
-    @OnQueueFailed()
+    ) {
+        super();
+    }
+    @OnWorkerEvent("failed")
     onError(job: Job<Stripe.Event>, error: Error) {
         this.logger.error(
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-explicit-any
@@ -46,19 +42,18 @@ export class StripeQueuedEventHandler {
         );
     }
 
-    @OnQueueActive()
+    @OnWorkerEvent("active")
     onActive(job: Job<Stripe.Event>) {
         this.logger.log(`Active job ${job.id} of type ${job.name}`);
     }
 
-    @OnQueueCompleted()
-    // eslint-disable-next-line sonarjs/no-identical-functions
+    @OnWorkerEvent("completed")
+     
     onComplete(job: Job<Stripe.Event>) {
         this.logger.log(`Completed job ${job.id} of type ${job.name}`);
     }
 
-    @Process()
-    public async handleEvent(job: Job<Stripe.Event>): Promise<void> {
+    public async process(job: Job<Stripe.Event>): Promise<void> {
         const eventType = job.data.type;
 
         this.logger.log("Handling queued item", {
@@ -258,9 +253,9 @@ export class StripeQueuedEventHandler {
             eventToStore.stripeObjectType = eventType || "unknown";
             eventToStore.clientReferenceId = "not set";
 
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+             
             eventToStore.stripeSessionId =
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (job?.data?.data?.object as any)?.id || "unknown";
             eventToStore.stripeData = job.data;
 

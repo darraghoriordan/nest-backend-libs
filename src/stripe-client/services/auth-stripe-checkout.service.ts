@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/naming-convention */
+ 
 import {ForbiddenException, Injectable, Logger} from "@nestjs/common";
 import {RequestUser} from "../../authorization/models/RequestWithUser.js";
 import {StripeCheckoutSessionRequestDto} from "../models/StripeCheckoutSessionRequestDto.js";

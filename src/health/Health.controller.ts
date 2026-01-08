@@ -24,17 +24,17 @@ export class HealthController {
     @HealthCheck()
     @ApiOkResponse()
     async check(): Promise<HealthCheckResult> {
-        const redisUrl = new URL(process.env.REDIS_URL || "redis://localhost");
+        const redisUrl = new URL(process.env.REDIS_URL ?? "redis://localhost");
         return this.health.check([
             () =>
                 this.http.pingCheck(
                     "frontend-app",
-                    process.env.FRONTEND_APP_URL || "http://localhost"
+                    process.env.FRONTEND_APP_URL ?? "http://localhost"
                 ),
             () =>
                 this.http.pingCheck(
                     "backend-api",
-                    (process.env.BACKEND_APP_URL || "http://localhost") +
+                    (process.env.BACKEND_APP_URL ?? "http://localhost") +
                         "/admin/health"
                 ),
             () => this.database.pingCheck("app-database"),

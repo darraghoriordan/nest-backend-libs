@@ -17,12 +17,12 @@ export class CoreConfigModule {
         return {
             module: CoreConfigModule,
             global: options.isGlobal ?? true,
-            imports: [...(options.imports || [])],
+            imports: [...(options.imports ?? [])],
             providers: [
                 {
                     provide: CORE_MODULE_OPTIONS,
                     useFactory: options.useFactory,
-                    inject: options.inject || [],
+                    inject: options.inject ?? [],
                 },
                 CoreConfigurationService,
             ],

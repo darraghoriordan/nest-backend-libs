@@ -42,7 +42,7 @@ export class UserApiKeyController {
     }
 
     @Put(":uuid")
-    // eslint-disable-next-line sonarjs/no-duplicate-string
+     
     @MandatoryUserClaims("modify:all")
     @ApiOperation({tags: ["SuperPower"]})
     @ApiOkResponse({type: UserApiKey})

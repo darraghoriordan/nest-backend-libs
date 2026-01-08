@@ -17,7 +17,7 @@ import {AuthenticatedStripeCheckoutService} from "../services/auth-stripe-checko
 @ApiBearerAuth()
 @Controller("payments/stripe")
 @ApiTags("Payments")
-// eslint-disable-next-line @darraghor/nestjs-typed/injectable-should-be-provided
+ 
 export class StripeCheckoutController {
     constructor(
         private readonly stripeService: AuthenticatedStripeCheckoutService

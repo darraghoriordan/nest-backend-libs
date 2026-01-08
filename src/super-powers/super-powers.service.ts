@@ -12,7 +12,7 @@ import {EntityManager} from "typeorm";
  * or these will fail.
  */
 @Injectable()
-// eslint-disable-next-line @darraghor/nestjs-typed/injectable-should-be-provided
+ 
 export class SuperPowersService {
     constructor(private readonly entityManager: EntityManager) {}
 

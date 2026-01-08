@@ -85,7 +85,7 @@ export class UserValidationService {
                 ?.map((s) => s?.internalSku) || []
         );
 
-        // eslint-disable-next-line sonarjs/prefer-immediate-return
+         
         return {
             ...user,
             permissions: [...permissionsSet],

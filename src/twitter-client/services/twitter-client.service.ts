@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/naming-convention */
+ 
 import {Inject, Injectable, Logger} from "@nestjs/common";
 //import {EUploadMimeType, TwitterApiReadWrite} from "twitter-api-v2";
 import type {TwitterApiReadWrite, EUploadMimeType} from "twitter-api-v2";

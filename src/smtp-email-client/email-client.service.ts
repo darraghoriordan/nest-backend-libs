@@ -1,7 +1,7 @@
-import {InjectQueue} from "@nestjs/bull";
+import {InjectQueue} from "@nestjs/bullmq";
 import {Inject, Injectable, Logger} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import {Queue} from "bull";
+import {Queue} from "bullmq";
 import {Transporter} from "nodemailer";
 import {Repository} from "typeorm";
 import {Email} from "./email.entity.js";
@@ -54,6 +54,6 @@ export class SmtpEmailClient {
         this.logger.log(
             `Saving email to queue. Email ownerId: ${email.ownerId}`
         );
-        await this.queue.add(email);
+        await this.queue.add("send-email", email);
     }
 }

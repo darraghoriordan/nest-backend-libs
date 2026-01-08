@@ -19,7 +19,7 @@ export interface SmtpEmailModuleAsyncOptions extends Pick<
 > {
     useFactory: (
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ...args: any[]
+        ...arguments_: any[]
     ) => Promise<SmtpEmailModuleOptions> | SmtpEmailModuleOptions;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     inject?: any[];

@@ -6,7 +6,7 @@ import {CoreConfigurationService} from "../core-config/CoreConfigurationService.
 
 /* istanbul ignore next */
 @Injectable()
-// eslint-disable-next-line @darraghor/nestjs-typed/injectable-should-be-provided
+ 
 export class SwaggerGen {
     constructor(private config: CoreConfigurationService) {}
     private readonly logger = new Logger(SwaggerGen.name);

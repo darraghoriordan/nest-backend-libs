@@ -22,7 +22,7 @@ export class CliCommandService {
         const result = await execPromise(
             `${command} ${commandArguments.join(" ")}`,
             {
-                shell: shell || "/bin/bash",
+                shell: shell ?? "/bin/bash",
                 cwd,
             }
         );

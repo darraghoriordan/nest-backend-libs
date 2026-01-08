@@ -3,7 +3,7 @@ import path from "path";
 import {DataSourceOptions} from "typeorm";
 import url from "url";
 
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
+ 
 export class PostgresTypeOrmConfigurationProvider {
     /**
      * This method uses process.env directly because it is also used in a node script that doesn't have access

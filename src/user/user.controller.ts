@@ -61,9 +61,9 @@ export class UserController {
         );
         const activePaidForProducts = new Set<string>(
             result.memberships
-                ?.flatMap((m) => m.organisation.subscriptionRecords || [])
-                ?.filter((s) => s && s.validUntil > new Date())
-                ?.map((s) => s?.internalSku) || []
+                ?.flatMap((m) => m.organisation.subscriptionRecords ?? [])
+                .filter((s) => s.validUntil > new Date())
+                .map((s) => s.internalSku) ?? []
         );
         return {
             ...result,

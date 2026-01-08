@@ -18,12 +18,12 @@ export class LoggerModule {
         return {
             module: LoggerModule,
             global: options.isGlobal ?? true,
-            imports: [...(options.imports || [])],
+            imports: [...(options.imports ?? [])],
             providers: [
                 {
                     provide: LOGGER_MODULE_OPTIONS,
                     useFactory: options.useFactory,
-                    inject: options.inject || [],
+                    inject: options.inject ?? [],
                 },
                 LoggingConfigurationService,
             ],

@@ -25,7 +25,7 @@ export class AuthzModule {
             module: AuthzModule,
             global: options.isGlobal ?? false,
             imports: [
-                ...(options.imports || []),
+                ...(options.imports ?? []),
                 PassportModule.register({defaultStrategy: "jwt"}),
                 TypeOrmModule.forFeature([User, Invitation]),
             ],
@@ -33,7 +33,7 @@ export class AuthzModule {
                 {
                     provide: AUTHZ_MODULE_OPTIONS,
                     useFactory: options.useFactory,
-                    inject: options.inject || [],
+                    inject: options.inject ?? [],
                 },
                 ApiKeyStrategy,
                 AuthConfigurationService,

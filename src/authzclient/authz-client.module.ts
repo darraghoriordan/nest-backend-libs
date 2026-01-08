@@ -20,12 +20,12 @@ export class AuthzClientModule {
         return {
             module: AuthzClientModule,
             global: options.isGlobal ?? false,
-            imports: [...(options.imports || [])],
+            imports: [...(options.imports ?? [])],
             providers: [
                 {
                     provide: AUTHZ_CLIENT_MODULE_OPTIONS,
                     useFactory: options.useFactory,
-                    inject: options.inject || [],
+                    inject: options.inject ?? [],
                 },
                 AuthClientConfigurationService,
                 AuthZClientProvider,

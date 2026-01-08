@@ -12,20 +12,20 @@ export class SqliteTypeOrmConfigurationProvider {
     public static getTypeOrmConfig(): DataSourceOptions {
         const directoryName = path.dirname(url.fileURLToPath(import.meta.url));
         const nodeModuleCorePath = path.join(
-            process.env.CORE_MODULE_ENTITY_PATH || "..",
+            process.env.CORE_MODULE_ENTITY_PATH ?? "..",
             "**",
             "*.entity.{ts,js}"
         );
 
         const appModulePath = path.join(
-            process.env.APP_MODULE_ENTITY_PATH ||
+            process.env.APP_MODULE_ENTITY_PATH ??
                 "../../../../../apps/backend/dist",
             "**",
             "*.entity.{ts,js}"
         );
 
         const migrationsPath = path.join(
-            process.env.MIGRATIONS_PATH || "../../../../../apps/backend/dist",
+            process.env.MIGRATIONS_PATH ?? "../../../../../apps/backend/dist",
             "**",
             "migrations",
             "*.{ts,js}"

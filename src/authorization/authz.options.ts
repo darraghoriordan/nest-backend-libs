@@ -14,7 +14,7 @@ export interface AuthzModuleAsyncOptions extends Pick<
 > {
     useFactory: (
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ...args: any[]
+        ...arguments_: any[]
     ) => Promise<AuthzModuleOptions> | AuthzModuleOptions;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     inject?: any[];

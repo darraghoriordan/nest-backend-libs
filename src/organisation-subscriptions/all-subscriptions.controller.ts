@@ -1,4 +1,4 @@
-/* eslint-disable sonarjs/no-duplicate-string */
+ 
 import {Controller, UseGuards, Get} from "@nestjs/common";
 import {
     ApiBearerAuth,

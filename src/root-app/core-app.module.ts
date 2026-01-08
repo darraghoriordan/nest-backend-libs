@@ -15,7 +15,7 @@ import {SwaggerGen} from "./SwaggerGen.js";
 import {NestFactory, Reflector} from "@nestjs/core";
 import {CoreConfigurationService} from "../core-config/CoreConfigurationService.js";
 import {CoreConfigModule} from "../core-config/CoreConfig.module.js";
-import {BullModule} from "@nestjs/bull";
+import {BullModule} from "@nestjs/bullmq";
 import {HealthModule} from "../health/Health.module.js";
 import type {RedisClientOptions} from "redis";
 import {CacheModule} from "@nestjs/cache-manager";
@@ -54,7 +54,7 @@ export class CoreModule {
                     useFactory: (configService: CoreConfigurationService) => {
                         const redisUrl = new URL(configService.bullQueueHost);
                         return {
-                            redis: {
+                            connection: {
                                 host: redisUrl.hostname,
                                 password: redisUrl.password,
                                 port: Number(redisUrl.port),
@@ -87,10 +87,10 @@ export class CoreModule {
                     inject: options.logger.inject || [],
                     useFactory: async (
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        ...args: any[]
+                        ...arguments_: any[]
                     ) => {
                         const loggerOptions: LoggerModuleOptions =
-                            await options.logger.useFactory(...args);
+                            await options.logger.useFactory(...arguments_);
                         return {
                             pinoHttp: {
                                 level: loggerOptions.minLevel ?? "debug",

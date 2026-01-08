@@ -14,7 +14,7 @@ export interface StripeModuleAsyncOptions extends Pick<
 > {
     useFactory: (
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ...args: any[]
+        ...arguments_: any[]
     ) => Promise<StripeModuleOptions> | StripeModuleOptions;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     inject?: any[];

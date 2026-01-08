@@ -1,4 +1,4 @@
-import {InjectQueue} from "@nestjs/bull";
+import {InjectQueue} from "@nestjs/bullmq";
 import {
     Controller,
     Get,
@@ -14,7 +14,7 @@ import {
     ApiBearerAuth,
     ApiOperation,
 } from "@nestjs/swagger";
-import {Queue} from "bull";
+import {Queue} from "bullmq";
 import {Request as ExpressRequest} from "express";
 import {StripeWebhookHandler} from "./../services/stripe-webhook-handler.service.js";
 import {QueueItemDto} from "../../root-app/models/QueueItemDto.js";
@@ -62,11 +62,11 @@ export class StripeWebhookController {
 
         return jobs.map((job) => {
             return {
-                id: job.id.toString(),
-                queueDateLocal: new Date(job.processedOn || 1),
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                id: job.id ?? "unknown",
+                queueDateLocal: new Date(job.processedOn ?? 1),
+
                 result: job.returnvalue,
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
                 data: job.data,
                 failReason: job.failedReason,
             };
@@ -84,11 +84,11 @@ export class StripeWebhookController {
 
         return jobs.map((job) => {
             return {
-                id: job.id.toString(),
-                queueDateLocal: new Date(job.processedOn || 1),
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                id: job.id ?? "unknown",
+                queueDateLocal: new Date(job.processedOn ?? 1),
+
                 result: job.returnvalue,
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
                 data: job.data,
                 failReason: job.failedReason,
             };
