@@ -44,6 +44,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             return;
         }
         this.logger.log(
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             `Validating user with payload sub: ${JSON.stringify(payload?.sub)}`
         );
         const invitationId = request.query.invitationId as string;

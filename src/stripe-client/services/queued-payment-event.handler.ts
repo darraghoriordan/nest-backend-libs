@@ -1,6 +1,3 @@
- 
-
- 
 import {Inject, Injectable, Logger} from "@nestjs/common";
 import {OnWorkerEvent, WorkerHost, Processor} from "@nestjs/bullmq";
 import {Job} from "bullmq";
@@ -18,8 +15,6 @@ import SubscriptionRecordMapper from "./subscriptionRecord.mapper.js";
 // You likely only need to handle the "checkout.session.completed" event for purchases
 // and the "customer.subscription.updated" event for subscription updates
 // https://stripe.com/docs/billing/subscriptions/webhooks
-
- 
 export class StripeQueuedEventHandler extends WorkerHost {
     private readonly logger = new Logger(StripeQueuedEventHandler.name);
     constructor(
@@ -44,13 +39,16 @@ export class StripeQueuedEventHandler extends WorkerHost {
 
     @OnWorkerEvent("active")
     onActive(job: Job<Stripe.Event>) {
-        this.logger.log(`Active job ${job.id} of type ${job.name}`);
+        this.logger.log(
+            `Active job ${job.id?.toString() ?? "unknown id"} of type ${job.name}`
+        );
     }
 
     @OnWorkerEvent("completed")
-     
     onComplete(job: Job<Stripe.Event>) {
-        this.logger.log(`Completed job ${job.id} of type ${job.name}`);
+        this.logger.log(
+            `Completed job ${job.id?.toString() ?? "unknown id"} of type ${job.name}`
+        );
     }
 
     public async process(job: Job<Stripe.Event>): Promise<void> {
@@ -253,9 +251,8 @@ export class StripeQueuedEventHandler extends WorkerHost {
             eventToStore.stripeObjectType = eventType || "unknown";
             eventToStore.clientReferenceId = "not set";
 
-             
             eventToStore.stripeSessionId =
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unnecessary-condition, @typescript-eslint/prefer-nullish-coalescing
                 (job?.data?.data?.object as any)?.id || "unknown";
             eventToStore.stripeData = job.data;
 

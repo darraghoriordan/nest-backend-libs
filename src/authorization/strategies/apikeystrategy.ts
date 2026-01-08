@@ -37,6 +37,7 @@ export class ApiKeyStrategy extends PassportStrategy(HeaderAPIKeyStrategy) {
             const foundUser =
                 await this.userValidationService.findUserByApiKey(apiKey);
 
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (!foundUser || foundUser === null) {
                 done(new Error("Invalid API key"));
             }

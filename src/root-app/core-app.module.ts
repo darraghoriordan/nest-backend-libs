@@ -83,13 +83,14 @@ export class CoreModule {
                 HealthModule,
                 // Pino logger - uses logger config directly from options
                 LoggerModule.forRootAsync({
-                    imports: [...(options.logger.imports || [])],
-                    inject: options.logger.inject || [],
+                    imports: [...(options.logger.imports ?? [])],
+                    inject: options.logger.inject ?? [],
                     useFactory: async (
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         ...arguments_: any[]
                     ) => {
                         const loggerOptions: LoggerModuleOptions =
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                             await options.logger.useFactory(...arguments_);
                         return {
                             pinoHttp: {
@@ -108,7 +109,7 @@ export class CoreModule {
                 {
                     provide: LOGGER_MODULE_OPTIONS,
                     useFactory: options.logger.useFactory,
-                    inject: options.logger.inject || [],
+                    inject: options.logger.inject ?? [],
                 },
                 LoggingConfigurationService,
                 AppService,
@@ -148,6 +149,7 @@ export class CoreModule {
     ): void {
         void (async () => {
             try {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 const app = await NestFactory.create(rootModule, {
                     bodyParser: true,
                     rawBody: true,

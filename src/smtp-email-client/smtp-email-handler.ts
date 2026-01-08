@@ -26,7 +26,7 @@ export class SmtpEmailHandler extends WorkerHost {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError(job: Job<Email>, error: any) {
         this.logger.error(
-            `Failed job ${job.id} of type ${job.name}: ${error.message as string}`,
+            `Failed job ${job.id?.toString() ?? "unknown id"} of type ${job.name}: ${error.message as string}`,
 
             error.stack
         );
@@ -34,13 +34,16 @@ export class SmtpEmailHandler extends WorkerHost {
 
     @OnWorkerEvent("active")
     onActive(job: Job<Email>) {
-        this.logger.log(`Active job ${job.id} of type ${job.name}`, job.data);
+        this.logger.log(
+            `Active job ${job.id?.toString() ?? "unknown id"} of type ${job.name}`,
+            job.data
+        );
     }
 
     @OnWorkerEvent("completed")
     onComplete(job: Job<Email>) {
         this.logger.log(
-            `Completed job ${job.id} of type ${job.name}`,
+            `Completed job ${job.id?.toString() ?? "unknown id"} of type ${job.name}`,
             job.data
         );
     }
@@ -52,12 +55,14 @@ export class SmtpEmailHandler extends WorkerHost {
 
         if (!this.config.isEmailSyncSendEnabled) {
             this.logger.log(
-                `Email saved but not sent because email is disabled. Email id: ${savedEmail.id}`
+                `Email saved but not sent because email is disabled. Email id: ${savedEmail.id.toString()}`
             );
             return;
         }
 
-        this.logger.log(`Sending an email. Email id: ${savedEmail.id}`);
+        this.logger.log(
+            `Sending an email. Email id: ${savedEmail.id.toString()}`
+        );
 
         const sendEmailBody = {
             from: `"${this.config.senderName}" <${this.config.senderEmailAddress}>`,
@@ -71,7 +76,7 @@ export class SmtpEmailHandler extends WorkerHost {
         if (emailData.textBody) {
             sendEmailBody.text = emailData.textBody;
         }
-         
+
         const info = await this.smtpEmailTransporter.sendMail(sendEmailBody);
 
         emailData.sentDate = new Date();

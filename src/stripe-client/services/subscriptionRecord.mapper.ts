@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {Injectable, Logger} from "@nestjs/common";
 import Stripe from "stripe";
@@ -87,6 +88,7 @@ export default class SubscriptionRecordMapper {
             stripeCustomer?.id || "unknown";
 
         subscriptionFulfilmentDto.paymentSystemCustomerEmail =
+            // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
             stripeCustomer?.email || altEmail || altEmail2 || "unknown";
 
         return subscriptionFulfilmentDto;
@@ -127,7 +129,7 @@ export default class SubscriptionRecordMapper {
                 stripeCurrentPeriodEndMilliSeconds + twoDaysInMilliSeconds
             );
             this.logger.log(
-                `Set valid until to ${newValidUntil.toISOString()} based on sub ${stripeCurrentPeriodEnd}`
+                `Set valid until to ${newValidUntil.toISOString()} based on sub ${stripeCurrentPeriodEnd.toString()}`
             );
         }
 

@@ -66,6 +66,7 @@ export class UserController {
                 .map((s) => s.internalSku) ?? []
         );
         return {
+            // eslint-disable-next-line @typescript-eslint/no-misused-spread
             ...result,
             activeSubscriptionProductKeys: [...activePaidForProducts],
             memberships: request.user.memberships ?? [],
@@ -111,6 +112,7 @@ export class UserController {
         @Request() request: RequestWithUser
     ): Promise<BooleanResult> {
         const deleteResult = await this.userService.remove(uuid, request.user);
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         return {result: deleteResult !== undefined};
     }
 }

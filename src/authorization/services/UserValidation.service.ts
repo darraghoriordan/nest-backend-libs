@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import {
     BadRequestException,
     Injectable,
@@ -60,12 +61,13 @@ export class UserValidationService {
             },
             "super user ids"
         );
+
         if (!user?.id) {
             throw new Error(
                 "Unable to authenticate and register a valid user with this auth0 user"
             );
         }
-        const permissionsSet = new Set<string>(authProviderPermissions || []);
+        const permissionsSet = new Set<string>(authProviderPermissions ?? []);
 
         if (
             user.auth0UserId &&
@@ -80,13 +82,13 @@ export class UserValidationService {
         }
         const activePaidForProducts = new Set<string>(
             user.memberships
-                ?.flatMap((m) => m.organisation.subscriptionRecords || [])
+                ?.flatMap((m) => m.organisation.subscriptionRecords ?? [])
                 ?.filter((s) => s && s.validUntil > new Date())
-                ?.map((s) => s?.internalSku) || []
+                ?.map((s) => s?.internalSku) ?? []
         );
 
-         
         return {
+            // eslint-disable-next-line @typescript-eslint/no-misused-spread
             ...user,
             permissions: [...permissionsSet],
             activeSubscriptionProductKeys: [...activePaidForProducts],
@@ -270,7 +272,7 @@ export class UserValidationService {
         membership.roles = [newRole];
 
         // use the found user or create a new one
-        const user = foundUser || this.userRepository.create();
+        const user = foundUser ?? this.userRepository.create();
 
         // assign the membership
         user.memberships = [membership];
@@ -284,7 +286,11 @@ export class UserValidationService {
         if (!userForRequest) {
             throw new Error("User not found");
         }
-        this.logger.log(`Saved and returning user ${userForRequest.name} `);
+        this.logger.log(
+            `Saved and returning user: ${
+                userForRequest.name ?? "unknown user"
+            } `
+        );
         return userForRequest;
     }
 

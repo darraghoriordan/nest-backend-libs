@@ -28,10 +28,12 @@ export class ClaimsAuthorisationGuard implements CanActivate {
                 .getRequest<RequestWithUser>();
             const user = httpContext.user;
 
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (!routePermissions || routePermissions.length === 0) {
                 return true;
             }
 
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (!user || !user.permissions) {
                 return false;
             }
