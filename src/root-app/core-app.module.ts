@@ -59,7 +59,7 @@ export class CoreModule {
                                 password: redisUrl.password,
                                 port: Number(redisUrl.port),
                                 username: redisUrl.username,
-                                maxRetriesPerRequest: 3,
+                                //maxRetriesPerRequest: 3,
                             },
                         };
                     },
