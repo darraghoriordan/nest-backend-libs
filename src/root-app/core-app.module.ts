@@ -94,7 +94,15 @@ export class CoreModule {
                             await options.logger.useFactory(...arguments_);
                         return {
                             pinoHttp: {
-                                level: loggerOptions.minLevel ?? "debug",
+                                redact: {
+                                    paths: [
+                                        "req.headers.authorization",
+                                        'req.headers["Authorization"]',
+                                    ],
+                                    censor: "[REDACTED]",
+                                },
+                                level:
+                                    loggerOptions.httpReqResLogLevel ?? "warn",
                                 transport: loggerOptions.usePrettyLogs
                                     ? {target: "pino-pretty"}
                                     : undefined,

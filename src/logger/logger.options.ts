@@ -6,6 +6,7 @@ export interface LoggerModuleOptions {
     nodeEnv: string;
     loggerName?: string;
     minLevel?: string;
+    httpReqResLogLevel?: string;
     usePrettyLogs?: boolean;
 }
 
