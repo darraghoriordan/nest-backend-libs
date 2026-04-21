@@ -8,5 +8,9 @@
         "test",
         "dist",
         "**/*spec.ts"
-    ]
+    ],
+    "compilerOptions": {
+        "rootDir": "./src",
+        "moduleResolution": "bundler"
+    }
 }

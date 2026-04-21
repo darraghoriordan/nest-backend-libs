@@ -1,4 +1,3 @@
- 
 import {Inject, Injectable, Logger} from "@nestjs/common";
 import Stripe from "stripe";
 import {StripeCheckoutSessionRequestDto} from "../models/StripeCheckoutSessionRequestDto.js";
@@ -36,14 +35,14 @@ export class StripeCheckoutService {
         );
 
         const mappedSessionParameters = {
-            mode: parameters.mode as unknown as Stripe.Checkout.SessionCreateParams.Mode,
+            mode: parameters.mode,
             client_reference_id: paymentReference.uuid,
             line_items: parameters.lineItems,
             success_url: `${this.stripeClientConfigurationService.stripeRedirectsBaseUrl}${parameters.successFrontendPath}`,
             cancel_url: parameters.cancelFrontendPath
                 ? `${this.stripeClientConfigurationService.stripeRedirectsBaseUrl}${parameters.cancelFrontendPath}`
                 : undefined,
-        } as Stripe.Checkout.SessionCreateParams;
+        };
 
         const session = await this.clientInstance.checkout.sessions.create(
             mappedSessionParameters

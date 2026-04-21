@@ -3,8 +3,8 @@ import {StripeClientConfigurationService} from "./StripeClientConfigurationServi
 
 export const StripeClientProvider = {
     provide: "StripeClient",
-    useFactory: (config: StripeClientConfigurationService): Stripe => {
-        const apiVersion = "2025-12-15.clover";
+    useFactory: (config: StripeClientConfigurationService) => {
+        const apiVersion = "2026-03-25.dahlia";
         const appInfo = {
             name: "NestBackendLibs",
             url: "https://github.com/darraghoriordan/nest-backend-libs", // Optional
