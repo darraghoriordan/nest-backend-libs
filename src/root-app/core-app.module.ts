@@ -1,18 +1,26 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import "reflect-metadata";
-import helmet from "helmet";
+//import helmet from "helmet";
 import {
     BadRequestException,
     ClassSerializerInterceptor,
+    // BadRequestException,
+    // ClassSerializerInterceptor,
     DynamicModule,
     INestApplication,
     Module,
     ValidationPipe,
+    // ValidationPipe,
 } from "@nestjs/common";
 import {Logger, LoggerModule} from "nestjs-pino";
 import {AppController} from "./app.controller.js";
 import {AppService} from "./app.service.js";
 import {SwaggerGen} from "./SwaggerGen.js";
-import {NestFactory, Reflector} from "@nestjs/core";
+import {
+    NestFactory,
+    Reflector,
+    // Reflector
+} from "@nestjs/core";
 import {CoreConfigurationService} from "../core-config/CoreConfigurationService.js";
 import {CoreConfigModule} from "../core-config/CoreConfig.module.js";
 import {BullModule} from "@nestjs/bullmq";
@@ -27,6 +35,7 @@ import {
     LOGGER_MODULE_OPTIONS,
 } from "../logger/logger.options.js";
 import {LoggingConfigurationService} from "../logger/LoggingConfigurationService.js";
+import helmet from "helmet";
 
 export interface CoreModuleForRootAsyncOptions {
     core: CoreModuleAsyncOptions;
@@ -187,6 +196,7 @@ export class CoreModule {
                 app.enableCors({
                     origin: [configService.frontEndAppUrl],
                 });
+
                 app.useGlobalPipes(
                     new ValidationPipe({
                         transform: true,
