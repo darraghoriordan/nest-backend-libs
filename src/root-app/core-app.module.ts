@@ -66,19 +66,19 @@ export class CoreModule {
                     inject: [CoreConfigurationService],
                 }),
                 // Cache - uses core config
-                // CacheModule.registerAsync<RedisClientOptions>({
-                //     imports: [CoreConfigModule.forRootAsync(options.core)],
-                //     useFactory: (configService: CoreConfigurationService) => {
-                //         const redis = new KeyvRedis(
-                //             configService.bullQueueHost
-                //         );
-                //         return {
-                //             stores: [redis],
-                //         };
-                //     },
-                //     isGlobal: true,
-                //     inject: [CoreConfigurationService],
-                // }),
+                CacheModule.registerAsync<RedisClientOptions>({
+                    imports: [CoreConfigModule.forRootAsync(options.core)],
+                    useFactory: (configService: CoreConfigurationService) => {
+                        const redis = new KeyvRedis(
+                            configService.bullQueueHost
+                        );
+                        return {
+                            stores: [redis],
+                        };
+                    },
+                    isGlobal: true,
+                    inject: [CoreConfigurationService],
+                }),
                 // Health check
                 HealthModule,
                 // Pino logger - uses logger config directly from options
