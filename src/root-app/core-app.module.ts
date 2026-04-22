@@ -49,22 +49,22 @@ export class CoreModule {
                 // Core config
                 CoreConfigModule.forRootAsync(options.core),
                 // Bull queue - uses core config
-                // BullModule.forRootAsync({
-                //     imports: [CoreConfigModule.forRootAsync(options.core)],
-                //     useFactory: (configService: CoreConfigurationService) => {
-                //         const redisUrl = new URL(configService.bullQueueHost);
-                //         return {
-                //             connection: {
-                //                 host: redisUrl.hostname,
-                //                 password: redisUrl.password,
-                //                 port: Number(redisUrl.port),
-                //                 username: redisUrl.username,
-                //                 //maxRetriesPerRequest: 3,
-                //             },
-                //         };
-                //     },
-                //     inject: [CoreConfigurationService],
-                // }),
+                BullModule.forRootAsync({
+                    imports: [CoreConfigModule.forRootAsync(options.core)],
+                    useFactory: (configService: CoreConfigurationService) => {
+                        const redisUrl = new URL(configService.bullQueueHost);
+                        return {
+                            connection: {
+                                host: redisUrl.hostname,
+                                password: redisUrl.password,
+                                port: Number(redisUrl.port),
+                                username: redisUrl.username,
+                                //maxRetriesPerRequest: 3,
+                            },
+                        };
+                    },
+                    inject: [CoreConfigurationService],
+                }),
                 // Cache - uses core config
                 // CacheModule.registerAsync<RedisClientOptions>({
                 //     imports: [CoreConfigModule.forRootAsync(options.core)],
