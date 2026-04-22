@@ -17,9 +17,9 @@ import {CoreConfigurationService} from "../core-config/CoreConfigurationService.
 import {CoreConfigModule} from "../core-config/CoreConfig.module.js";
 import {BullModule} from "@nestjs/bullmq";
 import {HealthModule} from "../health/Health.module.js";
-//import type {RedisClientOptions} from "redis";
+import type {RedisClientOptions} from "redis";
 import {CacheModule} from "@nestjs/cache-manager";
-//import KeyvRedis from "@keyv/redis";
+import KeyvRedis from "@keyv/redis";
 import {CoreModuleAsyncOptions} from "../core-config/core-config.options.js";
 import {
     type LoggerModuleAsyncOptions,
