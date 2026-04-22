@@ -2,8 +2,7 @@ import {Processor, OnWorkerEvent, WorkerHost} from "@nestjs/bullmq";
 import {Inject, Injectable, Logger} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Job} from "bullmq";
-import {Transporter} from "nodemailer";
-import Mail from "nodemailer/lib/mailer";
+import type {SendMailOptions, Transporter} from "nodemailer";
 import {Repository} from "typeorm";
 import {Email} from "./email.entity.js";
 import {EmailConfigurationService} from "./EmailConfigurationService.js";
@@ -69,7 +68,7 @@ export class SmtpEmailHandler extends WorkerHost {
             to: emailData.to,
             subject: emailData.subject,
             bcc: emailData.bccTo,
-        } as Mail.Options;
+        } as SendMailOptions;
         if (emailData.htmlBody) {
             sendEmailBody.html = emailData.htmlBody;
         }

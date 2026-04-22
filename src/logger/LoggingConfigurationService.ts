@@ -1,7 +1,8 @@
 import {Inject, Injectable} from "@nestjs/common";
 import {IsBoolean, IsDefined, IsOptional, IsString} from "class-validator";
 import {ValidatedConfigurationService} from "../configuration/ValidatedConfigurationService.js";
-import {LOGGER_MODULE_OPTIONS, LoggerModuleOptions} from "./logger.options.js";
+import {LOGGER_MODULE_OPTIONS} from "./logger.options.js";
+import type {LoggerModuleOptions} from "./logger.options.js";
 
 @Injectable()
 export class LoggingConfigurationService extends ValidatedConfigurationService {

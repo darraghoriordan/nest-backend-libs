@@ -28,7 +28,7 @@ import {HealthModule} from "../health/Health.module.js";
 import type {RedisClientOptions} from "redis";
 import {CacheModule} from "@nestjs/cache-manager";
 import KeyvRedis from "@keyv/redis";
-import {CoreModuleAsyncOptions} from "../core-config/core-config.options.js";
+import type {CoreModuleAsyncOptions} from "../core-config/core-config.options.js";
 import {
     type LoggerModuleAsyncOptions,
     type LoggerModuleOptions,

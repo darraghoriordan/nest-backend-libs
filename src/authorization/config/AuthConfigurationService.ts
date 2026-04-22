@@ -1,7 +1,8 @@
 import {Inject, Injectable} from "@nestjs/common";
 import {IsArray, IsDefined, IsString} from "class-validator";
 import {ValidatedConfigurationService} from "../../configuration/ValidatedConfigurationService.js";
-import {AUTHZ_MODULE_OPTIONS, AuthzModuleOptions} from "../authz.options.js";
+import {AUTHZ_MODULE_OPTIONS} from "../authz.options.js";
+import type {AuthzModuleOptions} from "../authz.options.js";
 
 @Injectable()
 export class AuthConfigurationService extends ValidatedConfigurationService {

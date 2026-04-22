@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "module": "ES2022",
+        "module": "NodeNext",
         "declaration": true,
         "removeComments": false,
         "emitDecoratorMetadata": true,
@@ -14,7 +14,7 @@
         "alwaysStrict": true,
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
-        "moduleResolution": "bundler",
+        "moduleResolution": "NodeNext",
         "skipLibCheck": true,
         "skipDefaultLibCheck": true,
         "resolveJsonModule": true,
