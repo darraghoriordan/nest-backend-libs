@@ -17,9 +17,9 @@ import {CoreConfigurationService} from "../core-config/CoreConfigurationService.
 import {CoreConfigModule} from "../core-config/CoreConfig.module.js";
 import {BullModule} from "@nestjs/bullmq";
 import {HealthModule} from "../health/Health.module.js";
-import type {RedisClientOptions} from "redis";
+//import type {RedisClientOptions} from "redis";
 import {CacheModule} from "@nestjs/cache-manager";
-import KeyvRedis from "@keyv/redis";
+//import KeyvRedis from "@keyv/redis";
 import {CoreModuleAsyncOptions} from "../core-config/core-config.options.js";
 import {
     type LoggerModuleAsyncOptions,
@@ -49,36 +49,36 @@ export class CoreModule {
                 // Core config
                 CoreConfigModule.forRootAsync(options.core),
                 // Bull queue - uses core config
-                BullModule.forRootAsync({
-                    imports: [CoreConfigModule.forRootAsync(options.core)],
-                    useFactory: (configService: CoreConfigurationService) => {
-                        const redisUrl = new URL(configService.bullQueueHost);
-                        return {
-                            connection: {
-                                host: redisUrl.hostname,
-                                password: redisUrl.password,
-                                port: Number(redisUrl.port),
-                                username: redisUrl.username,
-                                //maxRetriesPerRequest: 3,
-                            },
-                        };
-                    },
-                    inject: [CoreConfigurationService],
-                }),
+                // BullModule.forRootAsync({
+                //     imports: [CoreConfigModule.forRootAsync(options.core)],
+                //     useFactory: (configService: CoreConfigurationService) => {
+                //         const redisUrl = new URL(configService.bullQueueHost);
+                //         return {
+                //             connection: {
+                //                 host: redisUrl.hostname,
+                //                 password: redisUrl.password,
+                //                 port: Number(redisUrl.port),
+                //                 username: redisUrl.username,
+                //                 //maxRetriesPerRequest: 3,
+                //             },
+                //         };
+                //     },
+                //     inject: [CoreConfigurationService],
+                // }),
                 // Cache - uses core config
-                CacheModule.registerAsync<RedisClientOptions>({
-                    imports: [CoreConfigModule.forRootAsync(options.core)],
-                    useFactory: (configService: CoreConfigurationService) => {
-                        const redis = new KeyvRedis(
-                            configService.bullQueueHost
-                        );
-                        return {
-                            stores: [redis],
-                        };
-                    },
-                    isGlobal: true,
-                    inject: [CoreConfigurationService],
-                }),
+                // CacheModule.registerAsync<RedisClientOptions>({
+                //     imports: [CoreConfigModule.forRootAsync(options.core)],
+                //     useFactory: (configService: CoreConfigurationService) => {
+                //         const redis = new KeyvRedis(
+                //             configService.bullQueueHost
+                //         );
+                //         return {
+                //             stores: [redis],
+                //         };
+                //     },
+                //     isGlobal: true,
+                //     inject: [CoreConfigurationService],
+                // }),
                 // Health check
                 HealthModule,
                 // Pino logger - uses logger config directly from options
