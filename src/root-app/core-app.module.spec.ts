@@ -13,16 +13,33 @@ import {CoreConfigurationService} from "../core-config/CoreConfigurationService.
 import {LoggingConfigurationService} from "../logger/LoggingConfigurationService.js";
 import {Logger} from "nestjs-pino";
 
-vi.mock("@nestjs/bullmq", () => ({
-    BullModule: {
-        forRootAsync: () => ({
-            module: class BullModule {},
-            global: true,
-            providers: [],
-            exports: [],
-        }),
-    },
-}));
+vi.mock("@nestjs/bullmq", () => {
+    class BullModule {
+        static forRootAsync() {
+            return {
+                module: BullModule,
+                global: true,
+                providers: [],
+                exports: [],
+            };
+        }
+    }
+    return {BullModule};
+});
+
+vi.mock("@nestjs/cache-manager", () => {
+    class CacheModule {
+        static registerAsync() {
+            return {
+                module: CacheModule,
+                global: true,
+                providers: [],
+                exports: [],
+            };
+        }
+    }
+    return {CacheModule};
+});
 
 const createMockCoreOptions = (): CoreModuleAsyncOptions => ({
     useFactory: (): CoreModuleOptions => ({
