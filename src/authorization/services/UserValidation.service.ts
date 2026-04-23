@@ -92,7 +92,7 @@ export class UserValidationService {
             ...user,
             permissions: [...permissionsSet],
             activeSubscriptionProductKeys: [...activePaidForProducts],
-        } as RequestUser;
+        };
     }
 
     async validateUser(

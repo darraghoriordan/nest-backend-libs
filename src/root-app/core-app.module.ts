@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import "reflect-metadata";
 //import helmet from "helmet";
 import {
