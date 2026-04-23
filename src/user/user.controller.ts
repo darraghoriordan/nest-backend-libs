@@ -26,6 +26,12 @@ import {DefaultAuthGuard} from "../authorization/guards/DefaultAuthGuard.js";
 import {ClaimsAuthorisationGuard} from "../authorization/guards/ClaimsAuthorisationGuard.js";
 import {SuperUserClaims} from "../authorization/models/SuperUserClaims.js";
 import {MandatoryUserClaims} from "../authorization/guards/MandatoryUserClaims.decorator.js";
+import {OrganisationMembership} from "../organisation-memberships/entities/organisation-membership.entity.js";
+import {UserOrganisationMembershipDto} from "./dto/user-organisation-membership.dto.js";
+
+type RawUserDtoInput = Omit<UserDto, "memberships"> & {
+    memberships?: OrganisationMembership[];
+};
 
 @UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
 @ApiBearerAuth()
@@ -41,13 +47,13 @@ export class UserController {
         @Param("uuid") uuid: string
     ): Promise<UserDto> {
         if (uuid === "me") {
-            return {
+            return this.toUserDto({
                 ...request.user,
                 memberships: request.user.memberships ?? [],
                 isSuper: request.user.permissions.includes(
                     SuperUserClaims.MODIFY_ALL
                 ),
-            };
+            });
         }
         if (!isUUID(uuid, "4")) {
             throw new BadRequestException(uuid, "Invalid UUID");
@@ -65,12 +71,12 @@ export class UserController {
                 .filter((s) => s.validUntil > new Date())
                 .map((s) => s.internalSku) ?? []
         );
-        return {
+        return this.toUserDto({
             // eslint-disable-next-line @typescript-eslint/no-misused-spread
             ...result,
             activeSubscriptionProductKeys: [...activePaidForProducts],
             memberships: request.user.memberships ?? [],
-        };
+        });
     }
 
     @Get()
@@ -114,5 +120,34 @@ export class UserController {
         const deleteResult = await this.userService.remove(uuid, request.user);
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         return {result: deleteResult !== undefined};
+    }
+
+    private toUserDto(user: RawUserDtoInput): UserDto {
+        return {
+            ...user,
+            memberships: (user.memberships ?? []).map((membership) =>
+                this.toMembershipDto(membership)
+            ),
+        };
+    }
+
+    private toMembershipDto(
+        membership: OrganisationMembership
+    ): UserOrganisationMembershipDto {
+        return {
+            id: membership.id,
+            uuid: membership.uuid,
+            userId: membership.userId,
+            organisation: {
+                id: membership.organisation.id,
+                uuid: membership.organisation.uuid,
+                name: membership.organisation.name,
+            },
+            organisationId: membership.organisationId,
+            roles: membership.roles,
+            createdDate: membership.createdDate,
+            deletedDate: membership.deletedDate,
+            updateDate: membership.updateDate,
+        };
     }
 }

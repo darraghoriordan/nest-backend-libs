@@ -1,5 +1,5 @@
 import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
-import {OrganisationMembership} from "../../organisation-memberships/entities/organisation-membership.entity.js";
+import {UserOrganisationMembershipDto} from "./user-organisation-membership.dto.js";
 
 export class UserDto {
     @ApiPropertyOptional({
@@ -41,8 +41,8 @@ export class UserDto {
     @ApiPropertyOptional()
     username?: string;
 
-    @ApiProperty({type: () => OrganisationMembership, isArray: true})
-    memberships!: OrganisationMembership[];
+    @ApiProperty({type: () => UserOrganisationMembershipDto, isArray: true})
+    memberships!: UserOrganisationMembershipDto[];
 
     @ApiProperty({type: String, isArray: true})
     activeSubscriptionProductKeys!: string[];

@@ -79,6 +79,9 @@ export {UserApiKeyController} from "./user-api-key/user-apikey.controller.js";
 export {UserApiKeyModule} from "./user-api-key/user-apikey.module.js";
 export {User} from "./user/entities/user.entity.js";
 export {UserService} from "./user/user.service.js";
+export {UserDto} from "./user/dto/userResponseDto.js";
+export {UserOrganisationMembershipDto} from "./user/dto/user-organisation-membership.dto.js";
+export {OrganisationSummaryDto} from "./user/dto/organisation-summary.dto.js";
 
 // organisations
 export {Organisation} from "./organisation/entities/organisation.entity.js";
