@@ -39,7 +39,6 @@ export class StripeWebhookController {
     @Post("webhook-receiver")
     @ApiOkResponse()
     @ApiBadRequestResponse()
-    // eslint-disable-next-line unicorn/prevent-abbreviations
     async webhookReceiver(@Req() req: RawBodyRequest<ExpressRequest>) {
         return this.stripeWebhookService.handleWebhook(req);
     }

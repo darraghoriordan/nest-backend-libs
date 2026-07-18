@@ -15,14 +15,14 @@ interface ArgumentsType {
     packageName: string;
 }
 
-export class WriteApiClientCommand
-    implements yargs.CommandModule<ArgumentsType, ArgumentsType>
-{
+export class WriteApiClientCommand implements yargs.CommandModule<
+    ArgumentsType,
+    ArgumentsType
+> {
     command = "api:write-client";
     describe =
         "Generates a new api client and installs it into frontend and integration test apps.";
 
-    // eslint-disable-next-line unicorn/prevent-abbreviations
     builder(args: yargs.Argv) {
         return args
             .option("o", {
@@ -48,7 +48,7 @@ export class WriteApiClientCommand
     }
 
     async handler(
-        // eslint-disable-next-line unicorn/prevent-abbreviations, @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         args: yargs.ArgumentsCamelCase<any> // this breaks if i use ArgumentsType but change back for dev
     ): Promise<void> {
         // call the script

@@ -11,6 +11,12 @@ export class SqliteTypeOrmConfigurationProvider {
      */
     public static getTypeOrmConfig(): DataSourceOptions {
         const directoryName = path.dirname(url.fileURLToPath(import.meta.url));
+        const databasePath = process.env.APP_SQLITE_DATABASE_PATH;
+
+        if (!databasePath) {
+            throw new Error("APP_SQLITE_DATABASE_PATH is required");
+        }
+
         const nodeModuleCorePath = path.join(
             process.env.CORE_MODULE_ENTITY_PATH ?? "..",
             "**",
@@ -40,17 +46,14 @@ export class SqliteTypeOrmConfigurationProvider {
 
         return {
             type: "sqlite",
-            database: process.env.APP_SQLITE_DATABASE_PATH,
+            database: databasePath,
             logging: false,
             migrationsTableName: "migrations",
             migrationsRun: false,
             synchronize: false,
             entities: [nodeModuleCorePath, appModulePath],
             migrations: [migrationsPath],
-            cli: {
-                migrationsDir: "src/migrations",
-            },
-        } as DataSourceOptions;
+        };
     }
 
     public static getNestTypeOrmConfig(): TypeOrmModuleOptions {
