@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-deprecated */
 import {Inject, Injectable, Logger} from "@nestjs/common";
 import Stripe from "stripe";
 import {StripeCheckoutSessionRequestDto} from "../models/StripeCheckoutSessionRequestDto.js";
@@ -10,6 +11,7 @@ import {Repository} from "typeorm";
 import {StripeCustomerPortalResponseDto} from "../models/StripeCustomerPortalResponseDto.js";
 import {RequestUser} from "../../authorization/models/RequestWithUser.js";
 
+/** @deprecated Use SecureStripeCheckoutService through StripePaymentsModule. */
 @Injectable()
 export class StripeCheckoutService {
     private readonly logger = new Logger(StripeCheckoutService.name);

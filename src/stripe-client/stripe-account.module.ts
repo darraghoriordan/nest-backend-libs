@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-deprecated */
 import {DynamicModule, Module} from "@nestjs/common";
 import "reflect-metadata";
 import {StripeClientConfigurationService} from "./StripeClientConfigurationService.js";
@@ -19,6 +20,7 @@ import {
     StripeModuleAsyncOptions,
 } from "./stripe-account.options.js";
 
+/** @deprecated Use StripePaymentsModule from `stripe-payments` for new applications. */
 @Module({})
 export class StripeAccountModule {
     static forRoot(): never {

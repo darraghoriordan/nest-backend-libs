@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-deprecated */
 import {UseGuards, Controller, Request, Get, Query} from "@nestjs/common";
 import {
     ApiBearerAuth,

@@ -27,35 +27,40 @@ The library includes the following modules that can be imported into your NestJS
 
 -   Open API
 
-## Stripe Module Notes
+## Stripe payments
 
-A module for integrating stripe into your nest application.
+`StripePaymentsModule` is the opinionated Stripe integration for new applications. It
+owns the server-side product catalog, authenticated organisation-owner checkout,
+idempotency records, safe redirect construction, customer portal sessions, signature
+verification, a durable webhook inbox, retries, replay, and subscription state updates.
 
-### Default functionality
+Configure it with an async factory. Products are deliberately configured on the server;
+clients send a product key, never arbitrary Stripe line items or prices:
 
-Webhook handling into a queue is automatically added to the module
-A controller to generate a customer portal session for authenticated users is added to the module
+```ts
+StripePaymentsModule.forRootAsync({
+    imports: [ConfigModule],
+    inject: [ConfigService],
+    useFactory: (config: ConfigService) => ({
+        accessToken: config.getOrThrow("STRIPE_ACCESS_TOKEN"),
+        webhookVerificationKey: config.getOrThrow(
+            "STRIPE_WEBHOOK_VERIFICATION_KEY",
+        ),
+        redirectsBaseUrl: config.getOrThrow("STRIPE_REDIRECTS_BASE_URL"),
+        products: parseStripeProductCatalog(
+            config.getOrThrow("STRIPE_PRODUCT_CATALOG_JSON"),
+        ),
+    }),
+});
+```
 
-### You must manually add the following to your own module
+Run `StrengthenStripePayments1775000000000` in the consuming application's migration
+set before enabling the module. The migration creates checkout idempotency records,
+the webhook inbox, payment ordering state, and the transaction uniqueness constraint.
 
-A controller to create a checkout session for either Authenticated or Unauthenticated users (your choice if you want your front end app to force users to auth or not)
-
-A handler for the webhook queue events. You can see an example `StripeQueuedEventHandler` in Miller but you will probably want to do different actions for your customers.
-
-### Env vars
-
-STRIPE_ACCESS_TOKEN
-Why: To create stripe sessions using the api
-Where: https://dashboard.stripe.com/apikeys
-
-STRIPE_WEBHOOK_VERIFICATION_KEY
-Why: To verify the webhook signature
-Where: https://dashboard.stripe.com/apikeys
-
-STRIPE_REDIRECTS_BASE_URL
-Why: To securely redirect the user to the correct website after checkout we don't use a full url
-in the request object, only a path which is combined with this base url
-Where: your frontend configuration
+`StripeAccountModule`, `StripeCheckoutService`, and `StripeQueuedEventHandler` remain
+available for existing applications but are deprecated. They accept unsafe legacy
+inputs and do not receive fixes made to the v2 flow; migrate to `StripePaymentsModule`.
 
 ### Testing
 

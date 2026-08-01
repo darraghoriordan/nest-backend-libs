@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-deprecated */
 import {Controller, Post, Body} from "@nestjs/common";
 import {ApiTags, ApiOkResponse} from "@nestjs/swagger";
 import {StripeCheckoutSessionRequestDto} from "./../models/StripeCheckoutSessionRequestDto.js";
@@ -13,7 +14,6 @@ import {StripeCheckoutSessionResponseDto} from "./../models/StripeCheckoutSessio
  */
 @Controller("payments/stripe")
 @ApiTags("Payments")
- 
 export class StripeUnauthenticatedCheckoutController {
     constructor(private readonly stripeService: StripeCheckoutService) {}
 

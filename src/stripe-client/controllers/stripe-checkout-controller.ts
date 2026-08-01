@@ -13,11 +13,11 @@ import {AuthenticatedStripeCheckoutService} from "../services/auth-stripe-checko
  *
  * This is not automatically included in the StripeClientModule.
  */
+/** @deprecated Use StripePaymentsModule's opinionated checkout controller. */
 @UseGuards(DefaultAuthGuard)
 @ApiBearerAuth()
 @Controller("payments/stripe")
 @ApiTags("Payments")
- 
 export class StripeCheckoutController {
     constructor(
         private readonly stripeService: AuthenticatedStripeCheckoutService

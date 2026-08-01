@@ -1,6 +1,6 @@
 {
     "name": "@darraghor/nest-backend-libs",
-    "version": "1.0.1",
+    "version": "6.0.0",
     "license": "SEE LICENSE IN LICENSE.md",
     "description": "Some helpers for personal projects in nestjs",
     "homepage": "https://github.com/darraghoriordan/nest-backend-libs",

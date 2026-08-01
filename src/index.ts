@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-deprecated */
 // The "barrels" issue means these must all be imported individually, which is a pain.
 
 import {RunningCommandLineModule} from "./runningCommandLine/RunningCommandLine.module.js";
@@ -55,6 +56,21 @@ export {StripeCheckoutSessionResponseDto} from "./stripe-client/models/StripeChe
 export {StripeCheckoutLineItem} from "./stripe-client/models/StripeCheckoutLineItem.js";
 export {StripeAccountModule} from "./stripe-client/stripe-account.module.js";
 export {StripeQueuedEventHandler} from "./stripe-client/services/queued-payment-event.handler.js";
+
+// Stripe payments v2
+export {StripePaymentsModule} from "./stripe-payments/stripe-payments.module.js";
+export type {
+    StripePaymentsMode,
+    StripePaymentsProduct,
+    StripePaymentsModuleOptions,
+    StripePaymentsModuleAsyncOptions,
+} from "./stripe-payments/stripe-payments.options.js";
+export {STRIPE_PAYMENTS_OPTIONS} from "./stripe-payments/stripe-payments.options.js";
+export {
+    createSecureStripeConfiguration,
+    parseStripeProductCatalog,
+} from "./stripe-payments/stripe-payment.config.js";
+export {StrengthenStripePayments1775000000000} from "./stripe-payments/migrations/1775000000000-strengthen-stripe-payments.js";
 
 // authorization module
 export {AuthzModule} from "./authorization/authz.module.js";
@@ -122,10 +138,12 @@ export type {
 } from "./authzclient/authz-client.options.js";
 export {AUTHZ_CLIENT_MODULE_OPTIONS} from "./authzclient/authz-client.options.js";
 
+/* eslint-disable @typescript-eslint/no-deprecated */
 export type {
     StripeModuleOptions,
     StripeModuleAsyncOptions,
 } from "./stripe-client/stripe-account.options.js";
+/* eslint-enable @typescript-eslint/no-deprecated */
 export {STRIPE_MODULE_OPTIONS} from "./stripe-client/stripe-account.options.js";
 
 export type {

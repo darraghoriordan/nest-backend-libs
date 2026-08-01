@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-deprecated */
 import {Inject, Injectable, Logger} from "@nestjs/common";
 import {OnWorkerEvent, WorkerHost, Processor} from "@nestjs/bullmq";
 import {Job} from "bullmq";
@@ -8,6 +9,7 @@ import {Repository} from "typeorm";
 import {OrganisationSubscriptionService} from "../../organisation-subscriptions/organisation-subscriptions.service.js";
 import SubscriptionRecordMapper from "./subscriptionRecord.mapper.js";
 
+/** @deprecated Use StripePaymentsModule, which provides durable event inboxing and replay. */
 @Injectable()
 @Processor("stripe-events")
 // This is just a looong example with notes. You should create your own handler
