@@ -1,5 +1,8 @@
-onlyBuiltDependencies:
-  - '@nestjs/core'
-  - '@scarf/scarf'
-  - esbuild
-  - msgpackr-extract
+allowBuilds:
+  '@nestjs/core': true
+  '@scarf/scarf': true
+  esbuild: true
+  msgpackr-extract: true
+
+overrides:
+  conventional-changelog-conventionalcommits: 7.0.2

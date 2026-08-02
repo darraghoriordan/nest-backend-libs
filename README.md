@@ -11,7 +11,7 @@ You can see how this library is used in a NestJS application on GitHub as [use-m
 The library includes the following modules that can be imported into your NestJS application. They are mostly dependant on each other so you should import them all. But they are things that are common to most applications so it makes sense to have them together in this library if you use this stack.
 
 - Authorization
-- Auth0 for authentication
+- Better Auth session and bearer-token authorization
 - Configuration
 - Postgres + typeorm
 - SQLite + typeorm
@@ -40,6 +40,33 @@ import {
 } from "@darraghor/nest-backend-libs/stripe";
 import {NEST_BACKEND_LIB_ENTITIES} from "@darraghor/nest-backend-libs/database";
 ```
+
+## Authentication and authorization
+
+`BetterAuthzModule` is the opinionated integration for new applications. Host Better Auth
+in the NestJS application (or another backend service) and provide a resolver that converts
+its session into `AuthenticatedUserProfile`. The module keeps `DefaultAuthGuard`, application
+users, organisations, invitations, claims, and API-key auth consistent without importing a
+frontend framework or the Better Auth SDK into this library.
+
+```ts
+BetterAuthzModule.forRootAsync({
+    imports: [ConfigModule],
+    inject: [ConfigService],
+    useFactory: () => ({
+        resolveUser: async (request) => resolveApplicationAuthSession(request),
+    }),
+});
+```
+
+The resolver may accept secure session cookies, signed bearer tokens, or both. This supports
+server-rendered frontends and independent browser SPAs—including SSE clients—through the same
+backend authorization contract.
+
+Add `authProviderUserId` to the consuming application's migration. On first login, a verified
+identity is linked to exactly one existing application user with the same email, preserving
+memberships and subscriptions. Duplicate matches fail closed. `AuthzModule` and
+`auth0UserId` remain available for staged upgrades but are deprecated.
 
 ## Stripe payments
 

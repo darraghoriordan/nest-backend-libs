@@ -202,4 +202,5 @@ coverage/
 .jest_cache
 openapitools.json
 .docker-compose
+.pnpm-store/
 junit-TEST.xml

@@ -47,6 +47,21 @@ export class UserService {
             },
         });
     }
+
+    async findOneByAuthProviderId(
+        authProviderUserId: string
+    ): Promise<User | undefined> {
+        return this.repository.findOneOrFail({
+            where: {authProviderUserId},
+            relations: {
+                memberships: {
+                    roles: true,
+                    user: false,
+                    organisation: {subscriptionRecords: true},
+                },
+            },
+        });
+    }
     // can change this to querybuilder to reduce the
     // loops later
     async findOneIfSameOrganisation(

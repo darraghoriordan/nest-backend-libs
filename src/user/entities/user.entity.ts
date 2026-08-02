@@ -61,7 +61,13 @@ export class User {
     @ApiPropertyOptional()
     @Column({nullable: true})
     @Index({unique: true})
+    /** @deprecated Use authProviderUserId for new authentication providers. */
     auth0UserId?: string;
+
+    @ApiPropertyOptional()
+    @Column({nullable: true})
+    @Index("IDX_user_auth_provider_user_id", {unique: true})
+    authProviderUserId?: string;
 
     @ApiPropertyOptional()
     @Column({nullable: true})

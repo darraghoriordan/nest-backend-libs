@@ -9,6 +9,7 @@ import {
 } from "./authz-client.options.js";
 
 @Module({})
+/** @deprecated Better Auth does not require an Auth0 user-info client. */
 export class AuthzClientModule {
     static forRoot(): never {
         throw new Error(

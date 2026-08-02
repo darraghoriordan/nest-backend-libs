@@ -13,6 +13,7 @@ import {
 } from "./authz.options.js";
 
 @Module({})
+/** @deprecated Use BetterAuthzModule for new applications. */
 export class AuthzModule {
     static forRoot(): never {
         throw new Error(

@@ -39,6 +39,9 @@ export class UserDto {
     auth0UserId?: string;
 
     @ApiPropertyOptional()
+    authProviderUserId?: string;
+
+    @ApiPropertyOptional()
     username?: string;
 
     @ApiProperty({type: () => UserOrganisationMembershipDto, isArray: true})

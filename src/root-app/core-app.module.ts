@@ -158,6 +158,10 @@ export class CoreModule {
         rootModule: any,
         callback: (appModule: INestApplication) => void | Promise<void>,
         options?: {
+            /** Disable Nest's parser when an integration (such as Better Auth)
+             * must receive the untouched request stream and will re-register
+             * parsers for the remaining routes. */
+            bodyParser?: boolean;
             preMiddleware?: (
                 appModule: INestApplication
             ) => void | Promise<void>;
@@ -167,8 +171,8 @@ export class CoreModule {
             try {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 const app = await NestFactory.create(rootModule, {
-                    bodyParser: true,
-                    rawBody: true,
+                    bodyParser: options?.bodyParser ?? true,
+                    rawBody: options?.bodyParser ?? true,
                     bufferLogs: true,
                 });
                 const loggerService = app.get(Logger);
