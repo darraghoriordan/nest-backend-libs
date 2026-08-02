@@ -89,7 +89,7 @@
     "scripts": {
         "clean": "rm -Rf ./dist/",
         "build:ci": "pnpm run build",
-        "build": "pnpm run clean && mkdir ./dist && tsc --project tsconfig.build.json && pnpm run copyOpenApiGenerationModule",
+        "build": "pnpm run clean && mkdir ./dist && pnpm exec tsc --project tsconfig.build.json && pnpm run copyOpenApiGenerationModule",
         "lint": "pnpm exec eslint",
         "lintone": "pnpm exec eslint  --no-error-on-unmatched-pattern",
         "test": "vitest run",
@@ -181,6 +181,7 @@
         "@types/yargs": "17.0.35",
         "@typescript-eslint/eslint-plugin": "8.64.0",
         "@typescript-eslint/parser": "8.64.0",
+        "@typescript/native": "npm:typescript@^7.0.2",
         "copyfiles": "2.4.1",
         "eslint": "10.7.0",
         "eslint-config-prettier": "10.1.8",
@@ -195,7 +196,7 @@
         "ts-loader": "9.6.2",
         "ts-node": "10.9.2",
         "tsconfig-paths": "4.2.0",
-        "typescript": "5.9.3",
+        "typescript": "npm:@typescript/typescript6@6.0.2",
         "typescript-eslint": "8.64.0",
         "vitest": "4.1.10",
         "yargs": "18.0.0"

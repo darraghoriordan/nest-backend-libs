@@ -108,6 +108,13 @@ existing health or metrics endpoint.
 available for existing applications but are deprecated. They accept unsafe legacy
 inputs and do not receive fixes made to the v2 flow; migrate to `StripePaymentsModule`.
 
+### TypeScript toolchain
+
+`pnpm build` uses the TypeScript 7 native compiler provided by `@typescript/native`.
+The `typescript` package is intentionally aliased to the TypeScript 6 compatibility
+release so ESLint and other tools that use the TypeScript compiler API continue to
+work. Keep build commands on `tsc` and compiler-API tooling on `typescript`/`tsc6`.
+
 ### Testing
 
 https://stripe.com/docs/webhooks/test
