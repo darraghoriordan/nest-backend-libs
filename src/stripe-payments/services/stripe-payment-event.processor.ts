@@ -4,6 +4,7 @@ import {OnWorkerEvent, Processor, WorkerHost} from "@nestjs/bullmq";
 import Stripe from "stripe";
 import {StripePaymentEventService} from "./stripe-payment-event.service.js";
 import {StripePaymentFulfillmentService} from "./stripe-payment-fulfillment.service.js";
+import {StripePaymentsTelemetryService} from "./stripe-payments-telemetry.service.js";
 
 @Injectable()
 @Processor("stripe-events")
@@ -12,7 +13,8 @@ export class StripePaymentEventProcessor extends WorkerHost {
 
     constructor(
         private readonly eventService: StripePaymentEventService,
-        private readonly fulfillmentService: StripePaymentFulfillmentService
+        private readonly fulfillmentService: StripePaymentFulfillmentService,
+        private readonly telemetry: StripePaymentsTelemetryService
     ) {
         super();
     }
@@ -32,8 +34,19 @@ export class StripePaymentEventProcessor extends WorkerHost {
         try {
             await this.fulfillmentService.process(event);
             await this.eventService.markProcessed(event.id);
+            await this.telemetry.record({
+                name: "webhook.processed",
+                stripeEventId: event.id,
+                eventType: event.type,
+            });
         } catch (error) {
             await this.eventService.markFailed(event.id, error);
+            await this.telemetry.record({
+                name: "webhook.failed",
+                stripeEventId: event.id,
+                eventType: event.type,
+                error: error instanceof Error ? error.message : String(error),
+            });
             throw error;
         }
     }

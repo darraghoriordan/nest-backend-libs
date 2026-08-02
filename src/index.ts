@@ -70,7 +70,31 @@ export {
     createSecureStripeConfiguration,
     parseStripeProductCatalog,
 } from "./stripe-payments/stripe-payment.config.js";
-export {StrengthenStripePayments1775000000000} from "./stripe-payments/migrations/1775000000000-strengthen-stripe-payments.js";
+export {
+    DefaultStripePaymentsAccessPolicy,
+    NoopStripePaymentsTelemetry,
+    STRIPE_PAYMENTS_ACCESS_POLICY,
+    STRIPE_PAYMENTS_ENTITLEMENT_STORE,
+    STRIPE_PAYMENTS_TELEMETRY,
+} from "./stripe-payments/stripe-payments.extensions.js";
+export type {
+    StripePaymentsAccessContext,
+    StripePaymentsAccessPolicy,
+    StripePaymentsEntitlement,
+    StripePaymentsEntitlementInput,
+    StripePaymentsEntitlementStore,
+    StripePaymentsRevocationInput,
+    StripePaymentsTelemetry,
+    StripePaymentsTelemetryEvent,
+} from "./stripe-payments/stripe-payments.extensions.js";
+export {StripePaymentsOperationsService} from "./stripe-payments/services/stripe-payments-operations.service.js";
+export type {StripePaymentsOperationsSnapshot} from "./stripe-payments/services/stripe-payments-operations.service.js";
+export {StripePaymentsTelemetryService} from "./stripe-payments/services/stripe-payments-telemetry.service.js";
+export {DefaultStripePaymentsEntitlementStore} from "./stripe-payments/services/default-stripe-payments-entitlement-store.js";
+export {
+    NEST_BACKEND_LIB_ENTITIES,
+    STRIPE_PAYMENTS_ENTITIES,
+} from "./typeorm/entities.js";
 
 // authorization module
 export {AuthzModule} from "./authorization/authz.module.js";

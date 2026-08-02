@@ -6,9 +6,10 @@ import {StripeCheckoutAttempt} from "../entities/stripe-checkout-attempt.entity.
 import {PaymentSessionService} from "../../payment-sessions/payment-session.service.js";
 import {SecureStripeProductService} from "./secure-stripe-product.service.js";
 import {
-    SecureSubscriptionInput,
-    SecureSubscriptionService,
-} from "./secure-subscription.service.js";
+    STRIPE_PAYMENTS_ENTITLEMENT_STORE,
+    StripePaymentsEntitlementInput,
+    StripePaymentsEntitlementStore,
+} from "../stripe-payments.extensions.js";
 
 type StripeMetadata = Partial<Record<string, string>>;
 
@@ -54,7 +55,8 @@ export class StripePaymentFulfillmentService {
         private readonly attemptRepository: Repository<StripeCheckoutAttempt>,
         private readonly paymentSessionService: PaymentSessionService,
         private readonly productService: SecureStripeProductService,
-        private readonly subscriptionService: SecureSubscriptionService
+        @Inject(STRIPE_PAYMENTS_ENTITLEMENT_STORE)
+        private readonly entitlementStore: StripePaymentsEntitlementStore
     ) {}
 
     async process(event: Stripe.Event): Promise<void> {
@@ -153,7 +155,7 @@ export class StripePaymentFulfillmentService {
 
         const productObject =
             typeof price.product === "string" ? undefined : price.product;
-        const input: SecureSubscriptionInput = {
+        const input: StripePaymentsEntitlementInput = {
             paymentSystemTransactionId: subscriptionId ?? session.id,
             paymentSystemProductId: productObject?.id ?? price.id,
             paymentSystemCustomerId: customer.id,
@@ -175,7 +177,7 @@ export class StripePaymentFulfillmentService {
             stripeStatus:
                 configuredProduct.mode === "subscription" ? "active" : "paid",
         };
-        await this.subscriptionService.save(input);
+        await this.entitlementStore.save(input);
     }
 
     private async markCheckoutAttemptFailed(
@@ -262,11 +264,10 @@ export class StripePaymentFulfillmentService {
                     where: {id: Number(checkoutAttemptId)},
                 });
                 if (attempt?.stripeSessionId) {
-                    const revoked =
-                        await this.subscriptionService.revokePayment(
-                            attempt.stripeSessionId,
-                            input
-                        );
+                    const revoked = await this.entitlementStore.revokePayment(
+                        attempt.stripeSessionId,
+                        input
+                    );
                     if (revoked) {
                         return;
                     }
@@ -276,7 +277,7 @@ export class StripePaymentFulfillmentService {
 
         const customerId = getCustomer(charge.customer).id;
         if (customerId !== "unknown") {
-            await this.subscriptionService.revokeCustomerPayments(
+            await this.entitlementStore.revokeCustomerPayments(
                 customerId,
                 input
             );
@@ -297,11 +298,11 @@ export class StripePaymentFulfillmentService {
         }
         const configuredProduct = this.productService.getByPriceId(price.id);
         const metadata = getMetadata(subscription);
-        const existing = await this.subscriptionService.findByTransactionId(
+        const existing = await this.entitlementStore.findByTransactionId(
             subscription.id
         );
         const organisationUuid =
-            metadata.organisationUuid ?? existing?.organisation.uuid;
+            metadata.organisationUuid ?? existing?.organisationUuid;
         if (!organisationUuid) {
             throw new Error(
                 "Subscription event could not be matched to an organisation"
@@ -314,7 +315,7 @@ export class StripePaymentFulfillmentService {
             event.type === "customer.subscription.deleted"
                 ? "canceled"
                 : subscription.status;
-        await this.subscriptionService.save({
+        await this.entitlementStore.save({
             paymentSystemTransactionId: subscription.id,
             paymentSystemProductId: productObject?.id ?? price.id,
             paymentSystemCustomerId: customer.id,

@@ -28,6 +28,46 @@
         ".": {
             "types": "./dist/index.d.ts",
             "import": "./dist/index.js"
+        },
+        "./authorization": {
+            "types": "./dist/exports/authorization.d.ts",
+            "import": "./dist/exports/authorization.js"
+        },
+        "./core": {
+            "types": "./dist/exports/core.d.ts",
+            "import": "./dist/exports/core.js"
+        },
+        "./database": {
+            "types": "./dist/exports/database.d.ts",
+            "import": "./dist/exports/database.js"
+        },
+        "./email": {
+            "types": "./dist/exports/email.d.ts",
+            "import": "./dist/exports/email.js"
+        },
+        "./invitations": {
+            "types": "./dist/exports/invitations.d.ts",
+            "import": "./dist/exports/invitations.js"
+        },
+        "./organisations": {
+            "types": "./dist/exports/organisations.d.ts",
+            "import": "./dist/exports/organisations.js"
+        },
+        "./stripe": {
+            "types": "./dist/exports/stripe.d.ts",
+            "import": "./dist/exports/stripe.js"
+        },
+        "./stripe-legacy": {
+            "types": "./dist/exports/stripe-legacy.d.ts",
+            "import": "./dist/exports/stripe-legacy.js"
+        },
+        "./twitter": {
+            "types": "./dist/exports/twitter.d.ts",
+            "import": "./dist/exports/twitter.js"
+        },
+        "./users": {
+            "types": "./dist/exports/users.d.ts",
+            "import": "./dist/exports/users.js"
         }
     },
     "keywords": [

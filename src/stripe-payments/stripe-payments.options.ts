@@ -21,7 +21,7 @@ export interface StripePaymentsModuleOptions {
 
 export interface StripePaymentsModuleAsyncOptions extends Pick<
     ModuleMetadata,
-    "imports"
+    "imports" | "providers"
 > {
     useFactory: (
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

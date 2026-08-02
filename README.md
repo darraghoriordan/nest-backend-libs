@@ -10,22 +10,36 @@ You can see how this library is used in a NestJS application on GitHub as [use-m
 
 The library includes the following modules that can be imported into your NestJS application. They are mostly dependant on each other so you should import them all. But they are things that are common to most applications so it makes sense to have them together in this library if you use this stack.
 
--   Authorization
--   Auth0 for authentication
--   Configuration
--   Postgres + typeorm
--   SQLite + typeorm
--   health checks
--   invitations
--   logging
--   organisations
--   subscriptions
--   payments (Stripe but should work with any)
--   CLI (e.g. for running stable diffusion)
+- Authorization
+- Auth0 for authentication
+- Configuration
+- Postgres + typeorm
+- SQLite + typeorm
+- health checks
+- invitations
+- logging
+- organisations
+- subscriptions
+- payments (Stripe but should work with any)
+- CLI (e.g. for running stable diffusion)
 
 ## Modules with no dependencies
 
--   Open API
+- Open API
+
+## Focused imports
+
+Applications can import only the public surface they use instead of loading the root
+barrel. Available entry points include `/authorization`, `/core`, `/database`, `/email`,
+`/invitations`, `/organisations`, `/stripe`, `/stripe-legacy`, `/twitter`, and `/users`:
+
+```ts
+import {
+    StripePaymentsModule,
+    STRIPE_PAYMENTS_ACCESS_POLICY,
+} from "@darraghor/nest-backend-libs/stripe";
+import {NEST_BACKEND_LIB_ENTITIES} from "@darraghor/nest-backend-libs/database";
+```
 
 ## Stripe payments
 
@@ -44,19 +58,51 @@ StripePaymentsModule.forRootAsync({
     useFactory: (config: ConfigService) => ({
         accessToken: config.getOrThrow("STRIPE_ACCESS_TOKEN"),
         webhookVerificationKey: config.getOrThrow(
-            "STRIPE_WEBHOOK_VERIFICATION_KEY",
+            "STRIPE_WEBHOOK_VERIFICATION_KEY"
         ),
         redirectsBaseUrl: config.getOrThrow("STRIPE_REDIRECTS_BASE_URL"),
         products: parseStripeProductCatalog(
-            config.getOrThrow("STRIPE_PRODUCT_CATALOG_JSON"),
+            config.getOrThrow("STRIPE_PRODUCT_CATALOG_JSON")
         ),
     }),
 });
 ```
 
-Run `StrengthenStripePayments1775000000000` in the consuming application's migration
-set before enabling the module. The migration creates checkout idempotency records,
-the webhook inbox, payment ordering state, and the transaction uniqueness constraint.
+The library does not ship application migrations. Add `NEST_BACKEND_LIB_ENTITIES` to
+the consuming application's TypeORM data source and generate migrations there whenever
+the installed library changes its entities. `STRIPE_PAYMENTS_ENTITIES` is also exported
+when a Stripe-only entity list is more convenient.
+
+Application-specific behavior can be supplied with Nest providers. The default access
+policy requires an organisation owner; telemetry defaults to a no-op and telemetry
+failures never interrupt payment processing:
+
+```ts
+StripePaymentsModule.forRootAsync({
+    imports: [ConfigModule],
+    inject: [ConfigService],
+    useFactory: createStripeOptions,
+    providers: [
+        {
+            provide: STRIPE_PAYMENTS_ACCESS_POLICY,
+            useClass: ApplicationStripeAccessPolicy,
+        },
+        {
+            provide: STRIPE_PAYMENTS_TELEMETRY,
+            useClass: OpenTelemetryStripePayments,
+        },
+        {
+            provide: STRIPE_PAYMENTS_ENTITLEMENT_STORE,
+            useClass: ApplicationEntitlementStore,
+        },
+    ],
+});
+```
+
+`GET /payments/stripe/operations` is restricted to `read:all` and reports durable
+event counts, stale processing records, queue counts, and an `up` or `degraded` status.
+`StripePaymentsOperationsService` is exported for integration into an application's
+existing health or metrics endpoint.
 
 `StripeAccountModule`, `StripeCheckoutService`, and `StripeQueuedEventHandler` remain
 available for existing applications but are deprecated. They accept unsafe legacy

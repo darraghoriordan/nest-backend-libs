@@ -14,13 +14,18 @@ import {
     RawStripeWebhookRequest,
     SecureStripeWebhookService,
 } from "../services/secure-stripe-webhook.service.js";
+import {
+    StripePaymentsOperationsService,
+    StripePaymentsOperationsSnapshot,
+} from "../services/stripe-payments-operations.service.js";
 
 @Controller("payments/stripe")
 @ApiTags("Payments")
 export class SecureStripeWebhookController {
     constructor(
         private readonly webhookService: SecureStripeWebhookService,
-        @InjectQueue("stripe-events") private readonly eventQueue: Queue
+        @InjectQueue("stripe-events") private readonly eventQueue: Queue,
+        private readonly operationsService: StripePaymentsOperationsService
     ) {}
 
     @Post("webhook-receiver")
@@ -53,6 +58,15 @@ export class SecureStripeWebhookController {
     @ApiOkResponse({type: [Object]})
     getFailedQueueJobs(): Promise<unknown[]> {
         return this.getJobs(["delayed", "failed"]);
+    }
+
+    @Get("operations")
+    @UseGuards(DefaultAuthGuard, ClaimsAuthorisationGuard)
+    @MandatoryUserClaims("read:all")
+    @ApiOperation({tags: ["SuperPower"]})
+    @ApiOkResponse({type: Object})
+    getOperations(): Promise<StripePaymentsOperationsSnapshot> {
+        return this.operationsService.getSnapshot();
     }
 
     private async getJobs(

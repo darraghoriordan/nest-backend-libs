@@ -17,6 +17,7 @@ import {
 import {Organisation} from "../../organisation/entities/organisation.entity.js";
 
 @Entity()
+@Index(["paymentSystemTransactionId"], {unique: true})
 export class OrganisationSubscriptionRecord {
     @PrimaryGeneratedColumn()
     @ApiProperty()

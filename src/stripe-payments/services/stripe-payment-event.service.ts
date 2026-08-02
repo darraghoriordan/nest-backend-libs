@@ -5,6 +5,7 @@ import {InjectQueue} from "@nestjs/bullmq";
 import {Repository} from "typeorm";
 import Stripe from "stripe";
 import {StripeCheckoutEvent} from "../entities/stripe-payment-event.entity.js";
+import {StripePaymentsTelemetryService} from "./stripe-payments-telemetry.service.js";
 
 interface RawStripeObject {
     id?: unknown;
@@ -35,7 +36,8 @@ export class StripePaymentEventService {
         @InjectRepository(StripeCheckoutEvent)
         private readonly eventRepository: Repository<StripeCheckoutEvent>,
         @InjectQueue("stripe-events")
-        private readonly eventQueue: Queue
+        private readonly eventQueue: Queue,
+        private readonly telemetry: StripePaymentsTelemetryService
     ) {}
 
     async receive(event: Stripe.Event): Promise<void> {
@@ -69,6 +71,12 @@ export class StripePaymentEventService {
         if (paymentEvent.status === "processed") {
             return;
         }
+
+        await this.telemetry.record({
+            name: "webhook.received",
+            stripeEventId: event.id,
+            eventType: event.type,
+        });
 
         const existingJob = await this.eventQueue.getJob(
             this.getBaseJobId(event.id)

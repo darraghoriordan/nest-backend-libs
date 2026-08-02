@@ -1,6 +1,5 @@
 import {
     ConflictException,
-    ForbiddenException,
     Inject,
     Injectable,
     Logger,
@@ -20,7 +19,13 @@ import {
 } from "../models/secure-payment-response.dto.js";
 import {StripeCheckoutAttempt} from "../entities/stripe-checkout-attempt.entity.js";
 import {SecureStripeProductService} from "./secure-stripe-product.service.js";
-import {SecureSubscriptionService} from "./secure-subscription.service.js";
+import {
+    STRIPE_PAYMENTS_ACCESS_POLICY,
+    STRIPE_PAYMENTS_ENTITLEMENT_STORE,
+    StripePaymentsAccessPolicy,
+    StripePaymentsEntitlementStore,
+} from "../stripe-payments.extensions.js";
+import {StripePaymentsTelemetryService} from "./stripe-payments-telemetry.service.js";
 
 const idempotencyKeyPattern = /^[A-Za-z0-9._-]{8,255}$/;
 
@@ -34,7 +39,11 @@ export class SecureStripeCheckoutService {
         @InjectRepository(StripeCheckoutAttempt)
         private readonly attemptRepository: Repository<StripeCheckoutAttempt>,
         private readonly productService: SecureStripeProductService,
-        private readonly subscriptionService: SecureSubscriptionService
+        @Inject(STRIPE_PAYMENTS_ENTITLEMENT_STORE)
+        private readonly entitlementStore: StripePaymentsEntitlementStore,
+        @Inject(STRIPE_PAYMENTS_ACCESS_POLICY)
+        private readonly accessPolicy: StripePaymentsAccessPolicy,
+        private readonly telemetry: StripePaymentsTelemetryService
     ) {}
 
     async createCheckoutSession(
@@ -43,7 +52,11 @@ export class SecureStripeCheckoutService {
         idempotencyKey: string | undefined
     ): Promise<StripeCheckoutSessionResponseDto> {
         const key = this.requireIdempotencyKey(idempotencyKey);
-        this.assertOrganisationOwner(request.organisationUuid, user);
+        await this.accessPolicy.assertCanManageOrganisation({
+            organisationUuid: request.organisationUuid,
+            user,
+            operation: "checkout",
+        });
         const product = this.productService.getByKey(request.productKey);
         const successUrl = this.productService.buildRedirectUrl(
             request.successFrontendPath
@@ -158,17 +171,32 @@ export class SecureStripeCheckoutService {
             attempt.stripeSessionId = session.id;
             attempt.stripeSessionUrl = session.url;
             await this.attemptRepository.save(attempt);
+            await this.telemetry.record({
+                name: "checkout.created",
+                attemptId: attempt.id,
+                organisationUuid: attempt.organisationUuid,
+                productKey: attempt.productKey,
+                stripeSessionId: session.id,
+            });
             return {
                 stripeSessionId: session.id,
                 stripeSessionUrl: session.url,
             };
         } catch (error) {
             attempt.status = "failed";
-            attempt.errorMessage =
+            const errorMessage =
                 error instanceof Error
                     ? error.message.slice(0, 500)
                     : "Stripe error";
+            attempt.errorMessage = errorMessage;
             await this.attemptRepository.save(attempt);
+            await this.telemetry.record({
+                name: "checkout.failed",
+                attemptId: attempt.id,
+                organisationUuid: attempt.organisationUuid,
+                productKey: attempt.productKey,
+                error: errorMessage,
+            });
             this.logger.error("Stripe Checkout session creation failed", {
                 attemptId: attempt.id,
                 productKey: product.key,
@@ -186,10 +214,14 @@ export class SecureStripeCheckoutService {
         idempotencyKey: string | undefined
     ): Promise<StripeCustomerPortalResponseDto> {
         const key = this.requireIdempotencyKey(idempotencyKey);
-        const subscription = await this.subscriptionService.findByUuid(
+        const subscription = await this.entitlementStore.findByUuid(
             request.subscriptionRecordUuid
         );
-        this.assertOrganisationOwner(subscription.organisation.uuid, user);
+        await this.accessPolicy.assertCanManageOrganisation({
+            organisationUuid: subscription.organisationUuid,
+            user,
+            operation: "customer-portal",
+        });
         if (!/^cus_[A-Za-z0-9]+$/.test(subscription.paymentSystemCustomerId)) {
             throw new ConflictException(
                 "This subscription has no valid Stripe customer"
@@ -215,25 +247,6 @@ export class SecureStripeCheckoutService {
             );
         }
         return idempotencyKey;
-    }
-
-    private assertOrganisationOwner(
-        organisationUuid: string,
-        user: RequestUser
-    ): void {
-        const isOwner = user.memberships
-            ?.filter((membership) =>
-                membership.roles?.some((role) => role.name === "owner")
-            )
-            .some(
-                (membership) =>
-                    membership.organisation.uuid === organisationUuid
-            );
-        if (!isOwner) {
-            throw new ForbiddenException(
-                "You are not the owner of this organisation"
-            );
-        }
     }
 
     private assertMatchingAttempt(

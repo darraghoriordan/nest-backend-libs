@@ -25,6 +25,16 @@ import {SecureSubscriptionService} from "./services/secure-subscription.service.
 import {StripePaymentEventProcessor} from "./services/stripe-payment-event.processor.js";
 import {StripePaymentEventService} from "./services/stripe-payment-event.service.js";
 import {StripePaymentFulfillmentService} from "./services/stripe-payment-fulfillment.service.js";
+import {
+    DefaultStripePaymentsAccessPolicy,
+    NoopStripePaymentsTelemetry,
+    STRIPE_PAYMENTS_ACCESS_POLICY,
+    STRIPE_PAYMENTS_ENTITLEMENT_STORE,
+    STRIPE_PAYMENTS_TELEMETRY,
+} from "./stripe-payments.extensions.js";
+import {StripePaymentsTelemetryService} from "./services/stripe-payments-telemetry.service.js";
+import {StripePaymentsOperationsService} from "./services/stripe-payments-operations.service.js";
+import {DefaultStripePaymentsEntitlementStore} from "./services/default-stripe-payments-entitlement-store.js";
 
 /**
  * Opinionated Stripe payments for organisation-based applications.
@@ -66,10 +76,26 @@ export class StripePaymentsModule {
                 SecureStripeProductService,
                 SecureStripeCheckoutService,
                 SecureSubscriptionService,
+                DefaultStripePaymentsEntitlementStore,
                 StripePaymentEventService,
                 SecureStripeWebhookService,
                 StripePaymentFulfillmentService,
                 StripePaymentEventProcessor,
+                StripePaymentsTelemetryService,
+                StripePaymentsOperationsService,
+                {
+                    provide: STRIPE_PAYMENTS_ACCESS_POLICY,
+                    useClass: DefaultStripePaymentsAccessPolicy,
+                },
+                {
+                    provide: STRIPE_PAYMENTS_TELEMETRY,
+                    useClass: NoopStripePaymentsTelemetry,
+                },
+                {
+                    provide: STRIPE_PAYMENTS_ENTITLEMENT_STORE,
+                    useExisting: DefaultStripePaymentsEntitlementStore,
+                },
+                ...(options.providers ?? []),
             ],
             controllers: [
                 SecureStripeCheckoutController,
@@ -82,6 +108,11 @@ export class StripePaymentsModule {
                 SecureStripeCheckoutService,
                 SecureSubscriptionService,
                 StripePaymentEventService,
+                StripePaymentsOperationsService,
+                StripePaymentsTelemetryService,
+                STRIPE_PAYMENTS_ACCESS_POLICY,
+                STRIPE_PAYMENTS_ENTITLEMENT_STORE,
+                STRIPE_PAYMENTS_TELEMETRY,
             ],
         };
     }

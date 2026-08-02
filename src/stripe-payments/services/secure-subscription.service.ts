@@ -6,22 +6,9 @@ import {Queue} from "bullmq";
 import {InjectRepository} from "@nestjs/typeorm";
 import {QueryFailedError, Repository} from "typeorm";
 import {StripePaymentState} from "../entities/stripe-payment-state.entity.js";
+import type {StripePaymentsEntitlementInput} from "../stripe-payments.extensions.js";
 
-export interface SecureSubscriptionInput {
-    paymentSystemTransactionId: string;
-    paymentSystemProductId: string;
-    paymentSystemCustomerId: string;
-    paymentSystemCustomerEmail: string;
-    paymentSystemMode: "subscription" | "payment";
-    paymentSystemName: "stripe";
-    validUntil: Date;
-    internalSku: string;
-    productDisplayName: string;
-    organisationUuid?: string;
-    stripeEventId: string;
-    stripeEventCreatedAt: Date;
-    stripeStatus: string;
-}
+export type SecureSubscriptionInput = StripePaymentsEntitlementInput;
 
 @Injectable()
 export class SecureSubscriptionService {
