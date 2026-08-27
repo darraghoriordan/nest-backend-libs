@@ -198,6 +198,7 @@ export class CoreModule {
                 }
                 app.enableCors({
                     origin: [configService.frontEndAppUrl],
+                    credentials: true,
                 });
 
                 app.useGlobalPipes(
